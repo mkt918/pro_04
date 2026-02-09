@@ -15,10 +15,11 @@ class VariableSystem {
         this.updateVariablePanel();
     }
 
-    // 変数の値を設定
+    // 変数の値を設定（存在しない場合は自動作成）
     setVariable(name, value) {
+        // 変数が存在しない場合は自動的に作成
         if (!this.variables.has(name)) {
-            throw new Error(`変数 "${name}" が見つかりません`);
+            console.log(`変数 "${name}" を自動作成しました`);
         }
         this.variables.set(name, value);
         this.updateVariablePanel();

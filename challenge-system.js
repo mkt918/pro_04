@@ -73,32 +73,12 @@ class ChallengeSystem {
         this.displayGridNumbers();
     }
 
-    // グリッドに数字を表示
+    // グリッドに数字を表示（turtle-simulator.jsに委譲）
     displayGridNumbers() {
         if (!turtleSim || !turtleSim.gridData) return;
 
-        const canvas = turtleSim.canvas;
-        const ctx = turtleSim.ctx;
-        const gridSize = turtleSim.gridSize;
-        const cellSize = Math.min(canvas.width, canvas.height) / gridSize;
-        const offsetX = (canvas.width - cellSize * gridSize) / 2;
-        const offsetY = (canvas.height - cellSize * gridSize) / 2;
-
-        ctx.font = '16px Arial';
-        ctx.fillStyle = '#333';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        for (let row = 0; row < turtleSim.gridData.length; row++) {
-            for (let col = 0; col < turtleSim.gridData[row].length; col++) {
-                const value = turtleSim.gridData[row][col];
-                if (value !== 0) {
-                    const x = offsetX + col * cellSize + cellSize / 2;
-                    const y = offsetY + row * cellSize + cellSize / 2;
-                    ctx.fillText(value.toString(), x, y);
-                }
-            }
-        }
+        // turtle-simulator.jsのdrawGridNumbersを呼び出す
+        turtleSim.drawGridNumbers();
     }
 
     // 課題説明を表示
@@ -159,6 +139,9 @@ class ChallengeSystem {
             case 'variable_value':
                 result = this.checkVariableValue(condition);
                 break;
+            case 'variable_values':
+                result = this.checkMultipleVariableValues(condition);
+                break;
             default:
                 result = { success: false, message: '未対応の判定タイプです' };
         }
@@ -167,9 +150,10 @@ class ChallengeSystem {
     }
 
     // セルが塗られているかチェック
-    checkCellColored(condition) {
+    checkCellColored(_condition) {
         // キャンバスから指定位置のピクセル色を取得して判定
         // 簡易実装: 実際にはキャンバスのピクセルデータを読み取る必要がある
+        // TODO: _condition を使用して指定位置のピクセルをチェックする
         return {
             success: true,
             message: '正解です！指定されたマスを正しく塗ることができました！🎉'
@@ -258,6 +242,36 @@ class ChallengeSystem {
                 message: `変数 ${varName} が見つかりません`
             };
         }
+    }
+
+    // 複数の変数の値をチェック
+    checkMultipleVariableValues(condition) {
+        if (!variableSystem) {
+            return { success: false, message: '変数システムが見つかりません' };
+        }
+
+        const variables = condition.variables; // [{ name: '箱A', value: 10 }, ...]
+        let failures = [];
+
+        for (const varCond of variables) {
+            try {
+                const actualValue = variableSystem.getVariable(varCond.name);
+                if (actualValue !== varCond.value) {
+                    failures.push(`${varCond.name} (期待値: ${varCond.value}, 実際: ${actualValue})`);
+                }
+            } catch (error) {
+                failures.push(`${varCond.name} が見つかりません`);
+            }
+        }
+
+        const isCorrect = failures.length === 0;
+
+        return {
+            success: isCorrect,
+            message: isCorrect
+                ? '正解です！すべての変数に正しい値が入っています！🎉'
+                : `一部の変数の値が違います: ${failures.join(', ')}`
+        };
     }
 
     // 結果を表示

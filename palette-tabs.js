@@ -18,7 +18,7 @@ function initPaletteTabs() {
             <button class="palette-tab" data-category="variable">📦箱（変数）</button>
             <button class="palette-tab" data-category="calc">🧪けいさん</button>
             <button class="palette-tab" data-category="action">🎯操作</button>
-            <button class="palette-tab" data-category="pen">🖊️ペン</button>
+            <button class="palette-tab" data-category="template">🎨お手本</button>
         </div>
     `;
 
@@ -46,11 +46,12 @@ function initPaletteTabs() {
 function switchPaletteCategory(category) {
     const blocks = document.querySelectorAll('.block-template');
     const categories = document.querySelectorAll('.palette-category');
+    const subCategories = document.querySelectorAll('.palette-category-sub');
 
     // ブロックの表示切替
     blocks.forEach(block => {
         const blockCategory = block.dataset.category;
-        if (blockCategory === category || (category === 'loop' && blockCategory === 'control')) {
+        if (blockCategory === category) {
             block.style.display = 'block';
         } else {
             block.style.display = 'none';
@@ -59,10 +60,20 @@ function switchPaletteCategory(category) {
 
     // カテゴリヘッダーの表示切替
     categories.forEach(cat => {
-        if (cat.dataset.category === category || (category === 'loop' && cat.dataset.category === 'control')) {
+        if (cat.dataset.category === category) {
             cat.style.display = 'block';
         } else {
             cat.style.display = 'none';
+        }
+    });
+
+    // サブカテゴリヘッダーの表示切替（現状は基本タブのみ）
+    subCategories.forEach(sub => {
+        const subCategory = sub.dataset.category || 'basic'; // デフォルトは basic
+        if (subCategory === category) {
+            sub.style.display = 'block';
+        } else {
+            sub.style.display = 'none';
         }
     });
 }

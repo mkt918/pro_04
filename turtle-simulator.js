@@ -142,6 +142,36 @@ class TurtleSimulator {
             this.ctx.lineTo(offsetX + this.gridSize * cellSize, y);
             this.ctx.stroke();
         }
+
+        // グリッドデータに数字があれば表示
+        this.drawGridNumbers();
+    }
+
+    // グリッドに数字を表示
+    drawGridNumbers() {
+        if (!this.gridData) return;
+
+        const cellSize = Math.min(this.width, this.height) / this.gridSize;
+        const offsetX = (this.width - cellSize * this.gridSize) / 2;
+        const offsetY = (this.height - cellSize * this.gridSize) / 2;
+
+        // フォントサイズをセルサイズに合わせて調整
+        const fontSize = Math.max(12, Math.floor(cellSize * 0.4));
+        this.ctx.font = `bold ${fontSize}px Arial`;
+        this.ctx.fillStyle = '#333';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
+        for (let row = 0; row < this.gridData.length; row++) {
+            for (let col = 0; col < this.gridData[row].length; col++) {
+                const value = this.gridData[row][col];
+                if (value !== 0) {
+                    const x = offsetX + col * cellSize + cellSize / 2;
+                    const y = offsetY + row * cellSize + cellSize / 2;
+                    this.ctx.fillText(value.toString(), x, y);
+                }
+            }
+        }
     }
 
     drawTurtle() {
