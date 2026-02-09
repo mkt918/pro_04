@@ -5,6 +5,12 @@ function initPaletteTabs() {
     const paletteSection = document.querySelector('.column-blocks');
     const paletteTitle = paletteSection.querySelector('.column-title');
 
+    // 既にタブが存在する場合はスキップ
+    if (document.querySelector('.palette-tabs')) {
+        console.log('Palette tabs already initialized, skipping...');
+        return;
+    }
+
     // タブHTMLを作成
     const tabsHTML = `
         <div class="palette-tabs">
