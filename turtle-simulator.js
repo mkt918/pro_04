@@ -23,6 +23,33 @@ class TurtleSimulator {
 
         // タートルの初期状態
         this.reset();
+
+        // 記憶用
+        this.savedPos = null;
+    }
+
+    savePos() {
+        this.savedPos = {
+            x: this.x,
+            y: this.y,
+            angle: this.angle
+        };
+    }
+
+    async restorePos() {
+        if (!this.savedPos) return;
+
+        if (this.gridMode) {
+            await this.animateCellMove(this.savedPos.x, this.savedPos.y);
+        } else {
+            await this.animateMove(this.savedPos.x, this.savedPos.y);
+        }
+        this.angle = this.savedPos.angle;
+        this.drawTurtle();
+    }
+
+    async restart() {
+        await this.home();
     }
 
     initGridData() {

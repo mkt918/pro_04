@@ -53,8 +53,8 @@
 
             <!-- 統合ブロックパレット -->
             <div id="gridPalette" class="palette active">
-                <!-- 基本 -->
-                <div class="palette-category" data-category="basic">🚀 基本</div>
+                <!-- 基本・制御（統合） -->
+                <div class="palette-category" data-category="basic">🚀 基本・制御</div>
                 <div class="block-template" data-category="basic" data-type="start"
                     data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
                     🚀 プログラム開始
@@ -68,22 +68,13 @@
                         <option value="5">5マス</option>
                     </select> 進む
                 </div>
-                <div class="block-template" data-category="basic" data-type="home" data-code="t.home()">
-                    🏠 A1に戻る
+                <div class="block-template" data-category="basic" data-type="right" data-code="t.right(90)">
+                    ↩️ 右に90度回る
                 </div>
-
-                <!-- 回転 -->
-                <div class="palette-category" data-category="rotate">🔄 回転</div>
-                <div class="block-template" data-category="rotate" data-type="right" data-code="t.right(90)">
-                    ↪️ 右に90度回る
+                <div class="block-template" data-category="basic" data-type="left" data-code="t.left(90)">
+                    ↪️ 左に90度回る
                 </div>
-                <div class="block-template" data-category="rotate" data-type="left" data-code="t.left(90)">
-                    ↩️ 左に90度回る
-                </div>
-
-                <!-- 制御 -->
-                <div class="palette-category" data-category="control">🔀 制御</div>
-                <div class="block-template" data-category="loop" data-type="loop_start"
+                <div class="block-template" data-category="basic" data-type="loop_start"
                     data-code="for i in range({count}):">
                     🔁 <select class="block-select" data-param="count">
                         <option value="2">2回</option>
@@ -94,10 +85,10 @@
                         <option value="10">10回</option>
                     </select> くりかえす ↓
                 </div>
-                <div class="block-template" data-category="loop" data-type="loop_end" data-code="# ループ終わり">
+                <div class="block-template" data-category="basic" data-type="loop_end" data-code="# ループ終わり">
                     🔁 ↑ ここまで
                 </div>
-                <div class="block-template" data-category="control" data-type="if_start"
+                <div class="block-template" data-category="basic" data-type="if_start"
                     data-code="if t.get_current_value() {op} {value}:">
                     🔀 もし **今のマス** が <select class="block-select" data-param="op">
                         <option value="==">＝</option>
@@ -112,7 +103,10 @@
                         <option value="箱C">箱C</option>
                     </select> なら ↓
                 </div>
-                <div class="block-template" data-category="control" data-type="if_end" data-code="# 条件分岐ここまで">
+                <div class="block-template" data-category="basic" data-type="else_start" data-code="else:">
+                    🔀 そうでなければ ↓
+                </div>
+                <div class="block-template" data-category="basic" data-type="if_end" data-code="# 条件分岐ここまで">
                     🔀 ↑ ここまで
                 </div>
 
@@ -149,7 +143,16 @@
                 </div>
 
                 <!-- マス目操作 -->
-                <div class="palette-category" data-category="action">🎯 マス目操作</div>
+                <div class="palette-category" data-category="action">🎯 操作</div>
+                <div class="block-template" data-category="action" data-type="restart" data-code="t.restart()">
+                    🔄 最初からA1でやり直す
+                </div>
+                <div class="block-template" data-category="action" data-type="save_pos" data-code="t.savePos()">
+                    📍 今の座標を覚える
+                </div>
+                <div class="block-template" data-category="action" data-type="restore_pos" data-code="t.restorePos()">
+                    🚩 覚えた座標に移動する
+                </div>
                 <div class="block-template" data-category="action" data-type="grid_set"
                     data-code="t.set_current_value({value})">
                     🎯 今のマスに <select class="block-select" data-param="value">

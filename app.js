@@ -319,16 +319,25 @@ function updateProgramBlocks() {
         element: block
     }));
 
-    // インデントの視覚的表現（ループ内）
+    // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
     programBlocks.forEach(b => {
         b.element.classList.remove('indented-1', 'indented-2', 'indented-3');
-        if (b.type === 'loop_end') depth = Math.max(0, depth - 1);
+
+        // 閉じるブロックまたは継続ブロックで深度を下げる
+        if (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start') {
+            depth = Math.max(0, depth - 1);
+        }
+
         if (depth > 0) {
             const indentClass = 'indented-' + Math.min(depth, 3);
             b.element.classList.add(indentClass);
         }
-        if (b.type === 'loop_start') depth++;
+
+        // 開始ブロックまたは継続ブロックで深度を上げる
+        if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start') {
+            depth++;
+        }
     });
 }
 
@@ -360,9 +369,17 @@ function generatePythonCode() {
             line = line.replace('{' + key + '}', value);
         }
 
-        if (block.type === 'loop_end') {
+        if (block.type === 'loop_end' || block.type === 'if_end') {
             indentLevel = Math.max(0, indentLevel - 1);
-            code += indent.repeat(indentLevel) + '# ループここまで\n';
+            const comment = block.type === 'loop_end' ? '# ループここまで' : '# 条件分岐ここまで';
+            code += indent.repeat(indentLevel) + comment + '\n';
+            continue;
+        }
+
+        if (block.type === 'else_start') {
+            indentLevel = Math.max(0, indentLevel - 1);
+            code += indent.repeat(indentLevel) + 'else:\n';
+            indentLevel++;
             continue;
         }
 
@@ -372,7 +389,7 @@ function generatePythonCode() {
             code += indent.repeat(indentLevel) + bl + '\n';
         }
 
-        if (block.type === 'loop_start') {
+        if (block.type === 'loop_start' || block.type === 'if_start') {
             indentLevel++;
         }
     }
