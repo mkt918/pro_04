@@ -362,9 +362,56 @@ body {
     border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* 種類別色分け */
-transform: translateY(-2px);
-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+/* ===== ブロックカテゴリ配色 ===== */
+.block-template[data-category="basic"],
+.program-block[data-category="basic"] {
+    background: linear-gradient(135deg, #11998e, #38ef7d) !important;
+    /* Emerald Green */
+    color: white;
+}
+
+.block-template[data-category="rotate"],
+.program-block[data-category="rotate"] {
+    background: linear-gradient(135deg, #FF512F, #DD2476) !important;
+    /* Vivid Red/Pink */
+    color: white;
+}
+
+.block-template[data-category="loop"],
+.program-block[data-category="loop"],
+.block-template[data-category="control"],
+.program-block[data-category="control"] {
+    background: linear-gradient(135deg, #8E2DE2, #4A00E0) !important;
+    /* Deep Purple */
+    color: white;
+}
+
+.block-template[data-category="variable"],
+.program-block[data-category="variable"] {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed) !important;
+    /* Ocean Blue */
+    color: white;
+}
+
+.block-template[data-category="action"],
+.program-block[data-category="action"] {
+    background: linear-gradient(135deg, #4facfe, #00f2fe) !important;
+    /* Bright Cyan */
+    color: white;
+}
+
+.block-template[data-category="pen"],
+.program-block[data-category="pen"] {
+    background: linear-gradient(135deg, #2c3e50, #4ca1af) !important;
+    /* Slate Blue */
+    color: white;
+}
+
+.block-template[data-category="template"],
+.program-block[data-category="template"] {
+    background: linear-gradient(135deg, #f093fb, #f5576c) !important;
+    /* Soft Pink/Gold */
+    color: white;
 }
 
 .block-select {
