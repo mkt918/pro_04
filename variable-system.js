@@ -147,4 +147,9 @@ let variableSystem = null;
 // 初期化
 function initVariableSystem() {
     variableSystem = new VariableSystem();
+    // 固定変数「箱A〜C」を作成
+    variableSystem.createVariable('箱A', 0);
+    variableSystem.createVariable('箱B', 0);
+    variableSystem.createVariable('箱C', 0);
+    console.log('VariableSystem initialized with Box A, B, C.');
 }

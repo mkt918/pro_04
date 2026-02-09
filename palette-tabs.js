@@ -4,6 +4,13 @@
 function initPaletteTabs() {
     const paletteSection = document.querySelector('.column-blocks');
     const paletteTitle = paletteSection.querySelector('.column-title');
+    const gridPalette = document.getElementById('gridPalette');
+
+    // 通常のパレットを非表示にする（既にグリッドパレットがある場合）
+    const normalPalette = paletteSection.querySelector('.palette:not(#gridPalette)');
+    if (normalPalette) {
+        normalPalette.style.display = 'none';
+    }
 
     // 既にタブが存在する場合はスキップ
     if (document.querySelector('.palette-tabs')) {

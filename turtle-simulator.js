@@ -173,6 +173,9 @@ class TurtleSimulator {
 
             // セル単位でアニメーション
             await this.animateCellMove(targetX, targetY);
+
+            // 現在地の数字表示を更新
+            this.updateCurrentValueDisplay();
         } else {
             // 通常モード：ピクセル単位で移動
             const radians = this.angle * Math.PI / 180;
@@ -354,6 +357,33 @@ class TurtleSimulator {
         }
 
         this.gridData[currentCellY][currentCellX] = value;
+        // マス目を再描画
+        this.drawGrid();
+        this.drawTurtle();
+        // 表示を更新
+        this.updateCurrentValueDisplay();
+    }
+
+    // ブロックからのエイリアス（t.get_current_value()）
+    get_current_value() {
+        return this.getCellValue();
+    }
+
+    // ブロックからのエイリアス（t.set_current_value()）
+    set_current_value(value) {
+        this.setCellValue(value);
+    }
+
+    // 現在地の数字表示を更新
+    updateCurrentValueDisplay() {
+        const row = this.gridMode ? Math.round((this.y - ((this.height - (Math.min(this.width, this.height) / this.gridSize) * this.gridSize) / 2) - (Math.min(this.width, this.height) / this.gridSize) / 2) / (Math.min(this.width, this.height) / this.gridSize)) : 0;
+        const col = this.gridMode ? Math.round((this.x - ((this.width - (Math.min(this.width, this.height) / this.gridSize) * this.gridSize) / 2) - (Math.min(this.width, this.height) / this.gridSize) / 2) / (Math.min(this.width, this.height) / this.gridSize)) : 0;
+
+        const display = document.getElementById('currentCellValue');
+        if (display && this.gridData && this.gridData[row]) {
+            const val = this.gridData[row][col];
+            display.textContent = (val !== undefined && val !== 0) ? val : '0';
+        }
     }
 
     setColor(color) {
@@ -389,6 +419,9 @@ class TurtleSimulator {
 
         this.penDown = wasDown;
         this.drawTurtle();
+
+        // 現在地の数字表示を更新
+        this.updateCurrentValueDisplay();
     }
 
     setheading(angle) {
@@ -646,6 +679,46 @@ async function executeCommand(cmd) {
         }
         else if (cmd.includes('home')) {
             await turtleSim.home();
+        }
+        else if (cmd.includes('set_current_value')) {
+            const match = cmd.match(/set_current_value\((.+)\)/);
+            if (match) {
+                let val = match[1].trim();
+                // 変数名（箱Aなど）なら値を取得
+                if (variableSystem && variableSystem.hasVariable(val)) {
+                    val = variableSystem.getVariable(val);
+                } else if (!isNaN(val)) {
+                    val = parseFloat(val);
+                }
+                turtleSim.set_current_value(val);
+            }
+        }
+        else if (cmd.startsWith('var_set')) {
+            const match = cmd.match(/var_set\(['"](.+?)['"]\s*,\s*(.+)\)/);
+            if (match) {
+                const name = match[1];
+                let value = match[2].trim();
+
+                // 値が関数の場合（t.get_current_value() など）
+                if (value.includes('t.get_current_value()')) {
+                    value = turtleSim.get_current_value();
+                }
+                // 値が他の変数名の場合
+                else if (value.startsWith("'") || value.startsWith('"')) {
+                    const otherVar = value.replace(/['"]/g, '');
+                    if (variableSystem && variableSystem.hasVariable(otherVar)) {
+                        value = variableSystem.getVariable(otherVar);
+                    }
+                }
+                // 値が数値の場合
+                else if (!isNaN(value)) {
+                    value = parseFloat(value);
+                }
+
+                if (variableSystem) {
+                    variableSystem.setVariable(name, value);
+                }
+            }
         }
         else if (cmd.includes('setheading')) {
             const match = cmd.match(/setheading\((\d+)\)/);

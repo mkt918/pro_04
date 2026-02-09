@@ -119,6 +119,53 @@ function initUnifiedSortable() {
             updatePreviewIfPossible();
         }
     });
+
+    // パレットの各ブロックにクリックイベントを追加（クリックで追加機能）
+    const paletteItems = document.querySelectorAll('.block-template');
+    paletteItems.forEach(item => {
+        item.style.cursor = 'pointer';
+        item.title = 'クリックまたはドラッグで追加';
+        item.addEventListener('click', function () {
+            const clone = this.cloneNode(true);
+            clone.classList.remove('block-template');
+            clone.classList.add('program-block');
+
+            // パラメータを初期化
+            const params = {};
+            clone.querySelectorAll('.block-select, .block-input').forEach(el => {
+                params[el.dataset.param] = el.value;
+            });
+            clone.dataset.params = JSON.stringify(params);
+
+            // 削除ボタンを追加
+            const deleteBtn = document.createElement('span');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.onclick = function (e) {
+                e.stopPropagation();
+                clone.remove();
+                checkEmptyHint();
+                updatePreviewIfPossible();
+            };
+            clone.appendChild(deleteBtn);
+
+            // 現在のプログラムエリアに追加
+            const activeTabBtn = document.querySelector('.tab-btn.active');
+            if (!activeTabBtn) return;
+
+            const activeTabId = activeTabBtn.dataset.tab;
+            const targetContainer = document.getElementById(activeTabId + 'Program');
+            if (targetContainer) {
+                targetContainer.appendChild(clone);
+                checkEmptyHint();
+                updatePreviewIfPossible();
+
+                // 視覚的なフィードバック
+                this.classList.add('clicked-flash');
+                setTimeout(() => this.classList.remove('clicked-flash'), 200);
+            }
+        });
+    });
 }
 
 // 新しく追加されたブロックのセットアップ
