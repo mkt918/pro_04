@@ -1,16 +1,9 @@
-// ===== パレットタブシステム v1.0 (2026-02-09) =====
+// ===== パレットタブシステム v1.1 (2026-02-09) =====
 
 // パレットタブを初期化
 function initPaletteTabs() {
     const paletteSection = document.querySelector('.column-blocks');
     const paletteTitle = paletteSection.querySelector('.column-title');
-    const gridPalette = document.getElementById('gridPalette');
-
-    // 通常のパレットを非表示にする（既にグリッドパレットがある場合）
-    const normalPalette = paletteSection.querySelector('.palette:not(#gridPalette)');
-    if (normalPalette) {
-        normalPalette.style.display = 'none';
-    }
 
     // 既にタブが存在する場合はスキップ
     if (document.querySelector('.palette-tabs')) {
@@ -21,17 +14,17 @@ function initPaletteTabs() {
     // タブHTMLを作成
     const tabsHTML = `
         <div class="palette-tabs">
-            <button class="palette-tab active" data-category="basic">🚀 基本</button>
-            <button class="palette-tab" data-category="variable">📦 変数</button>
-            <button class="palette-tab" data-category="control">🔀 制御</button>
+            <button class="palette-tab active" data-category="basic">🚀基本</button>
+            <button class="palette-tab" data-category="rotate">🔄回転</button>
+            <button class="palette-tab" data-category="loop">🔁ループ</button>
+            <button class="palette-tab" data-category="variable">📦箱</button>
+            <button class="palette-tab" data-category="action">🎯操作</button>
+            <button class="palette-tab" data-category="pen">🖊️ペン</button>
         </div>
     `;
 
     // タイトルの後に挿入
     paletteTitle.insertAdjacentHTML('afterend', tabsHTML);
-
-    // すべてのブロックにカテゴリ属性を追加
-    assignBlockCategories();
 
     // タブクリックイベントを設定
     const tabs = document.querySelectorAll('.palette-tab');
@@ -50,50 +43,27 @@ function initPaletteTabs() {
     switchPaletteCategory('basic');
 }
 
-// ブロックにカテゴリを割り当て
-function assignBlockCategories() {
-    const blocks = document.querySelectorAll('.block-template');
-
-    blocks.forEach(block => {
-        const type = block.dataset.type;
-
-        // 基本カテゴリ
-        if (['start', 'forward', 'backward', 'right', 'left', 'circle', 'home',
-            'penup', 'pendown', 'pensize', 'color', 'fillcell', 'clear',
-            'loop_start', 'loop_end', 'template'].includes(type)) {
-            block.dataset.category = 'basic';
-        }
-        // 変数カテゴリ
-        else if (['var_create', 'var_set', 'array_create', 'array_set'].includes(type)) {
-            block.dataset.category = 'variable';
-        }
-        // 制御カテゴリ
-        else if (['if_start', 'else_start', 'if_end', 'grid_get', 'grid_set'].includes(type)) {
-            block.dataset.category = 'control';
-        }
-        // デフォルトは基本
-        else {
-            block.dataset.category = 'basic';
-        }
-    });
-}
-
 // カテゴリを切り替え
 function switchPaletteCategory(category) {
     const blocks = document.querySelectorAll('.block-template');
     const categories = document.querySelectorAll('.palette-category');
 
+    // ブロックの表示切替
     blocks.forEach(block => {
         const blockCategory = block.dataset.category;
-        if (blockCategory === category) {
+        if (blockCategory === category || (category === 'loop' && blockCategory === 'control')) {
             block.style.display = 'block';
         } else {
             block.style.display = 'none';
         }
     });
 
-    // カテゴリヘッダーも表示/非表示
+    // カテゴリヘッダーの表示切替
     categories.forEach(cat => {
-        cat.style.display = 'none';
+        if (cat.dataset.category === category || (category === 'loop' && cat.dataset.category === 'control')) {
+            cat.style.display = 'block';
+        } else {
+            cat.style.display = 'none';
+        }
     });
 }

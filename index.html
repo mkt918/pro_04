@@ -51,123 +51,15 @@
             <h2 class="column-title">📦 ブロックパレット</h2>
 
 
-            <div class="palette-category">🚀 基本</div>
-            <div class="block-template" data-type="start" data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
-                🚀 プログラム開始
-            </div>
-
-            <div class="palette-category">🚶 移動</div>
-            <div class="block-template" data-type="forward" data-code="t.forward({distance})">
-                ⬆️ <select class="block-select" data-param="distance">
-                    <option value="1">1マス</option>
-                    <option value="2">2マス</option>
-                    <option value="3">3マス</option>
-                    <option value="4">4マス</option>
-                    <option value="5">5マス</option>
-                </select> 進む
-            </div>
-
-            <div class="block-template" data-type="home" data-code="t.home()">
-                🏠 A1に戻る
-            </div>
-
-            <div class="palette-category">🔄 回転</div>
-            <div class="block-template" data-type="right" data-code="t.right({angle})">
-                ↪️ 右に <select class="block-select" data-param="angle">
-                    <option value="15">15°</option>
-                    <option value="30">30°</option>
-                    <option value="45">45°</option>
-                    <option value="60">60°</option>
-                    <option value="72">72°</option>
-                    <option value="90" selected>90°</option>
-                    <option value="120">120°</option>
-                    <option value="144">144°</option>
-                    <option value="180">180°</option>
-                </select> 回る
-            </div>
-            <div class="block-template" data-type="left" data-code="t.left({angle})">
-                ↩️ 左に <select class="block-select" data-param="angle">
-                    <option value="15">15°</option>
-                    <option value="30">30°</option>
-                    <option value="45">45°</option>
-                    <option value="60">60°</option>
-                    <option value="72">72°</option>
-                    <option value="90" selected>90°</option>
-                    <option value="120">120°</option>
-                    <option value="144">144°</option>
-                    <option value="180">180°</option>
-                </select> 回る
-            </div>
-
-            <!-- カテゴリー削除 -->
-
-            <div class="palette-category">🔁 ループ</div>
-            <div class="block-template loop-block" data-type="loop_start" data-code="for i in range({count}):">
-                🔁 <select class="block-select" data-param="count">
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="8">8</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                </select> 回くりかえす ↓
-            </div>
-            <div class="block-template loop-end-block" data-type="loop_end" data-code="# ループ終わり">
-                🔁 ↑ ここまで
-            </div>
-
-            <div class="palette-category">🖊️ ペン</div>
-            <div class="block-template" data-type="penup" data-code="t.penup()">
-                🖊️ ペンをあげる
-            </div>
-            <div class="block-template" data-type="pendown" data-code="t.pendown()">
-                🖊️ ペンをさげる
-            </div>
-            <div class="block-template" data-type="pensize" data-code="t.pensize({size})">
-                📏 ペンの太さ <select class="block-select" data-param="size">
-                    <option value="1" selected>1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                </select>
-            </div>
-            <div class="block-template" data-type="color" data-code="t.color('{color}')">
-                <div class="block-main-row">
-                    🎨 色を <input type="color" class="block-input" data-param="color" value="#000000"> に変える
-                </div>
-                <div class="color-palette-grid"></div>
-            </div>
-            <div class="block-template" data-type="clear" data-code="t.clear()">
-                🧹 画面をそうじする
-            </div>
-            <div class="palette-category">🌟 テンプレート</div>
-            <div class="block-template" data-type="template"
-                data-algorithm='[{"type":"loop_start","val":{"count":"4"}},{"type":"forward","val":{"distance":"100"}},{"type":"left","val":{"angle":"90"}},{"type":"loop_end","val":{}}]'>
-                🟦 正方形をかく
-            </div>
-            <div class="block-template" data-type="template"
-                data-algorithm='[{"type":"loop_start","val":{"count":"5"}},{"type":"forward","val":{"distance":"100"}},{"type":"right","val":{"angle":"144"}},{"type":"loop_end","val":{}}]'>
-                ⭐ 星をかく
-            </div>
-            <div class="block-template" data-type="template"
-                data-algorithm='[{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}}]'>
-                🌸 お花をかく
-            </div>
-            </div>
-
-            <!-- グリッドモード用パレット -->
-            <div id="gridPalette" class="palette">
-                <div class="palette-category">🚀 基本</div>
-                <div class="block-template" data-type="start"
+            <!-- 統合ブロックパレット -->
+            <div id="gridPalette" class="palette active">
+                <!-- 基本 -->
+                <div class="palette-category" data-category="basic">🚀 基本</div>
+                <div class="block-template" data-category="basic" data-type="start"
                     data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
                     🚀 プログラム開始
                 </div>
-
-                <div class="palette-category">🚶 移動</div>
-                <div class="block-template" data-type="forward" data-code="t.forward({distance})">
+                <div class="block-template" data-category="basic" data-type="forward" data-code="t.forward({distance})">
                     ⬆️ <select class="block-select" data-param="distance">
                         <option value="1" selected>1マス</option>
                         <option value="2">2マス</option>
@@ -176,48 +68,23 @@
                         <option value="5">5マス</option>
                     </select> 進む
                 </div>
-                <!-- 円を削除 -->
-                <div class="block-template" data-type="home" data-code="t.home()">
+                <div class="block-template" data-category="basic" data-type="home" data-code="t.home()">
                     🏠 A1に戻る
                 </div>
 
-                <div class="palette-category">🔄 回転</div>
-                <div class="block-template" data-type="right" data-code="t.right(90)">
+                <!-- 回転 -->
+                <div class="palette-category" data-category="rotate">🔄 回転</div>
+                <div class="block-template" data-category="rotate" data-type="right" data-code="t.right(90)">
                     ↪️ 右に90度回る
                 </div>
-                <div class="block-template" data-type="left" data-code="t.left(90)">
+                <div class="block-template" data-category="rotate" data-type="left" data-code="t.left(90)">
                     ↩️ 左に90度回る
                 </div>
 
-                <div class="palette-category">🖊️ ペン</div>
-                <div class="block-template" data-type="penup" data-code="t.penup()">
-                    🖊️ ペンをあげる
-                </div>
-                <div class="block-template" data-type="pendown" data-code="t.pendown()">
-                    🖊️ ペンをさげる
-                </div>
-                <div class="block-template" data-type="pensize" data-code="t.pensize({size})">
-                    📏 太さ <select class="block-select" data-param="size">
-                        <option value="1">1</option>
-                        <option value="2" selected>2</option>
-                        <option value="3">3</option>
-                        <option value="5">5</option>
-                    </select>
-                </div>
-                <div class="block-template" data-type="color" data-code="t.color('{color}')">
-                    <div class="block-main-row">
-                        🎨 色 <input type="color" class="block-input" data-param="color" value="#000000">
-                    </div>
-                </div>
-                <div class="block-template" data-type="fillcell" data-code="t.fillcell()">
-                    🎨 マスを塗る
-                </div>
-                <div class="block-template" data-type="clear" data-code="t.clear()">
-                    🧹 画面をそうじする
-                </div>
-
-                <div class="palette-category">🔁 ループ</div>
-                <div class="block-template loop-block" data-type="loop_start" data-code="for i in range({count}):">
+                <!-- 制御 -->
+                <div class="palette-category" data-category="control">🔀 制御</div>
+                <div class="block-template" data-category="loop" data-type="loop_start"
+                    data-code="for i in range({count}):">
                     🔁 <select class="block-select" data-param="count">
                         <option value="2">2回</option>
                         <option value="3">3回</option>
@@ -227,21 +94,40 @@
                         <option value="10">10回</option>
                     </select> くりかえす ↓
                 </div>
-                <div class="block-template loop-end-block" data-type="loop_end" data-code="# ループ終わり">
+                <div class="block-template" data-category="loop" data-type="loop_end" data-code="# ループ終わり">
                     🔁 ↑ ここまで
                 </div>
+                <div class="block-template" data-category="control" data-type="if_start"
+                    data-code="if t.get_current_value() {op} {value}:">
+                    🔀 もし **今のマス** が <select class="block-select" data-param="op">
+                        <option value="==">＝</option>
+                        <option value="!=">≠</option>
+                        <option value=">">＞</option>
+                        <option value="<">＜</option>
+                    </select> <select class="block-select" data-param="value">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> なら ↓
+                </div>
+                <div class="block-template" data-category="control" data-type="if_end" data-code="# 条件分岐ここまで">
+                    🔀 ↑ ここまで
+                </div>
 
-                <div class="palette-category">📦 箱（変数）</div>
-                <div class="block-template" data-type="var_set" data-params='{"name":"箱A", "value":"0"}'
-                    data-code="var_set('{name}', {value})">
+                <!-- 変数（箱） -->
+                <div class="palette-category" data-category="variable">📦 箱（変数）</div>
+                <div class="block-template" data-category="variable" data-type="var_set"
+                    data-params='{"name":"箱A", "value":"0"}' data-code="var_set('{name}', {value})">
                     📦 <select class="block-select" data-param="name">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
                     </select> に <input type="text" class="block-input" data-param="value" value="0" size="3"> を入れる
                 </div>
-                <div class="block-template" data-type="var_set" data-params='{"name":"箱A", "value":"箱B"}'
-                    data-code="var_set('{name}', '{value}')">
+                <div class="block-template" data-category="variable" data-type="var_set"
+                    data-params='{"name":"箱A", "value":"箱B"}' data-code="var_set('{name}', '{value}')">
                     📦 <select class="block-select" data-param="name">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
@@ -252,7 +138,8 @@
                         <option value="箱C">箱C</option>
                     </select> の数字を入れる
                 </div>
-                <div class="block-template" data-type="var_set" data-params='{"name":"箱A", "value":"current_value"}'
+                <div class="block-template" data-category="variable" data-type="var_set"
+                    data-params='{"name":"箱A", "value":"current_value"}'
                     data-code="var_set('{name}', t.get_current_value())">
                     📦 <select class="block-select" data-param="name">
                         <option value="箱A">箱A</option>
@@ -260,67 +147,108 @@
                         <option value="箱C">箱C</option>
                     </select> に **今のマスの数字** を入れる
                 </div>
-                <div class="block-template" data-type="grid_set" data-code="t.set_current_value({value})">
+
+                <!-- マス目操作 -->
+                <div class="palette-category" data-category="action">🎯 マス目操作</div>
+                <div class="block-template" data-category="action" data-type="grid_set"
+                    data-code="t.set_current_value({value})">
                     🎯 今のマスに <select class="block-select" data-param="value">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
                     </select> を入れる
                 </div>
-
-                <div class="palette-category">🎨 ドット絵テンプレート</div>
-                <div class="block-template" data-type="template"
-                    data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#ff5252"}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}}]'>
-                    ❤️ ハート
+                <div class="block-template" data-category="action" data-type="fillcell" data-code="t.fillcell()">
+                    🎨 マスを塗る
                 </div>
-                <div class="block-template" data-type="template"
-                    data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}}]'>
-                    😊 スマイル
-                </div>
-                <div class="block-template" data-type="template"
-                    data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"7"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}}]'>
-                    🏁 チェッカー
+                <div class="block-template" data-category="action" data-type="clear" data-code="t.clear()">
+                    🧹 画面をそうじする
                 </div>
 
-                <div class="palette-category">📦 変数</div>
-                <div class="block-template" data-type="var_create" data-code="# 変数 {name} を作成">
-                    📦 変数 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="x"> を作る
+                <!-- ペン -->
+                <div class="palette-category" data-category="pen">🖊️ ペン</div>
+                <div class="block-template" data-category="pen" data-type="penup" data-code="t.penup()">
+                    🖊️ ペンをあげる
                 </div>
-                <div class="block-template" data-type="var_set" data-code="# 変数 {name} に {value} を代入">
-                    📦 変数 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="x"> に
-                    <input type="number" class="block-input-num" data-param="value" value="0"> を入れる
+                <div class="block-template" data-category="pen" data-type="pendown" data-code="t.pendown()">
+                    🖊️ ペンをさげる
                 </div>
-
-                <div class="palette-category">📚 配列</div>
-                <div class="block-template" data-type="array_create" data-code="# 配列 {name} を作成（サイズ {size}）">
-                    📚 配列 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="arr">
-                    を作る（サイズ <input type="number" class="block-input-num" data-param="size" value="5" min="1">）
+                <div class="block-template" data-category="pen" data-type="pensize" data-code="t.pensize({size})">
+                    📏 太さ <select class="block-select" data-param="size">
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                    </select>
                 </div>
-                <div class="block-template" data-type="array_set" data-code="# 配列 {name}[{index}] に {value} を代入">
-                    📚 配列 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="arr"> の
-                    <input type="number" class="block-input-num" data-param="index" value="0" min="0"> 番目に <input
-                        type="number" class="block-input-num" data-param="value" value="0"> を入れる
-                </div>
-
-                <div class="palette-category">🔀 条件分岐</div>
-                <div class="block-template" data-type="if_start" data-code="if {condition}:">
-                    🔀 もし <input type="text" class="block-input-text" data-param="condition" placeholder="条件"
-                        value="x > 0"> なら ↓
-                </div>
-                <div class="block-template" data-type="else_start" data-code="else:">
-                    🔀 そうでなければ ↓
-                </div>
-                <div class="block-template" data-type="if_end" data-code="# 条件分岐ここまで">
-                    🔀 ↑ ここまで
+                <div class="block-template" data-category="pen" data-type="color" data-code="t.color('{color}')">
+                    🎨 色 <input type="color" class="block-input" data-param="color" value="#000000">
                 </div>
 
-                <div class="palette-category">🎯 マス目操作</div>
-                <div class="block-template" data-type="grid_get" data-code="# 今いるマスの値を取得">
-                    🎯 今いるマスの値を取得
+                <!-- テンプレート -->
+                <div class="palette-category" data-category="template">🎨 お手本</div>
+                <div class="block-template" data-category="template" data-type="template"
+                    data-algorithm='[{"type":"loop_start","val":{"count":"4"}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{"angle":"90"}},{"type":"loop_end","val":{}}]'>
+                    🟦 正方形をかく
                 </div>
-                <div class="block-template" data-type="grid_set" data-code="# 今いるマスに {value} を書く">
-                    🎯 今いるマスに <input type="number" class="block-input-num" data-param="value" value="1"> を書く
+                <div class="block-template" data-category="template" data-type="template"
+                    data-algorithm='[{"type":"loop_start","val":{"count":"5"}},{"type":"forward","val":{"distance":"1"}},{"type":"right","val":{"angle":"144"}},{"type":"loop_end","val":{}}]'>
+                    ⭐ 星をかく
                 </div>
+            </div>
+
+            <div class="palette-category">🎨 ドット絵テンプレート</div>
+            <div class="block-template" data-type="template"
+                data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#ff5252"}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}}]'>
+                ❤️ ハート
+            </div>
+            <div class="block-template" data-type="template"
+                data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}}]'>
+                😊 スマイル
+            </div>
+            <div class="block-template" data-type="template"
+                data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"7"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}}]'>
+                🏁 チェッカー
+            </div>
+
+            <div class="palette-category">📦 変数</div>
+            <div class="block-template" data-type="var_create" data-code="# 変数 {name} を作成">
+                📦 変数 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="x"> を作る
+            </div>
+            <div class="block-template" data-type="var_set" data-code="# 変数 {name} に {value} を代入">
+                📦 変数 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="x"> に
+                <input type="number" class="block-input-num" data-param="value" value="0"> を入れる
+            </div>
+
+            <div class="palette-category">📚 配列</div>
+            <div class="block-template" data-type="array_create" data-code="# 配列 {name} を作成（サイズ {size}）">
+                📚 配列 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="arr">
+                を作る（サイズ <input type="number" class="block-input-num" data-param="size" value="5" min="1">）
+            </div>
+            <div class="block-template" data-type="array_set" data-code="# 配列 {name}[{index}] に {value} を代入">
+                📚 配列 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="arr"> の
+                <input type="number" class="block-input-num" data-param="index" value="0" min="0"> 番目に <input
+                    type="number" class="block-input-num" data-param="value" value="0"> を入れる
+            </div>
+
+            <div class="palette-category">🔀 条件分岐</div>
+            <div class="block-template" data-type="if_start" data-code="if {condition}:">
+                🔀 もし <input type="text" class="block-input-text" data-param="condition" placeholder="条件" value="x > 0">
+                なら ↓
+            </div>
+            <div class="block-template" data-type="else_start" data-code="else:">
+                🔀 そうでなければ ↓
+            </div>
+            <div class="block-template" data-type="if_end" data-code="# 条件分岐ここまで">
+                🔀 ↑ ここまで
+            </div>
+
+            <div class="palette-category">🎯 マス目操作</div>
+            <div class="block-template" data-type="grid_get" data-code="# 今いるマスの値を取得">
+                🎯 今いるマスの値を取得
+            </div>
+            <div class="block-template" data-type="grid_set" data-code="# 今いるマスに {value} を書く">
+                🎯 今いるマスに <input type="number" class="block-input-num" data-param="value" value="1"> を書く
+            </div>
 
             </div>
         </section>

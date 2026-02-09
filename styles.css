@@ -363,50 +363,8 @@ body {
 }
 
 /* 種類別色分け */
-[data-type="start"] {
-    background: linear-gradient(90deg, #11998e, #38ef7d);
-    color: white;
-}
-
-[data-type="forward"],
-[data-type="backward"],
-[data-type="circle"] {
-    background: linear-gradient(90deg, #4facfe, #00f2fe);
-    color: #002d4d;
-}
-
-[data-type="right"],
-[data-type="left"] {
-    background: linear-gradient(90deg, #f093fb, #f5576c);
-    color: white;
-}
-
-[data-type="loop_start"],
-[data-type="loop_end"] {
-    background: linear-gradient(90deg, #a855f7, #d946ef);
-    color: white;
-}
-
-[data-type="color"],
-[data-type="speed"],
-[data-type="stamp"],
-[data-type="clear"],
-[data-type="penup"],
-[data-type="pendown"],
-[data-type="pensize"],
-[data-type="fillcell"] {
-    background: linear-gradient(90deg, #f6d365, #fda085);
-    color: #5a3d00;
-}
-
-[data-type="color"] {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-[data-type="template"] {
-    background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-    color: white;
+transform: translateY(-2px);
+box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .block-select {
@@ -564,15 +522,19 @@ body {
 }
 
 @keyframes errorPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
         box-shadow: 0 0 20px rgba(255, 82, 82, 0.6);
     }
+
     50% {
         transform: scale(1.05);
         box-shadow: 0 0 30px rgba(255, 82, 82, 0.9);
     }
 }
+
 /* ===== チュートリアルモーダル ===== */
 .modal {
     display: none;
@@ -589,8 +551,13 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .modal-content {
@@ -609,6 +576,7 @@ body {
         transform: translateY(50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -649,7 +617,8 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.tutorial-step p, .tutorial-step ul {
+.tutorial-step p,
+.tutorial-step ul {
     color: #555;
     line-height: 1.6;
     margin: 0;
@@ -699,5 +668,5 @@ body {
     font-size: 1.1rem;
     font-weight: bold;
 }
- 
- 
+
+   
