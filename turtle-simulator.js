@@ -160,17 +160,6 @@ class TurtleSimulator {
             const rectY = this.y - cellSize / 2;
             this.spriteCtx.strokeRect(rectX + 2, rectY + 2, cellSize - 4, cellSize - 4);
 
-            // 向き（角度）を示すインジケータ
-            this.spriteCtx.translate(this.x, this.y);
-            this.spriteCtx.rotate(this.angle * Math.PI / 180);
-            this.spriteCtx.fillStyle = '#FF0000';
-            this.spriteCtx.beginPath();
-            const pointerSize = 10;
-            // 枠の右辺の中央に三角形を表示して向きを示す
-            this.spriteCtx.moveTo(cellSize / 2 - 2, 0);
-            this.spriteCtx.lineTo(cellSize / 2 - 12, -pointerSize / 2);
-            this.spriteCtx.lineTo(cellSize / 2 - 12, pointerSize / 2);
-            this.spriteCtx.fill();
         } else {
             // 通常モード：赤い矢印
             const size = 15;
@@ -194,10 +183,11 @@ class TurtleSimulator {
     }
 
     /**
-     * 指定された方向に1マス移動する
+     * 指定された方向に指定されたマス数移動する
      * @param {string} dir 'up', 'down', 'left', 'right'
+     * @param {number} distance マス数
      */
-    async move_dir(dir) {
+    async move_dir(dir, distance = 1) {
         if (this.hasError) return;
 
         // 角度を設定（0=右, 90=下, 180=左, 270=上）
@@ -209,9 +199,9 @@ class TurtleSimulator {
             case 'up': targetAngle = 270; break;
         }
 
-        // 向きを変えて1マス進む
+        // 向きを変えて移動する
         this.angle = targetAngle;
-        await this.forward(1);
+        await this.forward(distance);
     }
 
     clearTurtle() {
@@ -639,6 +629,12 @@ async function executeTurtleCommands(code) {
     }
 
     turtleSim.reset();
+
+    // 課題がアクティブな場合は、数値を復元する
+    if (typeof challengeSystem !== 'undefined' && challengeSystem && challengeSystem.challengeActive && challengeSystem.currentChallenge.initialGrid) {
+        challengeSystem.loadGridData(challengeSystem.currentChallenge.initialGrid);
+    }
+
     turtleSim.currentBlockIndex = 0;
     turtleSim.errorBlockIndex = undefined;
 
@@ -811,8 +807,8 @@ async function executeCommand(cmd) {
 
     try {
         if (cmd.includes('move_dir')) {
-            const match = cmd.match(/move_dir\(['"]?(\w+)['"]?\)/);
-            if (match) await turtleSim.move_dir(match[1]);
+            const match = cmd.match(/move_dir\(['"]?(\w+)['"]?(?:,\s*(\d+))?\)/);
+            if (match) await turtleSim.move_dir(match[1], match[2] ? parseInt(match[2]) : 1);
         }
         else if (cmd.includes('forward')) {
             const match = cmd.match(/forward\((\d+)\)/);

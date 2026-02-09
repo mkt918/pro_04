@@ -59,8 +59,15 @@
                     data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
                     🚀 プログラム開始
                 </div>
-                <div class="block-template" data-category="basic" data-type="forward" data-code="t.move_dir('{dir}')">
-                    1マス <select class="block-select" data-param="dir">
+                <div class="block-template" data-category="basic" data-type="forward"
+                    data-code="t.move_dir('{dir}', {distance})">
+                    <select class="block-select" data-param="distance">
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select> マス <select class="block-select" data-param="dir">
                         <option value="up">上</option>
                         <option value="down">下</option>
                         <option value="left">左</option>
@@ -253,6 +260,14 @@
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
                     </select> の数字を書く
+                </div>
+                <div class="block-template" data-category="action" data-type="grid_get_to_var"
+                    data-code="var_set('{target}', t.get_current_value())">
+                    🎯 今のマスの値を <select class="block-select" data-param="target">
+                        <option value="箱A" selected>箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> に入れる
                 </div>
                 <div class="block-template" data-category="action" data-type="grid_get"
                     data-code="t.get_current_value()">

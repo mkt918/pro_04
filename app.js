@@ -164,7 +164,15 @@ function setupNewBlock(el) {
 
     el.classList.remove('block-template');
     el.classList.add('program-block');
-    // ...
+
+    // 自動セット配置機能（ループ、条件分岐）
+    if (type === 'loop_start') {
+        setTimeout(() => addBlockProgrammatically('loop_end'), 50);
+    } else if (type === 'while_start') {
+        setTimeout(() => addBlockProgrammatically('loop_end'), 50);
+    } else if (type === 'if_start') {
+        setTimeout(() => addBlockProgrammatically('if_end'), 50);
+    }
     // 入力パラメータの初期値取得
     const params = {};
     const controls = el.querySelectorAll('select, input');
