@@ -145,24 +145,73 @@ class TurtleSimulator {
     }
 
     drawTurtle() {
-        const size = 15;
         this.spriteCtx.save();
-        this.spriteCtx.translate(this.x, this.y);
-        this.spriteCtx.rotate(this.angle * Math.PI / 180);
 
-        this.spriteCtx.fillStyle = '#4CAF50';
-        this.spriteCtx.strokeStyle = '#2E7D32';
-        this.spriteCtx.lineWidth = 2;
+        if (this.gridMode) {
+            // グリッドモード：現在のセルを赤い枠で囲む
+            const cellSize = Math.min(this.width, this.height) / this.gridSize;
 
-        this.spriteCtx.beginPath();
-        this.spriteCtx.moveTo(size, 0);
-        this.spriteCtx.lineTo(-size * 0.7, -size * 0.7);
-        this.spriteCtx.lineTo(-size * 0.7, size * 0.7);
-        this.spriteCtx.closePath();
-        this.spriteCtx.fill();
-        this.spriteCtx.stroke();
+            this.spriteCtx.strokeStyle = '#FF0000';
+            this.spriteCtx.lineWidth = 4;
+            this.spriteCtx.lineJoin = 'round';
+
+            // セルの外形を描画
+            const rectX = this.x - cellSize / 2;
+            const rectY = this.y - cellSize / 2;
+            this.spriteCtx.strokeRect(rectX + 2, rectY + 2, cellSize - 4, cellSize - 4);
+
+            // 向き（角度）を示すインジケータ
+            this.spriteCtx.translate(this.x, this.y);
+            this.spriteCtx.rotate(this.angle * Math.PI / 180);
+            this.spriteCtx.fillStyle = '#FF0000';
+            this.spriteCtx.beginPath();
+            const pointerSize = 10;
+            // 枠の右辺の中央に三角形を表示して向きを示す
+            this.spriteCtx.moveTo(cellSize / 2 - 2, 0);
+            this.spriteCtx.lineTo(cellSize / 2 - 12, -pointerSize / 2);
+            this.spriteCtx.lineTo(cellSize / 2 - 12, pointerSize / 2);
+            this.spriteCtx.fill();
+        } else {
+            // 通常モード：赤い矢印
+            const size = 15;
+            this.spriteCtx.translate(this.x, this.y);
+            this.spriteCtx.rotate(this.angle * Math.PI / 180);
+
+            this.spriteCtx.fillStyle = '#FF0000';
+            this.spriteCtx.strokeStyle = '#B30000';
+            this.spriteCtx.lineWidth = 2;
+
+            this.spriteCtx.beginPath();
+            this.spriteCtx.moveTo(size, 0);
+            this.spriteCtx.lineTo(-size * 0.7, -size * 0.7);
+            this.spriteCtx.lineTo(-size * 0.7, size * 0.7);
+            this.spriteCtx.closePath();
+            this.spriteCtx.fill();
+            this.spriteCtx.stroke();
+        }
 
         this.spriteCtx.restore();
+    }
+
+    /**
+     * 指定された方向に1マス移動する
+     * @param {string} dir 'up', 'down', 'left', 'right'
+     */
+    async move_dir(dir) {
+        if (this.hasError) return;
+
+        // 角度を設定（0=右, 90=下, 180=左, 270=上）
+        let targetAngle = 0;
+        switch (dir) {
+            case 'right': targetAngle = 0; break;
+            case 'down': targetAngle = 90; break;
+            case 'left': targetAngle = 180; break;
+            case 'up': targetAngle = 270; break;
+        }
+
+        // 向きを変えて1マス進む
+        this.angle = targetAngle;
+        await this.forward(1);
     }
 
     clearTurtle() {
@@ -179,8 +228,9 @@ class TurtleSimulator {
             const offsetX = (this.width - cellSize * this.gridSize) / 2;
             const offsetY = (this.height - cellSize * this.gridSize) / 2;
 
-            // 現在の方向に基づいて移動（0=右, 90=下, 180=左, 270=上）
-            const direction = Math.round(this.angle / 90) % 4;
+            // 現在の方向に基づいて移動（0=右, 1=下, 2=左, 3=上）
+            // 負の角度にも対応するために ((x % 4) + 4) % 4 を使用
+            const direction = ((Math.round(this.angle / 90) % 4) + 4) % 4;
             let dx = 0, dy = 0;
 
             switch (direction) {
@@ -760,7 +810,11 @@ async function executeCommand(cmd) {
     }
 
     try {
-        if (cmd.includes('forward')) {
+        if (cmd.includes('move_dir')) {
+            const match = cmd.match(/move_dir\(['"]?(\w+)['"]?\)/);
+            if (match) await turtleSim.move_dir(match[1]);
+        }
+        else if (cmd.includes('forward')) {
             const match = cmd.match(/forward\((\d+)\)/);
             if (match) await turtleSim.forward(parseInt(match[1]));
         }

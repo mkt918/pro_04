@@ -79,10 +79,28 @@ class VariableSystem {
         return this.arrays.get(name);
     }
 
-    // すべてリセット
+    // すべてリセット（箱A〜Cなどの固定変数は保持）
     reset() {
-        this.variables.clear();
+        // 保持したい変数名
+        const reserved = ['箱A', '箱B', '箱C'];
+
+        // 変数の整理
+        for (const name of Array.from(this.variables.keys())) {
+            if (!reserved.includes(name)) {
+                this.variables.delete(name);
+            }
+        }
+
+        // 配列は一旦全てクリア（箱A〜Cは変数なので）
         this.arrays.clear();
+
+        // 固定変数がなければ作成（保険）
+        reserved.forEach(name => {
+            if (!this.variables.has(name)) {
+                this.variables.set(name, 0);
+            }
+        });
+
         this.updateVariablePanel();
     }
 

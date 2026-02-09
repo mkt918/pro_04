@@ -363,11 +363,45 @@ body {
 }
 
 /* ===== ブロックカテゴリ配色 ===== */
-/* 🚀 基本・制御（Scratch風にオレンジ系） */
-.block-template[data-category="basic"],
-.program-block[data-category="basic"] {
+/* 🚀 基本・制御（移動・回転など） - ブルー系 */
+.block-template[data-category="basic"][data-type="start"],
+.program-block[data-category="basic"][data-type="start"],
+.block-template[data-category="basic"][data-type="forward"],
+.program-block[data-category="basic"][data-type="forward"],
+.block-template[data-category="basic"][data-type="right"],
+.program-block[data-category="basic"][data-type="right"],
+.block-template[data-category="basic"][data-type="left"],
+.program-block[data-category="basic"][data-type="left"],
+.block-template[data-category="basic"][data-type="wait"],
+.program-block[data-category="basic"][data-type="wait"] {
+    background: linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+    border-left: 5px solid #2E5FB7;
+    color: white;
+}
+
+/* 🔁 ループブロック - オレンジ系 */
+.block-template[data-category="basic"][data-type="loop_start"],
+.program-block[data-category="basic"][data-type="loop_start"],
+.block-template[data-category="basic"][data-type="while_start"],
+.program-block[data-category="basic"][data-type="while_start"],
+.block-template[data-category="basic"][data-type="break"],
+.program-block[data-category="basic"][data-type="break"],
+.block-template[data-category="basic"][data-type="loop_end"],
+.program-block[data-category="basic"][data-type="loop_end"] {
     background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
     border-left: 5px solid #CF8B17;
+    color: white;
+}
+
+/* 🔀 条件分岐ブロック - イエロー系 */
+.block-template[data-category="basic"][data-type="if_start"],
+.program-block[data-category="basic"][data-type="if_start"],
+.block-template[data-category="basic"][data-type="else_start"],
+.program-block[data-category="basic"][data-type="else_start"],
+.block-template[data-category="basic"][data-type="if_end"],
+.program-block[data-category="basic"][data-type="if_end"] {
+    background: linear-gradient(135deg, #FFBF00 0%, #FFA500 100%) !important;
+    border-left: 5px solid #E69500;
     color: white;
 }
 

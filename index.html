@@ -59,23 +59,16 @@
                     data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
                     🚀 プログラム開始
                 </div>
-                <div class="block-template" data-category="basic" data-type="forward" data-code="t.forward({distance})">
-                    ⬆️ <select class="block-select" data-param="distance">
-                        <option value="1" selected>1マス</option>
-                        <option value="2">2マス</option>
-                        <option value="3">3マス</option>
-                        <option value="4">4マス</option>
-                        <option value="5">5マス</option>
-                    </select> 進む
+                <div class="block-template" data-category="basic" data-type="forward" data-code="t.move_dir('{dir}')">
+                    1マス <select class="block-select" data-param="dir">
+                        <option value="up">上</option>
+                        <option value="down">下</option>
+                        <option value="left">左</option>
+                        <option value="right" selected>右</option>
+                    </select> に進む
                 </div>
                 <div class="block-template" data-category="basic" data-type="wait" data-code="t.wait({sec})">
                     ⏳ <input type="text" class="block-input" data-param="sec" value="1" size="2"> 秒待つ
-                </div>
-                <div class="block-template" data-category="basic" data-type="right" data-code="t.right(90)">
-                    ↪️ 右に90度回る
-                </div>
-                <div class="block-template" data-category="basic" data-type="left" data-code="t.left(90)">
-                    ↩️ 左に90度回る
                 </div>
 
                 <!-- ループセット -->
@@ -407,23 +400,24 @@
                 </div>
             </div>
 
+            <!-- 変数パネル (キャンバスの上に配置) -->
+            <div class="variable-panel">
+                <h3>📊 変数・配列</h3>
+                <div id="variableList" class="variable-list">
+                    <p class="no-variables">変数・配列はまだありません</p>
+                </div>
+            </div>
+
             <div class="canvas-container" style="position: relative;">
                 <canvas id="turtleCanvas" width="630" height="550"
                     style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></canvas>
                 <canvas id="spriteCanvas" width="630" height="550"
                     style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;"></canvas>
             </div>
+
             <div id="console" class="console">
                 <div class="console-title">📋 コンソール</div>
                 <div id="consoleOutput" class="console-output">準備完了なのだ！🚀</div>
-            </div>
-
-            <!-- 変数パネル -->
-            <div class="variable-panel">
-                <h3>📊 変数・配列</h3>
-                <div id="variableList" class="variable-list">
-                    <p class="no-variables">変数・配列はまだありません</p>
-                </div>
             </div>
         </section>
     </main>
