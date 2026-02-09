@@ -312,12 +312,34 @@ function syncGlobalSpeed() {
 function updateProgramBlocks() {
     const programArea = document.getElementById('programArea');
     const blocks = programArea.querySelectorAll('.program-block');
-    programBlocks = Array.from(blocks).map(block => ({
-        type: block.dataset.type,
-        code: block.dataset.code,
-        params: JSON.parse(block.dataset.params || '{}'),
-        element: block
-    }));
+    programBlocks = Array.from(blocks).map(block => {
+        const params = JSON.parse(block.dataset.params || '{}');
+
+        // input要素から値を取得してparamsに追加
+        const inputs = block.querySelectorAll('.block-input');
+        inputs.forEach(input => {
+            const paramName = input.dataset.param;
+            if (paramName) {
+                params[paramName] = input.value;
+            }
+        });
+
+        // select要素からも値を取得（既存の処理を維持）
+        const selects = block.querySelectorAll('.block-select');
+        selects.forEach(select => {
+            const paramName = select.dataset.param;
+            if (paramName) {
+                params[paramName] = select.value;
+            }
+        });
+
+        return {
+            type: block.dataset.type,
+            code: block.dataset.code,
+            params: params,
+            element: block
+        };
+    });
 
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
@@ -335,7 +357,7 @@ function updateProgramBlocks() {
         }
 
         // 開始ブロックまたは継続ブロックで深度を上げる
-        if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start') {
+        if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start') {
             depth++;
         }
     });
@@ -389,7 +411,7 @@ function generatePythonCode() {
             code += indent.repeat(indentLevel) + bl + '\n';
         }
 
-        if (block.type === 'loop_start' || block.type === 'if_start') {
+        if (block.type === 'loop_start' || block.type === 'if_start' || block.type === 'while_start') {
             indentLevel++;
         }
     }

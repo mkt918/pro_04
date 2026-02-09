@@ -16,6 +16,7 @@ function initPaletteTabs() {
         <div class="palette-tabs">
             <button class="palette-tab active" data-category="basic">🚀基本・制御</button>
             <button class="palette-tab" data-category="variable">📦箱（変数）</button>
+            <button class="palette-tab" data-category="calc">🧪けいさん</button>
             <button class="palette-tab" data-category="action">🎯操作</button>
             <button class="palette-tab" data-category="pen">🖊️ペン</button>
         </div>

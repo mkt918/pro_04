@@ -363,54 +363,49 @@ body {
 }
 
 /* ===== ブロックカテゴリ配色 ===== */
+/* 🚀 基本・制御（Scratch風にオレンジ系） */
 .block-template[data-category="basic"],
 .program-block[data-category="basic"] {
-    background: linear-gradient(135deg, #11998e, #38ef7d) !important;
-    /* Emerald Green */
+    background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
+    border-left: 5px solid #CF8B17;
     color: white;
 }
 
-.block-template[data-category="rotate"],
-.program-block[data-category="rotate"] {
-    background: linear-gradient(135deg, #FF512F, #DD2476) !important;
-    /* Vivid Red/Pink */
+/* 🧪 演算（Scratch風にグリーン系） */
+.block-template[data-category="calc"],
+.program-block[data-category="calc"] {
+    background: linear-gradient(135deg, #59C059 0%, #46A046 100%) !important;
+    border-left: 5px solid #389438;
     color: white;
 }
 
-.block-template[data-category="loop"],
-.program-block[data-category="loop"],
-.block-template[data-category="control"],
-.program-block[data-category="control"] {
-    background: linear-gradient(135deg, #8E2DE2, #4A00E0) !important;
-    /* Deep Purple */
-    color: white;
-}
-
+/* 📦 変数（青系） */
 .block-template[data-category="variable"],
 .program-block[data-category="variable"] {
-    background: linear-gradient(135deg, #2193b0, #6dd5ed) !important;
-    /* Ocean Blue */
+    background: linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+    border-left: 5px solid #2E5FB7;
     color: white;
 }
 
+/* 🎯 操作（シアン系） */
 .block-template[data-category="action"],
 .program-block[data-category="action"] {
-    background: linear-gradient(135deg, #4facfe, #00f2fe) !important;
-    /* Bright Cyan */
+    background: linear-gradient(135deg, #0BC2D0 0%, #0AA1AE 100%) !important;
+    border-left: 5px solid #088C98;
     color: white;
 }
 
+/* 🖊️ ペン（パープル系） */
 .block-template[data-category="pen"],
 .program-block[data-category="pen"] {
-    background: linear-gradient(135deg, #2c3e50, #4ca1af) !important;
-    /* Slate Blue */
+    background: linear-gradient(135deg, #9966FF 0%, #855CD6 100%) !important;
+    border-left: 5px solid #774DCB;
     color: white;
 }
 
 .block-template[data-category="template"],
 .program-block[data-category="template"] {
     background: linear-gradient(135deg, #f093fb, #f5576c) !important;
-    /* Soft Pink/Gold */
     color: white;
 }
 
@@ -445,6 +440,26 @@ body {
 .program-block .block-content {
     cursor: grab;
     flex: 1;
+}
+
+.palette-category {
+    font-weight: bold;
+    padding: 10px 5px 5px 5px;
+    margin-top: 15px;
+    border-bottom: 2px solid #eee;
+    color: #555;
+    font-size: 0.9em;
+}
+
+.palette-category-sub {
+    font-weight: bold;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #777;
+    font-size: 0.85em;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
 }
 
 .program-block .delete-btn {

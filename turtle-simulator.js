@@ -24,27 +24,36 @@ class TurtleSimulator {
         // タートルの初期状態
         this.reset();
 
-        // 記憶用
-        this.savedPos = null;
+        // 記憶用 (名前付き座標保存)
+        this.savedPos = new Map();
+
+        // 実行制御フラグ
+        this.breakFlag = false;
+        this.hasError = false;
     }
 
-    savePos() {
-        this.savedPos = {
+    async wait(seconds) {
+        await this.sleep(seconds * 1000);
+    }
+
+    savePos(name = 'default') {
+        this.savedPos.set(name, {
             x: this.x,
             y: this.y,
             angle: this.angle
-        };
+        });
     }
 
-    async restorePos() {
-        if (!this.savedPos) return;
+    async restorePos(name = 'default') {
+        const pos = this.savedPos.get(name);
+        if (!pos) return;
 
         if (this.gridMode) {
-            await this.animateCellMove(this.savedPos.x, this.savedPos.y);
+            await this.animateCellMove(pos.x, pos.y);
         } else {
-            await this.animateMove(this.savedPos.x, this.savedPos.y);
+            await this.animateMove(pos.x, pos.y);
         }
-        this.angle = this.savedPos.angle;
+        this.angle = pos.angle;
         this.drawTurtle();
     }
 
@@ -520,6 +529,59 @@ function initTurtleSimulator() {
     turtleSim = new TurtleSimulator('turtleCanvas', 'spriteCanvas');
 }
 
+/**
+ * 演算・比較式の評価
+ * @param {string} expr 評価する式 
+ */
+function evaluateExpression(expr) {
+    if (expr === undefined || expr === null) return 0;
+    let s = expr.toString().trim();
+
+    // マス目の値取得
+    if (s.includes('t.get_current_value()')) {
+        s = s.replace(/t\.get_current_value\(\)/g, turtleSim.get_current_value());
+    }
+
+    // 変数（箱A〜C）の置換
+    if (variableSystem) {
+        for (const name of ['箱A', '箱B', '箱C']) {
+            const val = variableSystem.getVariable(name);
+            // 正規表現の特殊文字をエスケープしてから置換
+            const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapedName, 'g');
+            s = s.replace(regex, val);
+        }
+    }
+
+    try {
+        // セキュリティ上の懸念はあるが、教育用シミュレータの内部処理として
+        // 算術演算 (+, -, *, /) を行う。
+        // 割り算を四捨五入するために、カスタム関数の実装を検討するか、
+        // evalの結果に対して処理を行う。
+
+        // Python風の演算子をJSに変換
+        s = s.replace(/==/g, ' === ');
+        s = s.replace(/\bnot\b/g, ' ! ');
+        s = s.replace(/\band\b/g, ' && ');
+        s = s.replace(/\bor\b/g, ' || ');
+
+        // 安全な計算のために簡易的なパーサを通すべきだが、
+        // ここでは eval を使用し、直後に四捨五入等の後処理を入れる。
+        // ※ 本番環境では math.js などのライブラリ使用を推奨
+        let result = eval(s);
+
+        // 割り算の結果や浮動小数点を四捨五入（ユーザーの要望）
+        if (typeof result === 'number' && !Number.isInteger(result)) {
+            result = Math.round(result);
+        }
+
+        return result;
+    } catch (e) {
+        console.error('Expression evaluation error:', e, 'Source:', s);
+        return 0;
+    }
+}
+
 // コマンド実行
 async function executeTurtleCommands(code) {
     if (!turtleSim) {
@@ -562,84 +624,130 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
     let i = startIndex;
 
     while (i < endIndex) {
-        if (turtleSim && turtleSim.hasError) break;
+        if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
 
         const line = lines[i];
         const trimmed = line.trim();
 
-        // コメントはスキップ
-        if (trimmed.startsWith('#')) {
+        if (trimmed === '' || trimmed.startsWith('#')) {
             i++;
             continue;
         }
 
-        // 現在の行のインデントを取得
         const currentIndent = line.search(/\S/);
+        if (currentIndent < baseIndent) break;
 
-        // インデントが基準より浅い場合は、このブロックの処理は終了（基本的には呼び出し元で制御されるが念のため）
-        if (currentIndent < baseIndent) {
+        // --- break 処理 ---
+        if (trimmed === 'break') {
+            if (turtleSim) turtleSim.breakFlag = true;
+            i++;
             break;
         }
 
-        // ループの開始検出
-        if (trimmed.startsWith('for')) {
+        // --- while (until) 処理 ---
+        if (trimmed.startsWith('while ')) {
+            const match = trimmed.match(/while\s+(.+):/);
+            if (!match) {
+                throw new Error(`while文の構文エラー: ${trimmed}`);
+            }
+            const conditionExpr = match[1];
+            const blockRange = findBlockRange(lines, i, endIndex);
+
+            while (evaluateExpression(conditionExpr)) {
+                await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end);
+                if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
+            }
+            // ループを抜けた際に breakFlag をリセット（この外側のループには影響させない）
+            if (turtleSim && turtleSim.breakFlag) {
+                turtleSim.breakFlag = false;
+            }
+            i = blockRange.end;
+            continue;
+        }
+
+        // --- for 処理 (旧互換) ---
+        if (trimmed.startsWith('for ')) {
             const match = trimmed.match(/range\((\d+)\)/);
             if (match) {
                 const loopCount = parseInt(match[1]);
-
-                // ループブロックの範囲を特定する
-                // 次の行から開始
-                const loopStart = i + 1;
-                let loopEnd = loopStart;
-
-                // 次の行のインデント（ループの中身のインデント）を取得
-                let innerIndent = -1;
-                if (loopStart < lines.length) {
-                    const nextLine = lines[loopStart];
-                    if (nextLine.trim() !== '') {
-                        innerIndent = nextLine.search(/\S/);
-                    }
-                }
-
-                // もし次の行がない、またはインデントが深くない場合は、中身のないループとしてスキップ
-                if (innerIndent <= currentIndent) {
-                    i++;
-                    continue;
-                }
-
-                // このインデントレベルが続く限りをループブロックとする
-                while (loopEnd < endIndex) {
-                    const checkLine = lines[loopEnd];
-                    // 空行は無視して続行（今回はfilterで消えているが念のため）
-                    if (checkLine.trim() === '') {
-                        loopEnd++;
-                        continue;
-                    }
-
-                    const checkIndent = checkLine.search(/\S/);
-                    // インデントが戻ったらブロック終了
-                    if (checkIndent < innerIndent) {
-                        break;
-                    }
-                    loopEnd++;
-                }
-
-                // ループ実行
+                const blockRange = findBlockRange(lines, i, endIndex);
                 for (let c = 0; c < loopCount; c++) {
-                    await executeBlock(lines, loopStart, innerIndent, loopEnd);
-                    if (turtleSim && turtleSim.hasError) break;
+                    await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end);
+                    if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
                 }
-
-                // 処理を行が進んだ分までスキップ
-                i = loopEnd;
+                if (turtleSim && turtleSim.breakFlag) turtleSim.breakFlag = false;
+                i = blockRange.end;
                 continue;
             }
+        }
+
+        // --- if / else 処理 ---
+        if (trimmed.startsWith('if ')) {
+            const match = trimmed.match(/if\s+(.+):/);
+            if (!match) {
+                throw new Error(`if文の構文エラー: ${trimmed}`);
+            }
+            const conditionExpr = match[1];
+            const ifRange = findBlockRange(lines, i, endIndex);
+
+            // else の範囲を探す
+            let elseRange = null;
+            if (ifRange.end < endIndex) {
+                const nextLine = lines[ifRange.end].trim();
+                if (nextLine === 'else:') {
+                    elseRange = findBlockRange(lines, ifRange.end, endIndex);
+                }
+            }
+
+            if (evaluateExpression(conditionExpr)) {
+                await executeBlock(lines, ifRange.start, ifRange.indent, ifRange.end);
+            } else if (elseRange) {
+                await executeBlock(lines, elseRange.start, elseRange.indent, elseRange.end);
+            }
+
+            i = elseRange ? elseRange.end : ifRange.end;
+            continue;
         }
 
         // 通常コマンドの実行
         await executeCommand(trimmed);
         i++;
     }
+}
+
+/**
+ * インデントに基づいたブロック範囲の特定
+ */
+function findBlockRange(lines, currentIndex, maxIndex) {
+    const currentIndent = lines[currentIndex].search(/\S/);
+    const start = currentIndex + 1;
+    let end = start;
+    let indent = -1;
+
+    // 中身の1行目からインデントを決定
+    while (end < maxIndex) {
+        if (lines[end].trim() !== '') {
+            indent = lines[end].search(/\S/);
+            break;
+        }
+        end++;
+    }
+
+    if (indent <= currentIndent) {
+        return { start: start, end: start, indent: indent };
+    }
+
+    // インデントが戻るまでを範囲とする
+    while (end < maxIndex) {
+        const checkLine = lines[end];
+        if (checkLine.trim() !== '') {
+            const checkIndent = checkLine.search(/\S/);
+            if (checkIndent < indent) break;
+        }
+        end++;
+    }
+
+    return { start: start, end: end, indent: indent };
 }
 
 // 個別コマンドの実行（拡張版）
@@ -710,46 +818,47 @@ async function executeCommand(cmd) {
         else if (cmd.includes('set_current_value')) {
             const match = cmd.match(/set_current_value\((.+)\)/);
             if (match) {
-                let val = match[1].trim();
-                // 変数名（箱Aなど）なら値を取得
-                if (variableSystem && variableSystem.hasVariable(val)) {
-                    val = variableSystem.getVariable(val);
-                } else if (!isNaN(val)) {
-                    val = parseFloat(val);
-                }
+                const val = evaluateExpression(match[1]);
                 turtleSim.set_current_value(val);
             }
+        }
+        else if (cmd.includes('get_current_value()') || cmd.includes('# 今いるマスの値を取得')) {
+            const val = turtleSim.get_current_value();
+            showConsoleMessage(`今のマスの数字は ${val} なのだ！`, 'info');
         }
         else if (cmd.startsWith('var_set')) {
             const match = cmd.match(/var_set\(['"](.+?)['"]\s*,\s*(.+)\)/);
             if (match) {
                 const name = match[1];
-                let value = match[2].trim();
-
-                // 値が関数の場合（t.get_current_value() など）
-                if (value.includes('t.get_current_value()')) {
-                    value = turtleSim.get_current_value();
-                }
-                // 値が他の変数名の場合
-                else if (value.startsWith("'") || value.startsWith('"')) {
-                    const otherVar = value.replace(/['"]/g, '');
-                    if (variableSystem && variableSystem.hasVariable(otherVar)) {
-                        value = variableSystem.getVariable(otherVar);
-                    }
-                }
-                // 値が数値の場合
-                else if (!isNaN(value)) {
-                    value = parseFloat(value);
-                }
-
+                const value = evaluateExpression(match[2]);
                 if (variableSystem) {
                     variableSystem.setVariable(name, value);
                 }
             }
         }
+        else if (cmd.includes('wait')) {
+            const match = cmd.match(/wait\((.+)\)/);
+            if (match) {
+                const sec = evaluateExpression(match[1]);
+                await turtleSim.wait(sec);
+            }
+        }
         else if (cmd.includes('setheading')) {
             const match = cmd.match(/setheading\((\d+)\)/);
             if (match) turtleSim.setheading(parseInt(match[1]));
+        }
+        else if (cmd.includes('restart()')) {
+            await turtleSim.restart();
+        }
+        else if (cmd.includes('savePos')) {
+            const match = cmd.match(/savePos\(['"]?(.+?)['"]?\)/);
+            const name = match ? match[1] : 'default';
+            turtleSim.savePos(name);
+        }
+        else if (cmd.includes('restorePos')) {
+            const match = cmd.match(/restorePos\(['"]?(.+?)['"]?\)/);
+            const name = match ? match[1] : 'default';
+            await turtleSim.restorePos(name);
         }
         // 変数操作
         else if (cmd.includes('# 変数') && cmd.includes('を作成')) {

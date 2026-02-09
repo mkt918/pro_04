@@ -53,7 +53,7 @@
 
             <!-- 統合ブロックパレット -->
             <div id="gridPalette" class="palette active">
-                <!-- 基本・制御（統合） -->
+                <!-- 基本・制御（統合・整理） -->
                 <div class="palette-category" data-category="basic">🚀 基本・制御</div>
                 <div class="block-template" data-category="basic" data-type="start"
                     data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
@@ -68,12 +68,18 @@
                         <option value="5">5マス</option>
                     </select> 進む
                 </div>
+                <div class="block-template" data-category="basic" data-type="wait" data-code="t.wait({sec})">
+                    ⏳ <input type="text" class="block-input" data-param="sec" value="1" size="2"> 秒待つ
+                </div>
                 <div class="block-template" data-category="basic" data-type="right" data-code="t.right(90)">
-                    ↩️ 右に90度回る
+                    ↪️ 右に90度回る
                 </div>
                 <div class="block-template" data-category="basic" data-type="left" data-code="t.left(90)">
-                    ↪️ 左に90度回る
+                    ↩️ 左に90度回る
                 </div>
+
+                <!-- ループセット -->
+                <div class="palette-category-sub">🔁 ループ</div>
                 <div class="block-template" data-category="basic" data-type="loop_start"
                     data-code="for i in range({count}):">
                     🔁 <select class="block-select" data-param="count">
@@ -85,23 +91,21 @@
                         <option value="10">10回</option>
                     </select> くりかえす ↓
                 </div>
+                <div class="block-template" data-category="basic" data-type="while_start"
+                    data-code="while not ({cond}):">
+                    🔄 <input type="text" class="block-input" data-param="cond" value="箱A == 10" size="10"> まで繰り返す ↓
+                </div>
+                <div class="block-template" data-category="basic" data-type="break" data-code="break">
+                    🛑 このループを抜ける
+                </div>
                 <div class="block-template" data-category="basic" data-type="loop_end" data-code="# ループ終わり">
                     🔁 ↑ ここまで
                 </div>
-                <div class="block-template" data-category="basic" data-type="if_start"
-                    data-code="if t.get_current_value() {op} {value}:">
-                    🔀 もし **今のマス** が <select class="block-select" data-param="op">
-                        <option value="==">＝</option>
-                        <option value="!=">≠</option>
-                        <option value=">">＞</option>
-                        <option value="<">＜</option>
-                    </select> <select class="block-select" data-param="value">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="箱A">箱A</option>
-                        <option value="箱B">箱B</option>
-                        <option value="箱C">箱C</option>
-                    </select> なら ↓
+
+                <!-- 条件分岐セット -->
+                <div class="palette-category-sub">🔀 もし〜ならば</div>
+                <div class="block-template" data-category="basic" data-type="if_start" data-code="if {cond}:">
+                    🔀 もし <input type="text" class="block-input" data-param="cond" value="箱A > 0" size="10"> なら ↓
                 </div>
                 <div class="block-template" data-category="basic" data-type="else_start" data-code="else:">
                     🔀 そうでなければ ↓
@@ -124,10 +128,6 @@
                     data-params='{"name":"箱A", "value":"箱B"}' data-code="var_set('{name}', '{value}')">
                     📦 <select class="block-select" data-param="name">
                         <option value="箱A">箱A</option>
-                        <option value="箱B">箱B</option>
-                        <option value="箱C">箱C</option>
-                    </select> に <select class="block-select" data-param="value">
-                        <option value="箱A">箱A</option>
                         <option value="箱B" selected>箱B</option>
                         <option value="箱C">箱C</option>
                     </select> の数字を入れる
@@ -142,24 +142,128 @@
                     </select> に **今のマスの数字** を入れる
                 </div>
 
+                <!-- 演算 -->
+                <div class="palette-category" data-category="calc">🧪 けいさん</div>
+                <div class="block-template" data-category="calc" data-type="var_set"
+                    data-code="var_set('{target}', {v1} {op} {v2})">
+                    🧪 <select class="block-select" data-param="target">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> ＝ <select class="block-select" data-param="v1">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select> <select class="block-select" data-param="op">
+                        <option value="+">＋</option>
+                        <option value="-">－</option>
+                        <option value="*">×</option>
+                        <option value="/">÷</option>
+                    </select> <select class="block-select" data-param="v2">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="block-template" data-category="calc" data-type="var_set"
+                    data-code="var_set('{target}', {v1} {op} {v2})">
+                    🧪 <select class="block-select" data-param="target">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> ＝ <select class="block-select" data-param="v1">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select> <select class="block-select" data-param="op">
+                        <option value="==">＝</option>
+                        <option value="!=">≠</option>
+                        <option value=">">＞</option>
+                        <option value="<">＜</option>
+                        <option value=">=">≧</option>
+                        <option value="<=">≦</option>
+                    </select> <select class="block-select" data-param="v2">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+
                 <!-- マス目操作 -->
                 <div class="palette-category" data-category="action">🎯 操作</div>
                 <div class="block-template" data-category="action" data-type="restart" data-code="t.restart()">
                     🔄 最初からA1でやり直す
                 </div>
-                <div class="block-template" data-category="action" data-type="save_pos" data-code="t.savePos()">
-                    📍 今の座標を覚える
+                <div class="block-template" data-category="action" data-type="save_pos" data-code="t.savePos('{name}')">
+                    📍 今の座標を <select class="block-select" data-param="name">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> に覚える
                 </div>
-                <div class="block-template" data-category="action" data-type="restore_pos" data-code="t.restorePos()">
-                    🚩 覚えた座標に移動する
+                <div class="block-template" data-category="action" data-type="restore_pos"
+                    data-code="t.restorePos('{name}')">
+                    🚩 <select class="block-select" data-param="name">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> に覚えた座標へ移動する
                 </div>
                 <div class="block-template" data-category="action" data-type="grid_set"
-                    data-code="t.set_current_value({value})">
+                    data-code="t.set_current_value('{value}')">
                     🎯 今のマスに <select class="block-select" data-param="value">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
-                    </select> を入れる
+                    </select> の数字を書く
+                </div>
+                <div class="block-template" data-category="action" data-type="grid_get"
+                    data-code="t.get_current_value()">
+                    🎯 今のマスの値を取得
                 </div>
                 <div class="block-template" data-category="action" data-type="fillcell" data-code="t.fillcell()">
                     🎨 マスを塗る
