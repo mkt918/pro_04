@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<!-- v1.0 正式リリース 2026-02-06 -->
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Python Turtle Learner v1.0 🌟</title>
+    <!-- キャッシュ対策 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles-variables.css?v=1">
+    <link rel="stylesheet" href="styles-challenge.css?v=1">
+    <link rel="stylesheet" href="styles-palette-tabs.css?v=1">
+    <link rel="stylesheet" href="styles-tutorial.css?v=1">
+    <!-- SortableJS for drag and drop reordering -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1>🎯 マス目プログラミング学習ツール v2.0</h1>
+            <p class="subtitle">🎮 アルゴリズムを遊びながら学ぼう！</p>
+        </div>
+        <div class="header-right">
+            <div class="speed-control">
+                <span>🏃 はやさ:</span>
+                <input type="range" id="globalSpeed" min="0" max="10" value="3">
+            </div>
+            <button id="loadChallengeBtn" class="btn btn-challenge" title="課題を読み込む">📚 課題</button>
+            <button id="runBtn" class="btn btn-run">▶ RUN</button>
+            <button id="resetBtn" class="btn btn-reset">🔄 RESET</button>
+            <button id="saveBtn" class="btn btn-save" title="ブラウザに保存">💾 保存</button>
+            <button id="loadBtn" class="btn btn-load" title="ブラウザから読込">📂 読込</button>
+            <button id="clearAllBtn" class="btn btn-clear" title="プログラムを全削除">🗑️ クリア</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Left Column: Block Palette -->
+        <section class="column column-blocks">
+            <h2 class="column-title">📦 ブロックパレット</h2>
+
+
+            <div class="palette-category">🚀 基本</div>
+            <div class="block-template" data-type="start" data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
+                🚀 プログラム開始
+            </div>
+
+            <div class="palette-category">🚶 移動</div>
+            <div class="block-template" data-type="forward" data-code="t.forward({distance})">
+                ⬆️ 前に <select class="block-select" data-param="distance">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
+                    <option value="60">60</option>
+                    <option value="70">70</option>
+                    <option value="80">80</option>
+                    <option value="90">90</option>
+                    <option value="100" selected>100</option>
+                </select> 歩すすむ
+            </div>
+            <div class="block-template" data-type="circle" data-code="t.circle({radius}, {extent})">
+                ⚪ <select class="block-select" data-param="extent">
+                    <option value="360" selected>円</option>
+                    <option value="180">半円</option>
+                    <option value="90">1/4円</option>
+                    <option value="45">1/8円</option>
+                </select> を描く (半径 <select class="block-select" data-param="radius">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40" selected>40</option>
+                    <option value="50">50</option>
+                    <option value="60">60</option>
+                    <option value="80">80</option>
+                    <option value="100">100</option>
+                </select>)
+            </div>
+            <div class="block-template" data-type="home" data-code="t.home()">
+                🏠 ホームに戻る
+            </div>
+
+            <div class="palette-category">🔄 回転</div>
+            <div class="block-template" data-type="right" data-code="t.right({angle})">
+                ↪️ 右に <select class="block-select" data-param="angle">
+                    <option value="15">15°</option>
+                    <option value="30">30°</option>
+                    <option value="45">45°</option>
+                    <option value="60">60°</option>
+                    <option value="72">72°</option>
+                    <option value="90" selected>90°</option>
+                    <option value="120">120°</option>
+                    <option value="144">144°</option>
+                    <option value="180">180°</option>
+                </select> 回る
+            </div>
+            <div class="block-template" data-type="left" data-code="t.left({angle})">
+                ↩️ 左に <select class="block-select" data-param="angle">
+                    <option value="15">15°</option>
+                    <option value="30">30°</option>
+                    <option value="45">45°</option>
+                    <option value="60">60°</option>
+                    <option value="72">72°</option>
+                    <option value="90" selected>90°</option>
+                    <option value="120">120°</option>
+                    <option value="144">144°</option>
+                    <option value="180">180°</option>
+                </select> 回る
+            </div>
+
+            <!-- カテゴリー削除 -->
+
+            <div class="palette-category">🔁 ループ</div>
+            <div class="block-template loop-block" data-type="loop_start" data-code="for i in range({count}):">
+                🔁 <select class="block-select" data-param="count">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                </select> 回くりかえす ↓
+            </div>
+            <div class="block-template loop-end-block" data-type="loop_end" data-code="# ループ終わり">
+                🔁 ↑ ここまで
+            </div>
+
+            <div class="palette-category">🖊️ ペン</div>
+            <div class="block-template" data-type="penup" data-code="t.penup()">
+                🖊️ ペンをあげる
+            </div>
+            <div class="block-template" data-type="pendown" data-code="t.pendown()">
+                🖊️ ペンをさげる
+            </div>
+            <div class="block-template" data-type="pensize" data-code="t.pensize({size})">
+                📏 ペンの太さ <select class="block-select" data-param="size">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            <div class="block-template" data-type="color" data-code="t.color('{color}')">
+                <div class="block-main-row">
+                    🎨 色を <input type="color" class="block-input" data-param="color" value="#000000"> に変える
+                </div>
+                <div class="color-palette-grid"></div>
+            </div>
+            <div class="block-template" data-type="clear" data-code="t.clear()">
+                🧹 画面をそうじする
+            </div>
+            <div class="palette-category">🌟 テンプレート</div>
+            <div class="block-template" data-type="template"
+                data-algorithm='[{"type":"loop_start","val":{"count":"4"}},{"type":"forward","val":{"distance":"100"}},{"type":"left","val":{"angle":"90"}},{"type":"loop_end","val":{}}]'>
+                🟦 正方形をかく
+            </div>
+            <div class="block-template" data-type="template"
+                data-algorithm='[{"type":"loop_start","val":{"count":"5"}},{"type":"forward","val":{"distance":"100"}},{"type":"right","val":{"angle":"144"}},{"type":"loop_end","val":{}}]'>
+                ⭐ 星をかく
+            </div>
+            <div class="block-template" data-type="template"
+                data-algorithm='[{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}},{"type":"circle","val":{"radius":"40","extent":"360"}},{"type":"left","val":{"angle":"60"}}]'>
+                🌸 お花をかく
+            </div>
+            </div>
+
+            <!-- グリッドモード用パレット -->
+            <div id="gridPalette" class="palette">
+                <div class="palette-category">🚀 基本</div>
+                <div class="block-template" data-type="start"
+                    data-code="import turtle\nt = turtle.Turtle()\nt.speed(3)">
+                    🚀 プログラム開始
+                </div>
+
+                <div class="palette-category">🚶 移動（マス単位）</div>
+                <div class="block-template" data-type="forward" data-code="t.forward({distance})">
+                    ⬆️ <select class="block-select" data-param="distance">
+                        <option value="1" selected>1マス</option>
+                        <option value="2">2マス</option>
+                        <option value="3">3マス</option>
+                        <option value="4">4マス</option>
+                        <option value="5">5マス</option>
+                        <option value="6">6マス</option>
+                        <option value="7">7マス</option>
+                        <option value="8">8マス</option>
+                        <option value="9">9マス</option>
+                        <option value="10">10マス</option>
+                    </select> 進む
+                </div>
+                <div class="block-template" data-type="circle" data-code="t.circle({radius}, {extent})">
+                    ⚪ <select class="block-select" data-param="extent">
+                        <option value="360" selected>円</option>
+                        <option value="180">半円</option>
+                        <option value="90">1/4円</option>
+                        <option value="45">1/8円</option>
+                    </select> (半径 <select class="block-select" data-param="radius">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="5">5</option>
+                    </select> マス)
+                </div>
+                <div class="block-template" data-type="home" data-code="t.home()">
+                    🏠 A1に戻る
+                </div>
+
+                <div class="palette-category">🔄 回転（90度固定）</div>
+                <div class="block-template" data-type="right" data-code="t.right(90)">
+                    ↪️ 右に90度回る
+                </div>
+                <div class="block-template" data-type="left" data-code="t.left(90)">
+                    ↩️ 左に90度回る
+                </div>
+
+                <div class="palette-category">🖊️ ペン</div>
+                <div class="block-template" data-type="penup" data-code="t.penup()">
+                    🖊️ ペンをあげる
+                </div>
+                <div class="block-template" data-type="pendown" data-code="t.pendown()">
+                    🖊️ ペンをさげる
+                </div>
+                <div class="block-template" data-type="pensize" data-code="t.pensize({size})">
+                    📏 太さ <select class="block-select" data-param="size">
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="block-template" data-type="color" data-code="t.color('{color}')">
+                    <div class="block-main-row">
+                        🎨 色 <input type="color" class="block-input" data-param="color" value="#000000">
+                    </div>
+                    <div class="color-palette-grid"></div>
+                </div>
+                <div class="block-template" data-type="fillcell" data-code="t.fillcell()">
+                    🎨 マスを塗る
+                </div>
+                <div class="block-template" data-type="clear" data-code="t.clear()">
+                    🧹 画面をそうじする
+                </div>
+
+                <div class="palette-category">🔁 ループ</div>
+                <div class="block-template loop-block" data-type="loop_start" data-code="for i in range({count}):">
+                    🔁 <select class="block-select" data-param="count">
+                        <option value="2">2回</option>
+                        <option value="3">3回</option>
+                        <option value="4" selected>4回</option>
+                        <option value="5">5回</option>
+                        <option value="8">8回</option>
+                        <option value="10">10回</option>
+                    </select> くりかえす ↓
+                </div>
+                <div class="block-template loop-end-block" data-type="loop_end" data-code="# ループ終わり">
+                    🔁 ↑ ここまで
+                </div>
+
+                <div class="palette-category">🎨 ドット絵テンプレート</div>
+                <div class="block-template" data-type="template"
+                    data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#ff5252"}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}}]'>
+                    ❤️ ハート
+                </div>
+                <div class="block-template" data-type="template"
+                    data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"color","val":{"color":"#f8d878"}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"fillcell","val":{}}]'>
+                    😊 スマイル
+                </div>
+                <div class="block-template" data-type="template"
+                    data-algorithm='[{"type":"penup","val":{}},{"type":"color","val":{"color":"#000000"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"3"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"4"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"5"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"6"}},{"type":"left","val":{}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"penup","val":{}},{"type":"home","val":{}},{"type":"right","val":{}},{"type":"forward","val":{"distance":"7"}},{"type":"left","val":{}},{"type":"forward","val":{"distance":"1"}},{"type":"pendown","val":{}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}},{"type":"forward","val":{"distance":"2"}},{"type":"fillcell","val":{}}]'>
+                    🏁 チェッカー
+                </div>
+
+                <div class="palette-category">📦 変数</div>
+                <div class="block-template" data-type="var_create" data-code="# 変数 {name} を作成">
+                    📦 変数 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="x"> を作る
+                </div>
+                <div class="block-template" data-type="var_set" data-code="# 変数 {name} に {value} を代入">
+                    📦 変数 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="x"> に
+                    <input type="number" class="block-input-num" data-param="value" value="0"> を入れる
+                </div>
+
+                <div class="palette-category">📚 配列</div>
+                <div class="block-template" data-type="array_create" data-code="# 配列 {name} を作成（サイズ {size}）">
+                    📚 配列 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="arr">
+                    を作る（サイズ <input type="number" class="block-input-num" data-param="size" value="5" min="1">）
+                </div>
+                <div class="block-template" data-type="array_set" data-code="# 配列 {name}[{index}] に {value} を代入">
+                    📚 配列 <input type="text" class="block-input-text" data-param="name" placeholder="名前" value="arr"> の
+                    <input type="number" class="block-input-num" data-param="index" value="0" min="0"> 番目に <input
+                        type="number" class="block-input-num" data-param="value" value="0"> を入れる
+                </div>
+
+                <div class="palette-category">🔀 条件分岐</div>
+                <div class="block-template" data-type="if_start" data-code="if {condition}:">
+                    🔀 もし <input type="text" class="block-input-text" data-param="condition" placeholder="条件"
+                        value="x > 0"> なら ↓
+                </div>
+                <div class="block-template" data-type="else_start" data-code="else:">
+                    🔀 そうでなければ ↓
+                </div>
+                <div class="block-template" data-type="if_end" data-code="# 条件分岐ここまで">
+                    🔀 ↑ ここまで
+                </div>
+
+                <div class="palette-category">🎯 マス目操作</div>
+                <div class="block-template" data-type="grid_get" data-code="# 今いるマスの値を取得">
+                    🎯 今いるマスの値を取得
+                </div>
+                <div class="block-template" data-type="grid_set" data-code="# 今いるマスに {value} を書く">
+                    🎯 今いるマスに <input type="number" class="block-input-num" data-param="value" value="1"> を書く
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Middle Column: Program Area -->
+        <section class="column column-program">
+            <div class="program-header">
+                <h2 class="column-title">📝 プログラム</h2>
+                <div class="program-tabs">
+                    <button class="tab-btn active" data-tab="blocks">🧩 ブロック</button>
+                    <button class="tab-btn" data-tab="code">🐍 コード</button>
+                    <button id="exportBtn" class="tab-btn btn-export" title="ファイルに書き出し">📤 出力</button>
+                    <button id="importBtn" class="tab-btn btn-import" title="ファイルから読み込み">📥 入力</button>
+                    <input type="file" id="importFile" style="display: none;" accept=".json">
+                </div>
+            </div>
+            <div id="blocksTab" class="tab-content active">
+                <div id="programArea" class="program-area">
+                    <p class="drop-hint">← ブロックをドラッグして並べてね！<br>入れた後は上下に入れ替えられるのだ！</p>
+                </div>
+            </div>
+            <div id="codeTab" class="tab-content">
+                <div class="code-preview-container">
+                    <pre><code id="codePreview" class="language-python"># RUNを押すと生成されるのだ！</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Simulation Canvas -->
+        <section class="column column-canvas">
+            <div class="column-header-with-controls">
+                <h2 class="column-title">🎨 シミュレーション</h2>
+                <div class="header-controls">
+                    <div class="grid-size-control" id="gridSizeControl">
+                        <span>📐 マス:</span>
+                        <select id="gridSize">
+                            <option value="5">5×5</option>
+                            <option value="6">6×6</option>
+                            <option value="7">7×7</option>
+                            <option value="8" selected>8×8</option>
+                            <option value="10">10×10</option>
+                            <option value="12">12×12</option>
+                            <option value="16">16×16</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-container" style="position: relative;">
+                <canvas id="turtleCanvas" width="630" height="550"
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></canvas>
+                <canvas id="spriteCanvas" width="630" height="550"
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;"></canvas>
+            </div>
+            <div id="console" class="console">
+                <div class="console-title">📋 コンソール</div>
+                <div id="consoleOutput" class="console-output">準備完了なのだ！🚀</div>
+            </div>
+
+            <!-- 変数パネル -->
+            <div class="variable-panel">
+                <h3>📊 変数・配列</h3>
+                <div id="variableList" class="variable-list">
+                    <p class="no-variables">変数・配列はまだありません</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- チャレンジパネル -->
+    <div id="challengePanel" class="challenge-panel" style="display: none;">
+        <!-- 課題情報がここに動的に挿入されます -->
+    </div>
+
+    <!-- 課題選択モーダル -->
+    <div id="challengeModal" class="modal" style="display: none;">
+        <div class="modal-content challenge-modal-content">
+            <h2>📚 課題を選択</h2>
+            <div class="challenge-list">
+                <div class="challenge-category">
+                    <h3>🔍 探索アルゴリズム</h3>
+                    <button class="challenge-item" data-challenge="linear_search_01">
+                        <span class="challenge-title">数字を探せ！レベル1</span>
+                        <span class="challenge-difficulty">⭐</span>
+                    </button>
+                    <button class="challenge-item" data-challenge="linear_search_02">
+                        <span class="challenge-title">数字を探せ！レベル2</span>
+                        <span class="challenge-difficulty">⭐⭐</span>
+                    </button>
+                </div>
+                <div class="challenge-category">
+                    <h3>📊 ソートアルゴリズム</h3>
+                    <button class="challenge-item" data-challenge="bubble_sort_01">
+                        <span class="challenge-title">数字を並び替えよう！レベル1</span>
+                        <span class="challenge-difficulty">⭐⭐</span>
+                    </button>
+                </div>
+            </div>
+            <button id="closeChallengeModal" class="btn btn-reset">閉じる</button>
+        </div>
+    </div>
+
+    <!-- チュートリアルモーダル -->
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content">
+            <h2>🎯 マス目プログラミング学習ツール へようこそ！</h2>
+
+            <div class="tutorial-steps">
+                <div class="tutorial-step">
+                    <h3>📝 ステップ1: ブロックを追加</h3>
+                    <p>左のパレットからブロックを<strong>ドラッグ＆ドロップ</strong>、または<strong>クリック</strong>してプログラムエリアに追加します。</p>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>🔄 ステップ2: ブロックを並び替え</h3>
+                    <p>プログラムエリアでブロックをドラッグして順序を変更できます。ブロックにマウスを乗せると「✕」ボタンで削除できます。</p>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>🎨 ステップ3: マス目で描く</h3>
+                    <p>マス目を使ってドット絵を作成したり、アルゴリズムを視覚的に学習できます。</p>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>▶️ ステップ4: 実行！</h3>
+                    <p><strong>▶ RUN</strong>ボタンでプログラムを実行します。<strong>🔄 RESET</strong>でキャンバスをリセットできます。</p>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>💡 ヒント</h3>
+                    <p>🌟 <strong>テンプレート</strong>を使うと、複雑な図形も簡単に描けます！<br>
+                        💾 <strong>保存</strong>ボタンで作品を保存できます。</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="dontShowAgain">
+                    次回から表示しない
+                </label>
+                <button id="closeTutorial" class="btn btn-run">始める！ 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="variable-system.js?v=1"></script>
+    <script src="challenge-system.js?v=1"></script>
+    <script src="tutorial-system.js?v=1"></script>
+    <script src="palette-tabs.js?v=1"></script>
+    <script src="turtle-simulator.js?v=6"></script>
+    <script src="app.js?v=7"></script>
+    <script src="app-challenge-listeners.js?v=1"></script>
+</body>
+
+</html>

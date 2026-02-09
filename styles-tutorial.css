@@ -1,0 +1,96 @@
+/* ===== チュートリアルパネル ===== */
+.tutorial-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    max-width: 90%;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 2px solid #667eea;
+    z-index: 1001;
+    animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.tutorial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #667eea;
+}
+
+.tutorial-header h3 {
+    font-size: 1.1rem;
+    color: #667eea;
+    margin: 0;
+}
+
+.tutorial-content {
+    margin-bottom: 1rem;
+}
+
+.tutorial-content h4 {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.tutorial-content p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #666;
+}
+
+.tutorial-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tutorial-navigation button {
+    flex: 1;
+}
+
+.tutorial-navigation span {
+    font-weight: 600;
+    color: #667eea;
+    white-space: nowrap;
+}
+
+/* ブロックのハイライト */
+.tutorial-highlight {
+    animation: pulseHighlight 2s infinite;
+    border: 3px solid #667eea !important;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.5) !important;
+}
+
+@keyframes pulseHighlight {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+    }
+}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 マス目プログラミング学習ツール - ホーム</title>
+    <link rel="stylesheet" href="styles.css?v=7">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .home-container {
+            max-width: 1200px;
+            width: 90%;
+            padding: 2rem;
+        }
+
+        .home-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .home-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .home-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .mode-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+            border-color: white;
+        }
+
+        .mode-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .mode-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        .mode-card.free {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+        }
+
+        .mode-card.search {
+            background: linear-gradient(135deg, rgba(250, 208, 196, 0.3) 0%, rgba(255, 209, 255, 0.3) 100%);
+        }
+
+        .mode-card.sort {
+            background: linear-gradient(135deg, rgba(168, 255, 120, 0.3) 0%, rgba(120, 255, 214, 0.3) 100%);
+        }
+
+        .mode-card.maze {
+            background: linear-gradient(135deg, rgba(255, 154, 158, 0.3) 0%, rgba(250, 208, 196, 0.3) 100%);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="home-container">
+        <div class="home-header">
+            <h1>🎯 マス目プログラミング学習ツール</h1>
+            <p>アルゴリズムを楽しく学ぼう！</p>
+        </div>
+
+        <div class="mode-selection">
+            <a href="index.html?mode=free" class="mode-card free">
+                <h2>🎨 フリーモード</h2>
+                <p>自由にプログラムを作って遊ぼう！マス目を使ってドット絵を描いたり、オリジナルのアルゴリズムを試したりできます。</p>
+                <span class="badge">初心者向け</span>
+            </a>
+
+            <a href="index.html?mode=challenge&unit=search" class="mode-card search">
+                <h2>🔍 探索アルゴリズム</h2>
+                <p>データの中から目的の値を見つけ出す方法を学びます。線形探索や二分探索など、実用的なアルゴリズムをマスターしよう！</p>
+                <span class="badge">レベル1-5</span>
+            </a>
+
+            <a href="index.html?mode=challenge&unit=sort" class="mode-card sort">
+                <h2>📊 ソートアルゴリズム</h2>
+                <p>データを並び替える方法を学びます。バブルソート、選択ソート、挿入ソートなど、様々な並び替えアルゴリズムに挑戦！</p>
+                <span class="badge">レベル1-5</span>
+            </a>
+
+            <a href="index.html?mode=challenge&unit=maze" class="mode-card maze">
+                <h2>🗺️ 経路探索</h2>
+                <p>迷路の最短経路を見つける方法を学びます。幅優先探索や深さ優先探索など、実践的なアルゴリズムを体験しよう！</p>
+                <span class="badge">レベル1-5</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,172 @@
+/* ===== チャレンジシステム用スタイル ===== */
+
+/* チャレンジボタン */
+.btn-challenge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-challenge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* チャレンジパネル */
+.challenge-panel {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 350px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.challenge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #667eea;
+}
+
+.challenge-header h3 {
+    font-size: 1.1rem;
+    color: #667eea;
+    margin: 0;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.challenge-description {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.challenge-description p {
+    margin: 0;
+    color: #555;
+}
+
+.challenge-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.challenge-actions .btn {
+    flex: 1;
+}
+
+/* 成功時のフラッシュアニメーション */
+.success-flash {
+    animation: successFlash 1s ease;
+}
+
+@keyframes successFlash {
+
+    0%,
+    100% {
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    50% {
+        background: rgba(76, 175, 80, 0.3);
+    }
+}
+
+/* 課題選択モーダル */
+.challenge-modal-content {
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.challenge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.challenge-category h3 {
+    font-size: 1rem;
+    color: #667eea;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.challenge-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(102, 126, 234, 0.05);
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: left;
+}
+
+.challenge-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    transform: translateX(5px);
+}
+
+.challenge-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.challenge-difficulty {
+    font-size: 1.2rem;
+}
