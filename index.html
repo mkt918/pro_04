@@ -58,38 +58,17 @@
 
             <div class="palette-category">🚶 移動</div>
             <div class="block-template" data-type="forward" data-code="t.forward({distance})">
-                ⬆️ 前に <select class="block-select" data-param="distance">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                    <option value="50">50</option>
-                    <option value="60">60</option>
-                    <option value="70">70</option>
-                    <option value="80">80</option>
-                    <option value="90">90</option>
-                    <option value="100" selected>100</option>
-                </select> 歩すすむ
+                ⬆️ <select class="block-select" data-param="distance">
+                    <option value="1">1マス</option>
+                    <option value="2">2マス</option>
+                    <option value="3">3マス</option>
+                    <option value="4">4マス</option>
+                    <option value="5">5マス</option>
+                </select> 進む
             </div>
-            <div class="block-template" data-type="circle" data-code="t.circle({radius}, {extent})">
-                ⚪ <select class="block-select" data-param="extent">
-                    <option value="360" selected>円</option>
-                    <option value="180">半円</option>
-                    <option value="90">1/4円</option>
-                    <option value="45">1/8円</option>
-                </select> を描く (半径 <select class="block-select" data-param="radius">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40" selected>40</option>
-                    <option value="50">50</option>
-                    <option value="60">60</option>
-                    <option value="80">80</option>
-                    <option value="100">100</option>
-                </select>)
-            </div>
+
             <div class="block-template" data-type="home" data-code="t.home()">
-                🏠 ホームに戻る
+                🏠 A1に戻る
             </div>
 
             <div class="palette-category">🔄 回転</div>
@@ -187,7 +166,7 @@
                     🚀 プログラム開始
                 </div>
 
-                <div class="palette-category">🚶 移動（マス単位）</div>
+                <div class="palette-category">🚶 移動</div>
                 <div class="block-template" data-type="forward" data-code="t.forward({distance})">
                     ⬆️ <select class="block-select" data-param="distance">
                         <option value="1" selected>1マス</option>
@@ -195,31 +174,14 @@
                         <option value="3">3マス</option>
                         <option value="4">4マス</option>
                         <option value="5">5マス</option>
-                        <option value="6">6マス</option>
-                        <option value="7">7マス</option>
-                        <option value="8">8マス</option>
-                        <option value="9">9マス</option>
-                        <option value="10">10マス</option>
                     </select> 進む
                 </div>
-                <div class="block-template" data-type="circle" data-code="t.circle({radius}, {extent})">
-                    ⚪ <select class="block-select" data-param="extent">
-                        <option value="360" selected>円</option>
-                        <option value="180">半円</option>
-                        <option value="90">1/4円</option>
-                        <option value="45">1/8円</option>
-                    </select> (半径 <select class="block-select" data-param="radius">
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4" selected>4</option>
-                        <option value="5">5</option>
-                    </select> マス)
-                </div>
+                <!-- 円を削除 -->
                 <div class="block-template" data-type="home" data-code="t.home()">
                     🏠 A1に戻る
                 </div>
 
-                <div class="palette-category">🔄 回転（90度固定）</div>
+                <div class="palette-category">🔄 回転</div>
                 <div class="block-template" data-type="right" data-code="t.right(90)">
                     ↪️ 右に90度回る
                 </div>
@@ -246,7 +208,6 @@
                     <div class="block-main-row">
                         🎨 色 <input type="color" class="block-input" data-param="color" value="#000000">
                     </div>
-                    <div class="color-palette-grid"></div>
                 </div>
                 <div class="block-template" data-type="fillcell" data-code="t.fillcell()">
                     🎨 マスを塗る
@@ -268,6 +229,43 @@
                 </div>
                 <div class="block-template loop-end-block" data-type="loop_end" data-code="# ループ終わり">
                     🔁 ↑ ここまで
+                </div>
+
+                <div class="palette-category">📦 箱（変数）</div>
+                <div class="block-template" data-type="var_set" data-params='{"name":"箱A", "value":"0"}'
+                    data-code="var_set('{name}', {value})">
+                    📦 <select class="block-select" data-param="name">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> に <input type="text" class="block-input" data-param="value" value="0" size="3"> を入れる
+                </div>
+                <div class="block-template" data-type="var_set" data-params='{"name":"箱A", "value":"箱B"}'
+                    data-code="var_set('{name}', '{value}')">
+                    📦 <select class="block-select" data-param="name">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> に <select class="block-select" data-param="value">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B" selected>箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> の数字を入れる
+                </div>
+                <div class="block-template" data-type="var_set" data-params='{"name":"箱A", "value":"current_value"}'
+                    data-code="var_set('{name}', t.get_current_value())">
+                    📦 <select class="block-select" data-param="name">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> に **今のマスの数字** を入れる
+                </div>
+                <div class="block-template" data-type="grid_set" data-code="t.set_current_value({value})">
+                    🎯 今のマスに <select class="block-select" data-param="value">
+                        <option value="箱A">箱A</option>
+                        <option value="箱B">箱B</option>
+                        <option value="箱C">箱C</option>
+                    </select> を入れる
                 </div>
 
                 <div class="palette-category">🎨 ドット絵テンプレート</div>
