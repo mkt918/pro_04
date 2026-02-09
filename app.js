@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const tasks = [
         { name: 'VariableSystem', func: initVariableSystem },
         { name: 'ChallengeSystem', func: initChallengeSystem },
+        { name: 'PaletteTabs', func: initPaletteTabs },
+        { name: 'TutorialSystem', func: initTutorialSystem },
         { name: 'Sortable', func: initUnifiedSortable },
         { name: 'EventListeners', func: initEventListeners },
         { name: 'TurtleSimulator', func: initTurtleSimulator },
@@ -671,5 +673,6 @@ function initTutorialListeners() {
         closeBtn.addEventListener('click', closeTutorial);
     }
 }
- 
+
+ 
  
