@@ -208,7 +208,7 @@ class TurtleSimulator {
 
         if (this.gridMode) {
             // グリッドモード：現在のセルを赤い枠で囲む
-            const cellSize = Math.min(this.width, this.height) / this.gridSize;
+            const { cellSize } = this.getGridMetrics();
 
             this.spriteCtx.strokeStyle = '#FF0000';
             this.spriteCtx.lineWidth = 4;
@@ -434,9 +434,7 @@ class TurtleSimulator {
             return;
         }
 
-        const cellSize = Math.min(this.width, this.height) / this.gridSize;
-        const offsetX = (this.width - cellSize * this.gridSize) / 2;
-        const offsetY = (this.height - cellSize * this.gridSize) / 2;
+        const { cellSize, offsetX, offsetY } = this.getGridMetrics();
 
         // 現在のセル位置を計算
         const currentCellX = Math.round((this.x - offsetX - cellSize / 2) / cellSize);
@@ -461,9 +459,7 @@ class TurtleSimulator {
             return 0;
         }
 
-        const cellSize = Math.min(this.width, this.height) / this.gridSize;
-        const offsetX = (this.width - cellSize * this.gridSize) / 2;
-        const offsetY = (this.height - cellSize * this.gridSize) / 2;
+        const { cellSize, offsetX, offsetY } = this.getGridMetrics();
 
         // 現在のセル位置を計算
         const currentCellX = Math.round((this.x - offsetX - cellSize / 2) / cellSize);
@@ -486,9 +482,7 @@ class TurtleSimulator {
             return;
         }
 
-        const cellSize = Math.min(this.width, this.height) / this.gridSize;
-        const offsetX = (this.width - cellSize * this.gridSize) / 2;
-        const offsetY = (this.height - cellSize * this.gridSize) / 2;
+        const { cellSize, offsetX, offsetY } = this.getGridMetrics();
 
         // 現在のセル位置を計算
         const currentCellX = Math.round((this.x - offsetX - cellSize / 2) / cellSize);
@@ -586,7 +580,9 @@ class TurtleSimulator {
 
     async animateMove(targetX, targetY) {
         // ... (省略なしで再実装)
-        const steps = Math.max(1, Math.floor(20 / (20 / this.speed))); // 速度に応じてステップ数を変える
+        // アニメーション1ステップを20ms固定とし、speed(ms)全体を均等分割
+        // 例: speed=1000ms → 50ステップ × 20ms = 1000ms
+        const steps = Math.max(1, Math.floor(this.speed / 20));
         const dx = (targetX - this.x) / steps;
         const dy = (targetY - this.y) / steps;
 
@@ -629,7 +625,7 @@ class TurtleSimulator {
         this.y = targetY;
 
         this.drawTurtle();
-        await this.sleep(this.speed * 10); // グリッドモードは少し遅めに
+        await this.sleep(this.speed); // スライダーの速度設定をそのまま使用
     }
 
     updateStepDisplay() {
@@ -717,6 +713,7 @@ async function executeTurtleCommands(code) {
     turtleSim.currentBlockIndex = 0;
     turtleSim.errorBlockIndex = undefined;
 
+    turtleSim.isRunning = true;
     try {
         await parsePythonCode(code);
         if (!turtleSim.hasError) {
@@ -728,6 +725,8 @@ async function executeTurtleCommands(code) {
         if (turtleSim.errorBlockIndex === undefined) {
             turtleSim.errorBlockIndex = turtleSim.currentBlockIndex;
         }
+    } finally {
+        turtleSim.isRunning = false;
     }
 }
 
@@ -799,18 +798,28 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
             }
         }
 
+        // メタデータコメントを除去したコマンド文字列（条件式・コマンド処理で使用）
+        // 例: "if 箱A == 10:  # @idx:3" → "if 箱A == 10:"
+        const cleanedTrimmed = trimmed.replace(/\s*#\s*@idx:\d+\s*$/, '');
+
+        // --- else: 行はif処理側で消費されるためここでは読み飛ばす ---
+        if (cleanedTrimmed.startsWith('else:')) {
+            i++;
+            continue;
+        }
+
         // --- break 処理 ---
-        if (trimmed === 'break') {
+        if (cleanedTrimmed === 'break') {
             if (turtleSim) turtleSim.breakFlag = true;
             i++;
             break;
         }
 
         // --- while (until) 処理 ---
-        if (trimmed.startsWith('while ')) {
-            const match = trimmed.match(/while\s+(.+):/);
+        if (cleanedTrimmed.startsWith('while ')) {
+            const match = cleanedTrimmed.match(/while\s+(.+):/);
             if (!match) {
-                throw new Error(`while文の構文エラー: ${trimmed}`);
+                throw new Error(`while文の構文エラー: ${cleanedTrimmed}`);
             }
             const conditionExpr = match[1];
             const blockRange = findBlockRange(lines, i, endIndex);
@@ -827,9 +836,9 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
             continue;
         }
 
-        // --- for 処理 (旧互換) ---
-        if (trimmed.startsWith('for ')) {
-            const match = trimmed.match(/range\((\d+)\)/);
+        // --- for 処理 ---
+        if (cleanedTrimmed.startsWith('for ')) {
+            const match = cleanedTrimmed.match(/range\((\d+)\)/);
             if (match) {
                 const loopCount = parseInt(match[1]);
                 const blockRange = findBlockRange(lines, i, endIndex);
@@ -844,19 +853,19 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
         }
 
         // --- if / else 処理 ---
-        if (trimmed.startsWith('if ')) {
-            const match = trimmed.match(/if\s+(.+):/);
+        if (cleanedTrimmed.startsWith('if ')) {
+            const match = cleanedTrimmed.match(/if\s+(.+):/);
             if (!match) {
-                throw new Error(`if文の構文エラー: ${trimmed}`);
+                throw new Error(`if文の構文エラー: ${cleanedTrimmed}`);
             }
             const conditionExpr = match[1];
             const ifRange = findBlockRange(lines, i, endIndex);
 
-            // else の範囲を探す
+            // else の範囲を探す（行末に # @idx:N が付くため startsWith で判定）
             let elseRange = null;
             if (ifRange.end < endIndex) {
                 const nextLine = lines[ifRange.end].trim();
-                if (nextLine === 'else:') {
+                if (nextLine.startsWith('else:')) {
                     elseRange = findBlockRange(lines, ifRange.end, endIndex);
                 }
             }
@@ -879,11 +888,11 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
             continue;
         }
 
-        // 通常コマンドの実行
-        await executeCommand(trimmed);
+        // 通常コマンドの実行（メタデータ除去済みの文字列を渡す）
+        await executeCommand(cleanedTrimmed);
 
         // コマンド実行後に速度設定に応じた待機を入れる
-        if (!trimmed.startsWith('#') && turtleSim && targetStepIndex === -1) {
+        if (!cleanedTrimmed.startsWith('#') && turtleSim && targetStepIndex === -1) {
             await turtleSim.sleep(turtleSim.speed);
         }
 
@@ -1037,42 +1046,6 @@ async function executeCommand(cmd) {
             const match = cmd.match(/restorePos\(['"]?(.+?)['"]?\)/);
             const name = match ? match[1] : 'default';
             await turtleSim.restorePos(name);
-        }
-        // 変数操作
-        else if (cmd.includes('# 変数') && cmd.includes('を作成')) {
-            const match = cmd.match(/# 変数 (\w+) を作成/);
-            if (match && variableSystem) {
-                variableSystem.createVariable(match[1], 0);
-            }
-        }
-        else if (cmd.includes('# 変数') && cmd.includes('を代入')) {
-            const match = cmd.match(/# 変数 (\w+) に (-?\d+) を代入/);
-            if (match && variableSystem) {
-                variableSystem.setVariable(match[1], parseInt(match[2]));
-            }
-        }
-        // 配列操作
-        else if (cmd.includes('# 配列') && cmd.includes('を作成')) {
-            const match = cmd.match(/# 配列 (\w+) を作成（サイズ (\d+)）/);
-            if (match && variableSystem) {
-                variableSystem.createArray(match[1], parseInt(match[2]));
-            }
-        }
-        else if (cmd.includes('# 配列') && cmd.includes('を代入')) {
-            const match = cmd.match(/# 配列 (\w+)\[(\d+)\] に (-?\d+) を代入/);
-            if (match && variableSystem) {
-                variableSystem.setArrayElement(match[1], parseInt(match[2]), parseInt(match[3]));
-            }
-        }
-        // マス目操作
-        else if (cmd.includes('# 今いるマスの値を取得')) {
-            // この処理は変数に代入する形で使われるため、ここでは何もしない
-        }
-        else if (cmd.includes('# 今いるマスに') && cmd.includes('を書く')) {
-            const match = cmd.match(/# 今いるマスに (-?\d+) を書く/);
-            if (match && turtleSim) {
-                turtleSim.setCellValue(parseInt(match[1]));
-            }
         }
     } catch (error) {
         // エラー発生時にブロックインデックスを保存

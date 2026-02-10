@@ -310,16 +310,9 @@ function syncGlobalSpeed() {
         slider.value = 9;
         updateSpeedDisplay(slider.value);
 
-        // turtleSimの速度を初期反映
+        // turtleSimの速度を初期反映（スライダー値を直接渡す）
         if (turtleSim) {
-            const speedValueDisplay = document.getElementById('speedValueDisplay');
-            if (speedValueDisplay) {
-                const secMatch = speedValueDisplay.textContent.match(/[\d.]+/);
-                if (secMatch) {
-                    const sec = parseFloat(secMatch[0]);
-                    turtleSim.setSpeed(sec * 1000);
-                }
-            }
+            turtleSim.setSpeed(parseInt(slider.value));
         }
 
         // スライダーの変更イベントリスナー
@@ -327,14 +320,7 @@ function syncGlobalSpeed() {
             const val = parseInt(this.value);
             updateSpeedDisplay(val);
             if (turtleSim) {
-                const speedValueDisplay = document.getElementById('speedValueDisplay');
-                if (speedValueDisplay) {
-                    const secMatch = speedValueDisplay.textContent.match(/[\d.]+/);
-                    if (secMatch) {
-                        const sec = parseFloat(secMatch[0]);
-                        turtleSim.setSpeed(sec * 1000);
-                    }
-                }
+                turtleSim.setSpeed(val); // スライダー位置(0-10)を直接渡す
             }
         });
     }

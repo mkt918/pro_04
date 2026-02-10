@@ -95,11 +95,9 @@ class VariableSystem {
         // 配列は一旦全てクリア（箱A〜Cは変数なので）
         this.arrays.clear();
 
-        // 固定変数がなければ作成（保険）
+        // 固定変数を必ず0にリセット（存在しない場合は作成）
         reserved.forEach(name => {
-            if (!this.variables.has(name)) {
-                this.variables.set(name, 0);
-            }
+            this.variables.set(name, 0);
         });
 
         this.updateVariablePanel();

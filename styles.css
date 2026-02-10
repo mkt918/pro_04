@@ -105,6 +105,26 @@
     border: 1px solid #ddd;
 }
 
+.console-title {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 0.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.current-cell-label {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.current-cell-label #currentCellValue {
+    font-weight: bold;
+    color: #4facfe;
+    margin-left: 0.25rem;
+}
+
 .console-output {
     font-family: 'Consolas', monospace;
     font-size: 0.8rem;

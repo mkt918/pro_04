@@ -190,7 +190,7 @@
                     </select> に <input type="text" class="block-input" data-param="value" value="0" size="3"> を入れる
                 </div>
                 <div class="block-template" data-category="variable" data-type="var_set"
-                    data-params='{"name":"箱A", "value":"箱B"}' data-code="var_set('{name}', '{value}')">
+                    data-params='{"name":"箱A", "value":"箱B"}' data-code="var_set('{name}', {value})">
                     📦 <select class="block-select" data-param="name">
                         <option value="箱A">箱A</option>
                         <option value="箱B" selected>箱B</option>
@@ -418,7 +418,7 @@
             </div>
 
             <div id="console" class="console">
-                <div class="console-title">📋 コンソール</div>
+                <div class="console-title">📋 コンソール <span class="current-cell-label">現在マスの値: <span id="currentCellValue">0</span></span></div>
                 <div id="consoleOutput" class="console-output">準備完了なのだ！🚀</div>
             </div>
         </section>

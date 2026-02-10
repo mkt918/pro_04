@@ -34,11 +34,7 @@ class ChallengeSystem {
 
         // グリッドサイズを設定
         if (challenge.gridSize && turtleSim) {
-            const gridSizeSelect = document.getElementById('gridSize');
-            if (gridSizeSelect) {
-                gridSizeSelect.value = challenge.gridSize;
-                turtleSim.setGridMode(true, challenge.gridSize);
-            }
+            turtleSim.setGridMode(true, challenge.gridSize);
         }
 
         // 初期グリッドデータを設定
