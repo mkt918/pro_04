@@ -1,0 +1,213 @@
+/* ===== Python Turtle Learner - Blocks & Palette ===== */
+
+/* ===== パレット ===== */
+.palette {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.palette-category {
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin: 0.8rem 0 0.4rem 0;
+    color: #888;
+    border-bottom: 2px solid #eee;
+    padding: 10px 5px 5px 5px;
+}
+
+.palette-category-sub {
+    font-weight: bold;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #777;
+    font-size: 0.85em;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+}
+
+/* ===== ブロックテンプレート & プログラムブロック共通 ===== */
+.block-template,
+.program-block {
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: grab;
+    transition: transform 0.1s;
+    user-select: none;
+    width: fit-content;
+    min-width: 200px;
+    position: relative;
+}
+
+.block-template:hover {
+    transform: scale(1.02);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ブロック内の入力要素 */
+.block-select,
+.block-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 4px;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #333;
+}
+
+/* ===== ブロックカテゴリ配色 ===== */
+/* 基本・制御 - ブルー系 */
+.block-template[data-category="basic"][data-type="start"],
+.program-block[data-category="basic"][data-type="start"],
+.block-template[data-category="basic"][data-type="forward"],
+.program-block[data-category="basic"][data-type="forward"],
+.block-template[data-category="basic"][data-type="wait"],
+.program-block[data-category="basic"][data-type="wait"],
+.block-template[data-category="variable"],
+.program-block[data-category="variable"] {
+    background: linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+    border-left: 5px solid #2E5FB7;
+    color: white;
+}
+
+/* ループブロック - オレンジ系 */
+.block-template[data-category="basic"][data-type="loop_start"],
+.program-block[data-category="basic"][data-type="loop_start"],
+.block-template[data-category="basic"][data-type="while_start"],
+.program-block[data-category="basic"][data-type="while_start"],
+.block-template[data-category="basic"][data-type="loop_end"],
+.program-block[data-category="basic"][data-type="loop_end"] {
+    background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
+    border-left: 5px solid #CF8B17;
+    color: white;
+}
+
+/* 条件分岐ブロック - イエロー系 */
+.block-template[data-category="basic"][data-type="if_start"],
+.program-block[data-category="basic"][data-type="if_start"],
+.block-template[data-category="basic"][data-type="else_start"],
+.program-block[data-category="basic"][data-type="else_start"],
+.block-template[data-category="basic"][data-type="if_end"],
+.program-block[data-category="basic"][data-type="if_end"] {
+    background: linear-gradient(135deg, #FFBF00 0%, #FFA500 100%) !important;
+    border-left: 5px solid #E69500;
+    color: white;
+}
+
+/* 演算 - グリーン系 */
+.block-template[data-category="calc"],
+.program-block[data-category="calc"] {
+    background: linear-gradient(135deg, #59C059 0%, #46A046 100%) !important;
+    border-left: 5px solid #389438;
+    color: white;
+}
+
+/* 操作 - シアン系 */
+.block-template[data-category="action"],
+.program-block[data-category="action"] {
+    background: linear-gradient(135deg, #0BC2D0 0%, #0AA1AE 100%) !important;
+    border-left: 5px solid #088C98;
+    color: white;
+}
+
+/* ペン - パープル系 */
+.block-template[data-category="pen"],
+.program-block[data-category="pen"] {
+    background: linear-gradient(135deg, #9966FF 0%, #855CD6 100%) !important;
+    border-left: 5px solid #774DCB;
+    color: white;
+}
+
+/* プログラムエリア */
+.program-area {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+    padding: 1rem;
+    overflow-y: auto;
+    border: 2px dashed rgba(0, 0, 0, 0.1);
+}
+
+.program-block .delete-btn {
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    background: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.program-block:hover .delete-btn {
+    opacity: 1;
+}
+
+/* インデント */
+.indented-1 {
+    margin-left: 2rem;
+    border-left: 4px solid rgba(168, 85, 247, 0.6) !important;
+}
+
+.indented-2 {
+    margin-left: 4rem;
+    border-left: 4px solid rgba(168, 85, 247, 0.8) !important;
+}
+
+.indented-3 {
+    margin-left: 6rem;
+    border-left: 4px solid rgba(168, 85, 247, 1.0) !important;
+}
+
+/* 実行中のブロックハイライト */
+.active-block {
+    border: 3px solid #00e676 !important;
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.6) !important;
+    transform: scale(1.03);
+    z-index: 10;
+    transition: all 0.1s ease;
+}
+
+/* カラーパレット */
+.color-palette-grid {
+    display: none;
+    grid-template-columns: repeat(13, 1fr);
+    gap: 3px;
+    margin-top: 8px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+}
+
+.color-palette-grid.show {
+    display: grid;
+}
+
+.color-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.2);
+}
