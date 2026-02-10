@@ -43,6 +43,7 @@
             <button id="loadChallengeBtn" class="btn btn-challenge" title="課題を読み込む">📚 課題</button>
             <div class="execution-controls">
                 <button id="runBtn" class="btn btn-run">▶ RUN</button>
+                <button id="pauseBtn" class="btn btn-pause" title="実行を一時停止し、手動ステップに切り替え">⏸ 一時停止</button>
                 <button id="stopBtn" class="btn btn-stop" title="実行を停止">⏹ STOP</button>
                 <div class="step-controls">
                     <button id="stepBackBtn" class="btn btn-secondary" title="1手戻る">⏪ 戻る</button>
@@ -50,9 +51,17 @@
                 </div>
             </div>
             <button id="resetBtn" class="btn btn-reset">🔄 RESET</button>
-            <button id="saveBtn" class="btn btn-save" title="ブラウザに保存">💾 保存</button>
-            <button id="loadBtn" class="btn btn-load" title="ブラウザから読込">📂 読込</button>
+            <div class="dropdown">
+                <button id="dataBtn" class="btn btn-data" title="保存・読込メニュー">💾 データ ▾</button>
+                <div class="dropdown-menu" id="dataMenu">
+                    <button id="saveBtn">💾 ブラウザに保存</button>
+                    <button id="loadBtn">📂 ブラウザから読込</button>
+                    <button id="exportBtn">📤 ファイルに出力</button>
+                    <button id="importBtn">📥 ファイルから読込</button>
+                </div>
+            </div>
             <button id="clearAllBtn" class="btn btn-clear" title="プログラムを全削除">🗑️ クリア</button>
+            <input type="file" id="importFile" style="display: none;" accept=".json">
         </div>
     </header>
 
@@ -374,9 +383,6 @@
                 <div class="program-tabs">
                     <button class="tab-btn active" data-tab="blocks">🧩 ブロック</button>
                     <button class="tab-btn" data-tab="code">🐍 コード</button>
-                    <button id="exportBtn" class="tab-btn btn-export" title="ファイルに書き出し">📤 出力</button>
-                    <button id="importBtn" class="tab-btn btn-import" title="ファイルから読み込み">📥 入力</button>
-                    <input type="file" id="importFile" style="display: none;" accept=".json">
                 </div>
             </div>
             <div id="blocksTab" class="tab-content active">

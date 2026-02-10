@@ -146,3 +146,67 @@
     font-style: italic;
     font-size: 0.9rem;
 }
+
+/* ===== 一時停止ボタン ===== */
+.btn-pause {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    border: none;
+}
+
+.btn-pause:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+/* ===== データドロップダウン ===== */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-data {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: white;
+    border: none;
+}
+
+.btn-data:hover {
+    opacity: 0.85;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 160px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.dropdown-menu.open {
+    display: flex;
+}
+
+.dropdown-menu button {
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #333;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.dropdown-menu button:hover {
+    background: #f0f4ff;
+    color: #4facfe;
+}

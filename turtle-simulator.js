@@ -116,6 +116,7 @@ class TurtleSimulator {
         this.lineWidth = 2;
         this.isRunning = false;
         this.hasError = false;
+        this.breakFlag = false; // stop後の再実行のためにリセット
 
         // タートルを描画
         this.drawTurtle();

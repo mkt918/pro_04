@@ -390,16 +390,29 @@ function updateProgramBlocks() {
 // イベントリスナー
 function initEventListeners() {
     document.getElementById('runBtn').addEventListener('click', runProgram);
+    document.getElementById('pauseBtn').addEventListener('click', pauseProgram);
     document.getElementById('stopBtn').addEventListener('click', stopProgram);
     document.getElementById('stepBackBtn').addEventListener('click', stepBack);
     document.getElementById('stepForwardBtn').addEventListener('click', stepForward);
     document.getElementById('resetBtn').addEventListener('click', resetProgram);
-    document.getElementById('saveBtn').addEventListener('click', saveToLocalStorage);
-    document.getElementById('loadBtn').addEventListener('click', loadFromLocalStorage);
+    document.getElementById('saveBtn').addEventListener('click', () => { closeDataMenu(); saveToLocalStorage(); });
+    document.getElementById('loadBtn').addEventListener('click', () => { closeDataMenu(); loadFromLocalStorage(); });
     document.getElementById('clearAllBtn').addEventListener('click', clearAllBlocks);
-    document.getElementById('exportBtn').addEventListener('click', exportToFile);
-    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+    document.getElementById('exportBtn').addEventListener('click', () => { closeDataMenu(); exportToFile(); });
+    document.getElementById('importBtn').addEventListener('click', () => { closeDataMenu(); document.getElementById('importFile').click(); });
     document.getElementById('importFile').addEventListener('change', importFromFile);
+
+    // データドロップダウン
+    document.getElementById('dataBtn').addEventListener('click', function (e) {
+        e.stopPropagation();
+        document.getElementById('dataMenu').classList.toggle('open');
+    });
+    document.addEventListener('click', closeDataMenu);
+}
+
+function closeDataMenu() {
+    const menu = document.getElementById('dataMenu');
+    if (menu) menu.classList.remove('open');
 }
 
 // 実行管理フラグ
@@ -409,7 +422,22 @@ let currentStepIndex = -1;
 async function stopProgram() {
     if (turtleSim) {
         turtleSim.breakFlag = true;
+        isStepping = false;
+        currentStepIndex = -1;
         showConsoleMessage('プログラムを停止しました。', 'info');
+    }
+}
+
+// 一時停止：実行中断し、現在のブロック位置から手動ステップ操作に切り替える
+async function pauseProgram() {
+    if (turtleSim && turtleSim.isRunning) {
+        turtleSim.breakFlag = true;
+        // 現在実行中のブロックインデックスをステップ位置として保存
+        currentStepIndex = turtleSim.currentBlockIndex;
+        isStepping = true;
+        showConsoleMessage(`⏸ ステップ ${currentStepIndex + 1} で一時停止。「戻る」「進む」で確認できます。`, 'info');
+    } else {
+        showConsoleMessage('実行中のみ一時停止できます。', 'info');
     }
 }
 
@@ -423,8 +451,6 @@ async function stepForward() {
     updateProgramBlocks();
 
     if (currentStepIndex === -1) {
-        // 最初から開始
-        turtleSim.reset();
         currentStepIndex = 0;
     } else {
         currentStepIndex++;
@@ -436,13 +462,22 @@ async function stepForward() {
         return;
     }
 
+    // stepBack と同様に毎回リセット＆高速リプレイで正確な状態を再現する
+    // （リセットしないと前ステップの移動が累積してしまうため）
+    turtleSim.reset(); // breakFlag も同時にリセットされる
+    if (variableSystem) variableSystem.reset();
+
+    const originalSpeed = turtleSim.speed;
+    turtleSim.speed = 0; // 前ステップを即時リプレイ
     const code = generatePythonCodeAtStep(currentStepIndex);
     await executeTurtleCommandsAtStep(code, currentStepIndex);
+    turtleSim.speed = originalSpeed;
 }
 
 async function stepBack() {
     if (currentStepIndex <= 0) {
-        turtleSim.reset();
+        turtleSim.reset(); // breakFlag もリセットされる
+        if (variableSystem) variableSystem.reset();
         currentStepIndex = -1;
         clearActiveHighlights();
         showConsoleMessage('最初の位置に戻ったのだ！', 'info');
@@ -452,7 +487,8 @@ async function stepBack() {
     currentStepIndex--;
     // 「戻る」は「リセット + (現在の手-1)まで高速再実行」で実現
     const targetStep = currentStepIndex;
-    turtleSim.reset();
+    turtleSim.reset(); // breakFlag もリセットされる
+    if (variableSystem) variableSystem.reset();
 
     // 描画の即時反映のために一時的に速度を0にする
     const originalSpeed = turtleSim.speed;
