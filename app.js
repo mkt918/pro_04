@@ -307,12 +307,16 @@ function syncGlobalSpeed() {
     const speedSlider = document.getElementById('globalSpeed');
     if (speedSlider) {
         speedSlider.addEventListener('input', function () {
+            const val = parseInt(this.value);
             if (turtleSim) {
-                turtleSim.setSpeed(parseInt(this.value));
+                turtleSim.setSpeed(val);
             }
+            updateSpeedDisplay(val);
         });
         // 初期値反映
-        if (turtleSim) turtleSim.setSpeed(parseInt(speedSlider.value));
+        const initialVal = parseInt(speedSlider.value);
+        if (turtleSim) turtleSim.setSpeed(initialVal);
+        updateSpeedDisplay(initialVal);
     }
 }
 
@@ -397,7 +401,7 @@ function generatePythonCode() {
     let indentLevel = 0;
     const indent = '    ';
 
-    for (const block of programBlocks) {
+    programBlocks.forEach((block, index) => {
         let line = block.code;
 
         // パラメータ置換
@@ -405,30 +409,32 @@ function generatePythonCode() {
             line = line.replace('{' + key + '}', value);
         }
 
+        const meta = `  # @idx:${index}`;
+
         if (block.type === 'loop_end' || block.type === 'if_end') {
             indentLevel = Math.max(0, indentLevel - 1);
             const comment = block.type === 'loop_end' ? '# ループここまで' : '# 条件分岐ここまで';
-            code += indent.repeat(indentLevel) + comment + '\n';
-            continue;
+            code += indent.repeat(indentLevel) + comment + meta + '\n';
+            return;
         }
 
         if (block.type === 'else_start') {
             indentLevel = Math.max(0, indentLevel - 1);
-            code += indent.repeat(indentLevel) + 'else:\n';
+            code += indent.repeat(indentLevel) + 'else:' + meta + '\n';
             indentLevel++;
-            continue;
+            return;
         }
 
-        // マルチライン対応：各行にインデントを適用
+        // マルチライン対応：各行にインデントとメタデータを適用
         const blockLines = line.split('\n');
         for (const bl of blockLines) {
-            code += indent.repeat(indentLevel) + bl + '\n';
+            code += indent.repeat(indentLevel) + bl + meta + '\n';
         }
 
         if (block.type === 'loop_start' || block.type === 'if_start' || block.type === 'while_start') {
             indentLevel++;
         }
-    }
+    });
 
     return code;
 }
@@ -761,4 +767,20 @@ function initTutorialListeners() {
     }
 }
 
+// 速度表示の更新
+function updateSpeedDisplay(val) {
+    const display = document.getElementById('speedValueDisplay');
+    if (!display) return;
 
+    let sec;
+    if (val <= 7) {
+        sec = (1.6 - val * 0.2).toFixed(1);
+    } else if (val === 8) {
+        sec = "0.1";
+    } else if (val === 9) {
+        sec = "0.05";
+    } else {
+        sec = "0.01";
+    }
+    display.textContent = `(${sec}s)`;
+}

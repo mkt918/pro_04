@@ -333,8 +333,19 @@ class TurtleSimulator {
     }
 
     setSpeed(val) {
-        // 全体的に遅く調整 (15ms 〜 500ms 程度)
-        this.speed = val === 10 ? 15 : (11 - val) * 50;
+        // レベル5を0.6s(600ms)とし、±0.2s刻みで調整
+        // 0:1.6s, 5:0.6s, 7:0.2s, 8:0.1s, 9:0.05s, 10:0.01s
+        let ms;
+        if (val <= 7) {
+            ms = (1.6 - val * 0.2) * 1000;
+        } else if (val === 8) {
+            ms = 100;
+        } else if (val === 9) {
+            ms = 50;
+        } else {
+            ms = 10;
+        }
+        this.speed = Math.max(10, ms);
     }
 
     stamp() {
@@ -723,8 +734,24 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
         const currentIndent = line.search(/\S/);
         if (currentIndent < baseIndent) break;
 
+        // --- メタデータからハイライトとステップ更新を行う ---
+        const metaMatch = line.match(/# @idx:(\d+)/);
+        if (metaMatch) {
+            const blockIdx = parseInt(metaMatch[1]);
+            // 実行中のブロックを強調表示
+            if (typeof highlightActiveBlock === 'function') {
+                highlightActiveBlock(blockIdx);
+            }
+            // ステップ数もここでインクリメント（実際に命令が実行される際）
+            // ただし制御ブロック自体も1ステップとするかは方針次第だが、一貫性のためにここで行う
+            if (turtleSim) {
+                turtleSim.stepCount++;
+                turtleSim.updateStepDisplay();
+            }
+        }
+
         // --- break 処理 ---
-        if (trimmed === 'break') {
+        if (trimmed.startsWith('break')) {
             if (turtleSim) turtleSim.breakFlag = true;
             i++;
             break;
@@ -839,17 +866,6 @@ function findBlockRange(lines, currentIndex, maxIndex) {
 // 個別コマンドの実行（拡張版）
 async function executeCommand(cmd) {
     if (!cmd || cmd === 'pass' || cmd.startsWith('#')) return;
-
-    // コマンド実行時にブロックインデックスをインクリメント
-    if (turtleSim && !cmd.startsWith('for') && cmd !== 'pass') {
-        turtleSim.currentBlockIndex++;
-        turtleSim.stepCount++;
-        turtleSim.updateStepDisplay();
-        // 実行中のブロックを強調表示（もし highlightActiveBlock がグローバルなら）
-        if (typeof highlightActiveBlock === 'function') {
-            highlightActiveBlock(turtleSim.currentBlockIndex - 1);
-        }
-    }
 
     try {
         if (cmd.includes('move_dir')) {
