@@ -30,6 +30,7 @@ class TurtleSimulator {
         // 実行制御フラグ
         this.breakFlag = false;
         this.hasError = false;
+        this.stepCount = 0;
     }
 
     async wait(seconds) {
@@ -108,6 +109,8 @@ class TurtleSimulator {
 
         // タートルを描画
         this.drawTurtle();
+        this.stepCount = 0;
+        this.updateStepDisplay();
     }
 
     setGridMode(enabled, size = 8) {
@@ -330,8 +333,8 @@ class TurtleSimulator {
     }
 
     setSpeed(val) {
-        // speed(0)は瞬間だが、ここでは最速(1ms)にする
-        this.speed = val === 0 ? 1 : Math.max(1, 20 - val * 2);
+        // 全体的に遅く調整 (15ms 〜 500ms 程度)
+        this.speed = val === 10 ? 15 : (11 - val) * 50;
     }
 
     stamp() {
@@ -589,6 +592,13 @@ class TurtleSimulator {
         this.drawTurtle();
         await this.sleep(this.speed * 10); // グリッドモードは少し遅めに
     }
+
+    updateStepDisplay() {
+        const display = document.getElementById('stepCountDisplay');
+        if (display) {
+            display.textContent = this.stepCount;
+        }
+    }
 }
 
 // グローバルインスタンス
@@ -833,6 +843,12 @@ async function executeCommand(cmd) {
     // コマンド実行時にブロックインデックスをインクリメント
     if (turtleSim && !cmd.startsWith('for') && cmd !== 'pass') {
         turtleSim.currentBlockIndex++;
+        turtleSim.stepCount++;
+        turtleSim.updateStepDisplay();
+        // 実行中のブロックを強調表示（もし highlightActiveBlock がグローバルなら）
+        if (typeof highlightActiveBlock === 'function') {
+            highlightActiveBlock(turtleSim.currentBlockIndex - 1);
+        }
     }
 
     try {
@@ -902,10 +918,6 @@ async function executeCommand(cmd) {
                 turtleSim.set_current_value(val);
             }
         }
-        else if (cmd.includes('get_current_value()') || cmd.includes('# 今いるマスの値を取得')) {
-            const val = turtleSim.get_current_value();
-            showConsoleMessage(`今のマスの数字は ${val} なのだ！`, 'info');
-        }
         else if (cmd.startsWith('var_set')) {
             const match = cmd.match(/var_set\(['"](.+?)['"]\s*,\s*(.+)\)/);
             if (match) {
@@ -915,6 +927,10 @@ async function executeCommand(cmd) {
                     variableSystem.setVariable(name, value);
                 }
             }
+        }
+        else if (cmd === 't.get_current_value()' || cmd.includes('# 今いるマスの値を取得')) {
+            const val = turtleSim.get_current_value();
+            showConsoleMessage(`今のマスの数字は ${val} なのだ！`, 'info');
         }
         else if (cmd.includes('wait')) {
             const match = cmd.match(/wait\((.+)\)/);

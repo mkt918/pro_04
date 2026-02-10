@@ -774,12 +774,45 @@ body {
 }
 
 @keyframes error-pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.02);
     }
+}
+
+/* ===== 統計情報バッジ ===== */
+.program-stats {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.stat-badge {
+    background: rgba(79, 172, 254, 0.1);
+    border: 1px solid rgba(79, 172, 254, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #4facfe;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== 実行中のブロックハイライト ===== */
+.active-block {
+    border: 3px solid #00e676 !important;
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.6) !important;
+    transform: scale(1.03);
+    z-index: 10;
+    transition: all 0.1s ease;
 }
 
    

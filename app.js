@@ -349,6 +349,12 @@ function updateProgramBlocks() {
         };
     });
 
+    // 行数を更新
+    const lineCountDisplay = document.getElementById('lineCount');
+    if (lineCountDisplay) {
+        lineCountDisplay.textContent = programBlocks.length;
+    }
+
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
     programBlocks.forEach(b => {
@@ -443,6 +449,7 @@ async function runProgram() {
             return;
         }
 
+        clearActiveHighlights(); // 実行前にクリア
         const hasStart = programBlocks.some(b => b.type === 'start');
         if (!hasStart) {
             showConsoleMessage('「🚀 プログラム開始」ブロックを最初に置いてね！', 'error');
@@ -460,7 +467,30 @@ async function runProgram() {
     } finally {
         runBtn.disabled = false;
         runBtn.textContent = '▶ RUN';
+        // 実行終了後にハイライトを消さない（どこで止まったか見せるため）
+        // または数秒後に消す場合はここでタイマー
     }
+}
+
+// 実行中のブロックを強調表示
+function highlightActiveBlock(index) {
+    const blocks = document.querySelectorAll('.program-block');
+    blocks.forEach((block, idx) => {
+        if (idx === index) {
+            block.classList.add('active-block');
+            // スムーズにスクロール
+            block.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            block.classList.remove('active-block');
+        }
+    });
+}
+
+// ハイライトを全てクリア
+function clearActiveHighlights() {
+    document.querySelectorAll('.active-block').forEach(block => {
+        block.classList.remove('active-block');
+    });
 }
 
 // エラーブロックのハイライト表示
@@ -491,6 +521,7 @@ function clearErrorHighlight() {
 function resetProgram() {
     if (turtleSim) turtleSim.reset();
     if (variableSystem) variableSystem.reset();
+    clearActiveHighlights();
 
     // プログラムエリアをクリアして初期ブロックを再配置
     const programArea = document.getElementById('programArea');
