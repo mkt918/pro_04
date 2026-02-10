@@ -556,19 +556,9 @@ function clearAllBlocks() {
 function enableGridMode() {
     if (!turtleSim) return;
 
-    // 常にグリッドモードを有効化
-    const gridSizeSelect = document.getElementById('gridSize');
-    const gridSize = gridSizeSelect ? parseInt(gridSizeSelect.value) : 8;
+    // 常に10x10グリッドモードを有効化
+    const gridSize = 10;
     turtleSim.setGridMode(true, gridSize);
-
-    // グリッドサイズ変更のリスナー
-    if (gridSizeSelect) {
-        gridSizeSelect.addEventListener('change', function () {
-            const newSize = parseInt(this.value);
-            turtleSim.setGridMode(true, newSize);
-            showConsoleMessage(`グリッドサイズを ${newSize}x${newSize} に変更しました。`, 'info');
-        });
-    }
 }
 
 

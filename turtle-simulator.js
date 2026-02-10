@@ -15,7 +15,7 @@ class TurtleSimulator {
 
         // グリッドモードをデフォルトで有効化
         this.gridMode = true;
-        this.gridSize = 8;
+        this.gridSize = 10;
 
         // マス目データ管理（各セルに値を保存）
         this.gridData = [];
@@ -73,6 +73,18 @@ class TurtleSimulator {
         }
     }
 
+    getGridMetrics() {
+        const labelArea = 30; // ラベル表示用の余白
+        const availableWidth = this.width - labelArea;
+        const availableHeight = this.height - labelArea;
+        const cellSize = Math.floor(Math.min(availableWidth, availableHeight) / this.gridSize);
+
+        const offsetX = labelArea + (availableWidth - cellSize * this.gridSize) / 2;
+        const offsetY = labelArea + (availableHeight - cellSize * this.gridSize) / 2;
+
+        return { cellSize, offsetX, offsetY, labelArea };
+    }
+
     reset() {
         // メインキャンバス（描画用）をクリア
         this.ctx.clearRect(0, 0, this.width, this.height);
@@ -90,9 +102,7 @@ class TurtleSimulator {
         // タートルの状態を初期化
         if (this.gridMode) {
             // グリッドモード：左上のセル(A1)に配置
-            const cellSize = Math.min(this.width, this.height) / this.gridSize;
-            const offsetX = (this.width - cellSize * this.gridSize) / 2;
-            const offsetY = (this.height - cellSize * this.gridSize) / 2;
+            const { cellSize, offsetX, offsetY } = this.getGridMetrics();
             this.x = offsetX + cellSize / 2;
             this.y = offsetY + cellSize / 2;
         } else {
@@ -113,7 +123,7 @@ class TurtleSimulator {
         this.updateStepDisplay();
     }
 
-    setGridMode(enabled, size = 8) {
+    setGridMode(enabled, size = 10) {
         this.gridMode = enabled;
         this.gridSize = size;
         this.initGridData(); // マス目データを再初期化
@@ -121,9 +131,7 @@ class TurtleSimulator {
     }
 
     drawGrid() {
-        const cellSize = Math.min(this.width, this.height) / this.gridSize;
-        const offsetX = (this.width - cellSize * this.gridSize) / 2;
-        const offsetY = (this.height - cellSize * this.gridSize) / 2;
+        const { cellSize, offsetX, offsetY, labelArea } = this.getGridMetrics();
 
         this.ctx.strokeStyle = '#ddd';
         this.ctx.lineWidth = 1;
@@ -146,6 +154,26 @@ class TurtleSimulator {
             this.ctx.stroke();
         }
 
+        // 行列ラベルの描画
+        this.ctx.fillStyle = '#666';
+        this.ctx.font = 'bold 12px sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
+        // 列ラベル (A, B, C...)
+        const letters = 'ABCDEFGHIJ'.split('');
+        for (let i = 0; i < this.gridSize; i++) {
+            const x = offsetX + i * cellSize + cellSize / 2;
+            this.ctx.fillText(letters[i], x, offsetY - 15);
+        }
+
+        // 行ラベル (1, 2, 3...)
+        this.ctx.textAlign = 'right';
+        for (let i = 0; i < this.gridSize; i++) {
+            const y = offsetY + i * cellSize + cellSize / 2;
+            this.ctx.fillText(i + 1, offsetX - 10, y);
+        }
+
         // グリッドデータに数字があれば表示
         this.drawGridNumbers();
     }
@@ -154,9 +182,7 @@ class TurtleSimulator {
     drawGridNumbers() {
         if (!this.gridData) return;
 
-        const cellSize = Math.min(this.width, this.height) / this.gridSize;
-        const offsetX = (this.width - cellSize * this.gridSize) / 2;
-        const offsetY = (this.height - cellSize * this.gridSize) / 2;
+        const { cellSize, offsetX, offsetY } = this.getGridMetrics();
 
         // フォントサイズをセルサイズに合わせて調整
         const fontSize = Math.max(12, Math.floor(cellSize * 0.4));
@@ -247,9 +273,7 @@ class TurtleSimulator {
 
         if (this.gridMode) {
             // グリッドモード：セル単位で移動
-            const cellSize = Math.min(this.width, this.height) / this.gridSize;
-            const offsetX = (this.width - cellSize * this.gridSize) / 2;
-            const offsetY = (this.height - cellSize * this.gridSize) / 2;
+            const { cellSize, offsetX, offsetY } = this.getGridMetrics();
 
             // 現在の方向に基づいて移動（0=右, 1=下, 2=左, 3=上）
             // 負の角度にも対応するために ((x % 4) + 4) % 4 を使用
@@ -496,8 +520,13 @@ class TurtleSimulator {
 
     // 現在地の数字表示を更新
     updateCurrentValueDisplay() {
-        const row = this.gridMode ? Math.round((this.y - ((this.height - (Math.min(this.width, this.height) / this.gridSize) * this.gridSize) / 2) - (Math.min(this.width, this.height) / this.gridSize) / 2) / (Math.min(this.width, this.height) / this.gridSize)) : 0;
-        const col = this.gridMode ? Math.round((this.x - ((this.width - (Math.min(this.width, this.height) / this.gridSize) * this.gridSize) / 2) - (Math.min(this.width, this.height) / this.gridSize) / 2) / (Math.min(this.width, this.height) / this.gridSize)) : 0;
+        if (!this.gridMode) return;
+
+        const { cellSize, offsetX, offsetY } = this.getGridMetrics();
+
+        // 現在のピクセル座標からセル座標を特定
+        const row = Math.round((this.y - offsetY - cellSize / 2) / cellSize);
+        const col = Math.round((this.x - offsetX - cellSize / 2) / cellSize);
 
         const display = document.getElementById('currentCellValue');
         if (display && this.gridData && this.gridData[row]) {
@@ -524,9 +553,7 @@ class TurtleSimulator {
 
         if (this.gridMode) {
             // グリッドモード：左上のセル(A1)に移動
-            const cellSize = Math.min(this.width, this.height) / this.gridSize;
-            const offsetX = (this.width - cellSize * this.gridSize) / 2;
-            const offsetY = (this.height - cellSize * this.gridSize) / 2;
+            const { cellSize, offsetX, offsetY } = this.getGridMetrics();
             this.x = offsetX + cellSize / 2;
             this.y = offsetY + cellSize / 2;
             this.angle = 0; // 右向き
@@ -580,7 +607,8 @@ class TurtleSimulator {
                 this.y += dy;
             }
             this.drawTurtle();
-            await this.sleep(this.speed);
+            // アニメーションのなめらかさは固定（20ms）
+            await this.sleep(20);
         }
         // 位置を正確に合わせる
         this.x = targetX;
@@ -818,12 +846,21 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
                 await executeBlock(lines, elseRange.start, elseRange.indent, elseRange.end);
             }
 
+            // コマンド実行後に速度設定に応じた待機を入れる
+            await turtleSim.sleep(turtleSim.speed);
+
             i = elseRange ? elseRange.end : ifRange.end;
             continue;
         }
 
         // 通常コマンドの実行
         await executeCommand(trimmed);
+
+        // コマンド実行後に速度設定に応じた待機を入れる
+        if (!trimmed.startsWith('#') && turtleSim) {
+            await turtleSim.sleep(turtleSim.speed);
+        }
+
         i++;
     }
 }
