@@ -304,19 +304,39 @@ function updatePreviewIfPossible() {
 
 // 速度スライダーとの同期
 function syncGlobalSpeed() {
-    const speedSlider = document.getElementById('globalSpeed');
-    if (speedSlider) {
-        speedSlider.addEventListener('input', function () {
-            const val = parseInt(this.value);
-            if (turtleSim) {
-                turtleSim.setSpeed(val);
+    const slider = document.getElementById('speed');
+    if (slider) {
+        // 初期値を9(0.05s)に設定
+        slider.value = 9;
+        updateSpeedDisplay(slider.value);
+
+        // turtleSimの速度を初期反映
+        if (turtleSim) {
+            const speedValueDisplay = document.getElementById('speedValueDisplay');
+            if (speedValueDisplay) {
+                const secMatch = speedValueDisplay.textContent.match(/[\d.]+/);
+                if (secMatch) {
+                    const sec = parseFloat(secMatch[0]);
+                    turtleSim.setSpeed(sec * 1000);
+                }
             }
+        }
+
+        // スライダーの変更イベントリスナー
+        slider.addEventListener('input', function () {
+            const val = parseInt(this.value);
             updateSpeedDisplay(val);
+            if (turtleSim) {
+                const speedValueDisplay = document.getElementById('speedValueDisplay');
+                if (speedValueDisplay) {
+                    const secMatch = speedValueDisplay.textContent.match(/[\d.]+/);
+                    if (secMatch) {
+                        const sec = parseFloat(secMatch[0]);
+                        turtleSim.setSpeed(sec * 1000);
+                    }
+                }
+            }
         });
-        // 初期値反映
-        const initialVal = parseInt(speedSlider.value);
-        if (turtleSim) turtleSim.setSpeed(initialVal);
-        updateSpeedDisplay(initialVal);
     }
 }
 
@@ -384,6 +404,9 @@ function updateProgramBlocks() {
 // イベントリスナー
 function initEventListeners() {
     document.getElementById('runBtn').addEventListener('click', runProgram);
+    document.getElementById('stopBtn').addEventListener('click', stopProgram);
+    document.getElementById('stepBackBtn').addEventListener('click', stepBack);
+    document.getElementById('stepForwardBtn').addEventListener('click', stepForward);
     document.getElementById('resetBtn').addEventListener('click', resetProgram);
     document.getElementById('saveBtn').addEventListener('click', saveToLocalStorage);
     document.getElementById('loadBtn').addEventListener('click', loadFromLocalStorage);
@@ -391,6 +414,94 @@ function initEventListeners() {
     document.getElementById('exportBtn').addEventListener('click', exportToFile);
     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
     document.getElementById('importFile').addEventListener('change', importFromFile);
+}
+
+// 実行管理フラグ
+let isStepping = false;
+let currentStepIndex = -1;
+
+async function stopProgram() {
+    if (turtleSim) {
+        turtleSim.breakFlag = true;
+        showConsoleMessage('プログラムを停止しました。', 'info');
+    }
+}
+
+async function stepForward() {
+    if (turtleSim && turtleSim.isRunning) {
+        // すでに通常実行中の場合は何もしない
+        return;
+    }
+
+    isStepping = true;
+    updateProgramBlocks();
+
+    if (currentStepIndex === -1) {
+        // 最初から開始
+        turtleSim.reset();
+        currentStepIndex = 0;
+    } else {
+        currentStepIndex++;
+    }
+
+    if (currentStepIndex >= programBlocks.length) {
+        showConsoleMessage('最後の手順なのだ！', 'info');
+        currentStepIndex = programBlocks.length - 1;
+        return;
+    }
+
+    const code = generatePythonCodeAtStep(currentStepIndex);
+    await executeTurtleCommandsAtStep(code, currentStepIndex);
+}
+
+async function stepBack() {
+    if (currentStepIndex <= 0) {
+        turtleSim.reset();
+        currentStepIndex = -1;
+        clearActiveHighlights();
+        showConsoleMessage('最初の位置に戻ったのだ！', 'info');
+        return;
+    }
+
+    currentStepIndex--;
+    // 「戻る」は「リセット + (現在の手-1)まで高速再実行」で実現
+    const targetStep = currentStepIndex;
+    turtleSim.reset();
+
+    // 描画の即時反映のために一時的に速度を0にする
+    const originalSpeed = turtleSim.speed;
+    turtleSim.speed = 0;
+
+    const code = generatePythonCodeAtStep(targetStep);
+    await executeTurtleCommandsAtStep(code, targetStep);
+
+    turtleSim.speed = originalSpeed;
+}
+
+function generatePythonCodeAtStep(stepIndex) {
+    // 実際には全コードを生成するが、実行側で制御するために全コードを返す
+    return generatePythonCode();
+}
+
+async function executeTurtleCommandsAtStep(code, stepIndex) {
+    if (!turtleSim) initTurtleSimulator();
+
+    // 課題データの復元などは executeTurtleCommands に準ずる
+    if (typeof challengeSystem !== 'undefined' && challengeSystem && challengeSystem.challengeActive) {
+        challengeSystem.loadGridData(challengeSystem.currentChallenge.initialGrid);
+    }
+
+    try {
+        // turtle-simulator.js に定義した関数を呼び出す
+        if (typeof executeManualStep === 'function') {
+            await executeManualStep(code, stepIndex);
+        } else {
+            // 万が一関数が公開されていない場合（グローバルでない場合）のフォールバック
+            console.error('executeManualStep is not defined');
+        }
+    } catch (e) {
+        showConsoleMessage(`Error: ${e.message}`, 'error');
+    }
 }
 
 // Pythonコード生成ロジック
@@ -445,6 +556,10 @@ async function runProgram() {
     try {
         // エラーハイライトをクリア
         clearErrorHighlight();
+
+        // ステップ実行状態をリセット
+        isStepping = false;
+        currentStepIndex = -1;
 
         runBtn.disabled = true;
         runBtn.textContent = '⏳...';
@@ -726,7 +841,7 @@ function reconstructProgram(blocks) {
 
 // 初回訪問チェック
 function checkFirstVisit() {
-    const hasVisited = localStorage.getItem('turtle_tutorial_completed');
+    const hasVisited = localStorage.getItem('python_turtle_welcome_dismissed');
     if (!hasVisited) {
         showTutorial();
     }
@@ -741,19 +856,19 @@ function showTutorial() {
 }
 
 // チュートリアル閉じる
-function closeTutorial() {
+function closeWelcomeModal() {
     const dontShow = document.getElementById('dontShowAgain').checked;
     if (dontShow) {
-        localStorage.setItem('turtle_tutorial_completed', 'true');
+        localStorage.setItem('python_turtle_welcome_dismissed', 'true');
     }
     document.getElementById('tutorialModal').style.display = 'none';
 }
 
 // チュートリアルイベントリスナー
 function initTutorialListeners() {
-    const closeBtn = document.getElementById('closeTutorial');
+    const closeBtn = document.getElementById('welcomeModalCloseBtn');
     if (closeBtn) {
-        closeBtn.addEventListener('click', closeTutorial);
+        closeBtn.addEventListener('click', closeWelcomeModal);
     }
 }
 

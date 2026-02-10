@@ -740,15 +740,29 @@ async function parsePythonCode(code) {
     await executeBlock(lines, 0, 0, lines.length);
 }
 
+// マニュアルステップ実行（特定のステップまで実行して止める）
+async function executeManualStep(code, targetStepIndex) {
+    if (!turtleSim) {
+        initTurtleSimulator();
+    }
+
+    const lines = code.split('\n').filter(line => line.trim() !== '');
+
+    // turtleSimの内部状態をリセットしつつ、ステップ実行モードであることを示す
+    turtleSim.currentBlockIndex = 0;
+    turtleSim.errorBlockIndex = undefined;
+    turtleSim.breakFlag = false;
+
+    // 再帰的にブロックを実行
+    await executeBlock(lines, 0, 0, lines.length, targetStepIndex);
+}
+
 // ブロック実行関数
-// lines: 全行データ
-// startIndex: このブロックの開始行インデックス
-// baseIndent: このブロックの基準インデントレベル（文字数）
-// endIndex: このブロックの終了行インデックス（含まない）
-async function executeBlock(lines, startIndex, baseIndent, endIndex) {
+async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepIndex = -1) {
     let i = startIndex;
 
     while (i < endIndex) {
+        // 停止ボタンやエラーでの中断
         if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
 
         const line = lines[i];
@@ -764,22 +778,29 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
 
         // --- メタデータからハイライトとステップ更新を行う ---
         const metaMatch = line.match(/# @idx:(\d+)/);
+        let blockIdx = -1;
         if (metaMatch) {
-            const blockIdx = parseInt(metaMatch[1]);
+            blockIdx = parseInt(metaMatch[1]);
+
+            // ステップ実行モードの場合、目標のインデックスを超えたら停止
+            if (targetStepIndex !== -1 && blockIdx > targetStepIndex) {
+                return; // ここでこのブロックの実行を終了
+            }
+
             // 実行中のブロックを強調表示
             if (typeof highlightActiveBlock === 'function') {
                 highlightActiveBlock(blockIdx);
             }
-            // ステップ数もここでインクリメント（実際に命令が実行される際）
-            // ただし制御ブロック自体も1ステップとするかは方針次第だが、一貫性のためにここで行う
+
             if (turtleSim) {
                 turtleSim.stepCount++;
                 turtleSim.updateStepDisplay();
+                turtleSim.currentBlockIndex = blockIdx;
             }
         }
 
         // --- break 処理 ---
-        if (trimmed.startsWith('break')) {
+        if (trimmed === 'break') {
             if (turtleSim) turtleSim.breakFlag = true;
             i++;
             break;
@@ -795,7 +816,7 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
             const blockRange = findBlockRange(lines, i, endIndex);
 
             while (evaluateExpression(conditionExpr)) {
-                await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end);
+                await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end, targetStepIndex);
                 if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
             }
             // ループを抜けた際に breakFlag をリセット（この外側のループには影響させない）
@@ -813,7 +834,7 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
                 const loopCount = parseInt(match[1]);
                 const blockRange = findBlockRange(lines, i, endIndex);
                 for (let c = 0; c < loopCount; c++) {
-                    await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end);
+                    await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end, targetStepIndex);
                     if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
                 }
                 if (turtleSim && turtleSim.breakFlag) turtleSim.breakFlag = false;
@@ -841,13 +862,18 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
             }
 
             if (evaluateExpression(conditionExpr)) {
-                await executeBlock(lines, ifRange.start, ifRange.indent, ifRange.end);
+                await executeBlock(lines, ifRange.start, ifRange.indent, ifRange.end, targetStepIndex);
             } else if (elseRange) {
-                await executeBlock(lines, elseRange.start, elseRange.indent, elseRange.end);
+                await executeBlock(lines, elseRange.start, elseRange.indent, elseRange.end, targetStepIndex);
             }
 
-            // コマンド実行後に速度設定に応じた待機を入れる
-            await turtleSim.sleep(turtleSim.speed);
+            // 停止チェック
+            if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
+
+            // ステップモードでない場合のみ待機
+            if (targetStepIndex === -1) {
+                await turtleSim.sleep(turtleSim.speed);
+            }
 
             i = elseRange ? elseRange.end : ifRange.end;
             continue;
@@ -857,7 +883,7 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex) {
         await executeCommand(trimmed);
 
         // コマンド実行後に速度設定に応じた待機を入れる
-        if (!trimmed.startsWith('#') && turtleSim) {
+        if (!trimmed.startsWith('#') && turtleSim && targetStepIndex === -1) {
             await turtleSim.sleep(turtleSim.speed);
         }
 
@@ -935,7 +961,10 @@ async function executeCommand(cmd) {
         }
         else if (cmd.includes('speed')) {
             const match = cmd.match(/speed\((\d+)\)/);
-            if (match) turtleSim.setSpeed(parseInt(match[1]));
+            // スライダー優先のため、一旦コマンドからの設定は無視するか、
+            // ユーザーが明示的に書いた場合のみ適用する。
+            // ここではユーザー要望に合わせてスライダーの値を維持するため何もしない。
+            // if (match) turtleSim.setSpeed(parseInt(match[1]));
         }
         else if (cmd.includes('stamp')) {
             turtleSim.stamp();

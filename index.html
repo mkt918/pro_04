@@ -10,15 +10,15 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="stylesheet" href="styles-base.css?v=1">
-    <link rel="stylesheet" href="styles-elements.css?v=1">
-    <link rel="stylesheet" href="styles-blocks.css?v=1">
-    <link rel="stylesheet" href="styles.css?v=8">
-    <link rel="stylesheet" href="styles-animations.css?v=1">
-    <link rel="stylesheet" href="styles-variables.css?v=1">
-    <link rel="stylesheet" href="styles-challenge.css?v=1">
-    <link rel="stylesheet" href="styles-palette-tabs.css?v=1">
-    <link rel="stylesheet" href="styles-tutorial.css?v=1">
+    <link rel="stylesheet" href="styles-base.css?v=2">
+    <link rel="stylesheet" href="styles-elements.css?v=2">
+    <link rel="stylesheet" href="styles-blocks.css?v=2">
+    <link rel="stylesheet" href="styles.css?v=11">
+    <link rel="stylesheet" href="styles-animations.css?v=2">
+    <link rel="stylesheet" href="styles-variables.css?v=2">
+    <link rel="stylesheet" href="styles-challenge.css?v=2">
+    <link rel="stylesheet" href="styles-palette-tabs.css?v=2">
+    <link rel="stylesheet" href="styles-tutorial.css?v=3">
     <!-- SortableJS for drag and drop reordering -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <!-- Prism.js for Syntax Highlighting -->
@@ -36,13 +36,19 @@
         </div>
         <div class="header-right">
             <div class="speed-control">
-                <span>🏃 はやさ:</span>
-                <span id="speedValueDisplay"
-                    style="font-size: 0.75rem; color: #4facfe; font-weight: bold; min-width: 3.5rem;">(1.0s)</span>
-                <input type="range" id="globalSpeed" min="0" max="10" value="3">
+                <span>🚀 はやさ:</span>
+                <input type="range" id="speed" min="0" max="10" value="9" step="1">
+                <span id="speedValueDisplay" class="speed-value">(0.05s)</span>
             </div>
             <button id="loadChallengeBtn" class="btn btn-challenge" title="課題を読み込む">📚 課題</button>
-            <button id="runBtn" class="btn btn-run">▶ RUN</button>
+            <div class="execution-controls">
+                <button id="runBtn" class="btn btn-run">▶ RUN</button>
+                <button id="stopBtn" class="btn btn-stop" title="実行を停止">⏹ STOP</button>
+                <div class="step-controls">
+                    <button id="stepBackBtn" class="btn btn-secondary" title="1手戻る">⏪ 戻る</button>
+                    <button id="stepForwardBtn" class="btn btn-secondary" title="1手進む">⏩ 進む</button>
+                </div>
+            </div>
             <button id="resetBtn" class="btn btn-reset">🔄 RESET</button>
             <button id="saveBtn" class="btn btn-save" title="ブラウザに保存">💾 保存</button>
             <button id="loadBtn" class="btn btn-load" title="ブラウザから読込">📂 読込</button>
@@ -493,7 +499,7 @@
                     <input type="checkbox" id="dontShowAgain">
                     次回から表示しない
                 </label>
-                <button id="closeTutorial" class="btn btn-run">始める！ 🚀</button>
+                <button id="welcomeModalCloseBtn" class="btn btn-run">始める！ 🚀</button>
             </div>
         </div>
     </div>
@@ -504,7 +510,7 @@
     <script src="tutorial-system.js?v=1"></script>
     <script src="palette-tabs.js?v=1"></script>
     <script src="turtle-simulator.js?v=6"></script>
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=8"></script>
     <script src="app-challenge-listeners.js?v=1"></script>
 </body>
 
