@@ -40,7 +40,7 @@
                 <input type="range" id="speed" min="0" max="10" value="9" step="1">
                 <span id="speedValueDisplay" class="speed-value">(0.05s)</span>
             </div>
-            <button id="loadChallengeBtn" class="btn btn-challenge" title="課題を読み込む">📚 課題</button>
+            <button id="loadQuestBtn" class="btn btn-quest" title="クエストを読み込む">📚 クエスト</button>
             <div class="execution-controls">
                 <button id="runBtn" class="btn btn-run">▶ RUN</button>
                 <button id="pauseBtn" class="btn btn-pause" title="実行を一時停止し、手動ステップに切り替え">⏸ 一時停止</button>
@@ -440,40 +440,55 @@
         </section>
     </main>
 
-    <!-- チャレンジパネル -->
-    <div id="challengePanel" class="challenge-panel" style="display: none;">
-        <!-- 課題情報がここに動的に挿入されます -->
+    <!-- クエストパネル -->
+    <div id="questPanel" class="quest-panel" style="display: none;">
+        <!-- クエスト情報がここに動的に挿入されます -->
     </div>
 
-    <!-- 課題選択モーダル -->
-    <div id="challengeModal" class="modal" style="display: none;">
-        <div class="modal-content challenge-modal-content">
-            <h2>📚 課題を選択</h2>
-            <div class="challenge-list">
-                <div class="challenge-category">
-                    <h3>🔍 探索アルゴリズム</h3>
-                    <button class="challenge-item" data-challenge="linear_search_01">
-                        <span class="challenge-title">最大値と最小値を探せ！</span>
-                        <span class="challenge-difficulty">⭐⭐</span>
+    <!-- クエスト選択モーダル -->
+    <div id="questModal" class="modal" style="display: none;">
+        <div class="modal-content quest-modal-content">
+            <h2>📚 クエストを選択</h2>
+            <div class="quest-list">
+                <div class="quest-category">
+                    <h3>🔁 ループと判定</h3>
+                    <button class="quest-item" data-quest="loop_01">
+                        <span class="quest-title">数字に色を塗れ</span>
+                        <span class="quest-difficulty">⭐</span>
                     </button>
-                    <button class="challenge-item" data-challenge="linear_search_02">
-                        <span class="challenge-title">数字を探せ！(応用)</span>
-                        <span class="challenge-difficulty">⭐⭐</span>
+                    <button class="quest-item" data-quest="loop_02">
+                        <span class="quest-title">数字を並べろ</span>
+                        <span class="quest-difficulty">⭐</span>
                     </button>
-                    <button class="challenge-item" data-challenge="linear_search_03">
-                        <span class="challenge-title">二分探索で高速検索！</span>
-                        <span class="challenge-difficulty">⭐⭐⭐</span>
+                    <button class="quest-item" data-quest="loop_03">
+                        <span class="quest-title">99の表を作れ</span>
+                        <span class="quest-difficulty">⭐⭐</span>
                     </button>
                 </div>
-                <div class="challenge-category">
+                <div class="quest-category">
+                    <h3>🔍 探索アルゴリズム</h3>
+                    <button class="quest-item" data-quest="linear_search_01">
+                        <span class="quest-title">最大値と最小値を探せ！</span>
+                        <span class="quest-difficulty">⭐⭐</span>
+                    </button>
+                    <button class="quest-item" data-quest="linear_search_02">
+                        <span class="quest-title">数字を探せ！(線形探索)</span>
+                        <span class="quest-difficulty">⭐⭐</span>
+                    </button>
+                    <button class="quest-item" data-quest="linear_search_03">
+                        <span class="quest-title">二分探索で高速検索！</span>
+                        <span class="quest-difficulty">⭐⭐⭐</span>
+                    </button>
+                </div>
+                <div class="quest-category">
                     <h3>📊 ソートアルゴリズム</h3>
-                    <button class="challenge-item" data-challenge="bubble_sort_01">
-                        <span class="challenge-title">数字を並び替えよう！レベル1</span>
-                        <span class="challenge-difficulty">⭐⭐</span>
+                    <button class="quest-item" data-quest="bubble_sort_01">
+                        <span class="quest-title">数字を並び替えよう！レベル1</span>
+                        <span class="quest-difficulty">⭐⭐</span>
                     </button>
                 </div>
             </div>
-            <button id="closeChallengeModal" class="btn btn-reset">閉じる</button>
+            <button id="closeQuestModal" class="btn btn-reset">閉じる</button>
         </div>
     </div>
 
@@ -526,8 +541,8 @@
     <script src="tutorial-system.js?v=1"></script>
     <script src="palette-tabs.js?v=1"></script>
     <script src="turtle-simulator.js?v=6"></script>
-    <script src="app.js?v=8"></script>
-    <script src="app-challenge-listeners.js?v=1"></script>
+    <script src="app.js?v=9"></script>
+    <script src="app-challenge-listeners.js?v=2"></script>
 </body>
 
 </html>

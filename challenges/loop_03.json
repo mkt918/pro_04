@@ -1,0 +1,10 @@
+{
+    "id": "loop_03",
+    "title": "99の表を作れ",
+    "description": "左上の9x9の範囲に、九九の表を作成しましょう！（例：1行1列目には1x1=1、2行3列目には2x3=6）。二重ループ（ループの中のループ）を使ってみよう！",
+    "gridSize": 10,
+    "successCondition": {
+        "type": "multiplication_table",
+        "size": 9
+    }
+}

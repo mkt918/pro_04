@@ -1,0 +1,12 @@
+{
+    "id": "loop_02",
+    "title": "数字を並べろ",
+    "description": "1行目のマスに、左から順に「1, 2, 3, 4, 5, 6, 7, 8, 9, 10」と書き込みましょう！変数とループを組み合わせて挑戦だ！",
+    "gridSize": 10,
+    "successCondition": {
+        "type": "array_sorted",
+        "row": 0,
+        "specificSequence": true,
+        "expectedLength": 10
+    }
+}

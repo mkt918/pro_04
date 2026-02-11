@@ -1,0 +1,11 @@
+{
+    "id": "loop_01",
+    "title": "数字に色を塗れ",
+    "description": "1行目にランダムに並んだ数字があるマスを、すべて青色で塗りましょう。ループを使って効率よく移動してみてね！",
+    "gridSize": 10,
+    "randomizeRow0": true,
+    "successCondition": {
+        "type": "cells_colored_with_numbers",
+        "color": "#0000ff"
+    }
+}

@@ -1,7 +1,7 @@
-/* ===== チャレンジシステム用スタイル ===== */
+/* ===== クエストシステム用スタイル ===== */
 
-/* チャレンジボタン */
-.btn-challenge {
+/* クエストボタン */
+.btn-quest {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
@@ -12,13 +12,13 @@
     transition: all 0.3s ease;
 }
 
-.btn-challenge:hover {
+.btn-quest:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* チャレンジパネル */
-.challenge-panel {
+/* クエストパネル */
+.quest-panel {
     position: fixed;
     top: 80px;
     right: 20px;
@@ -45,7 +45,7 @@
     }
 }
 
-.challenge-header {
+.quest-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -54,7 +54,7 @@
     border-bottom: 2px solid #667eea;
 }
 
-.challenge-header h3 {
+.quest-header h3 {
     font-size: 1.1rem;
     color: #667eea;
     margin: 0;
@@ -81,7 +81,7 @@
     color: #333;
 }
 
-.challenge-description {
+.quest-description {
     margin-bottom: 1rem;
     padding: 1rem;
     background: rgba(102, 126, 234, 0.1);
@@ -89,17 +89,17 @@
     line-height: 1.6;
 }
 
-.challenge-description p {
+.quest-description p {
     margin: 0;
     color: #555;
 }
 
-.challenge-actions {
+.quest-actions {
     display: flex;
     gap: 0.5rem;
 }
 
-.challenge-actions .btn {
+.quest-actions .btn {
     flex: 1;
 }
 
@@ -120,21 +120,21 @@
     }
 }
 
-/* 課題選択モーダル */
-.challenge-modal-content {
+/* クエスト選択モーダル */
+.quest-modal-content {
     max-width: 600px;
     max-height: 80vh;
     overflow-y: auto;
 }
 
-.challenge-list {
+.quest-list {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     margin: 1.5rem 0;
 }
 
-.challenge-category h3 {
+.quest-category h3 {
     font-size: 1rem;
     color: #667eea;
     margin-bottom: 0.75rem;
@@ -142,7 +142,7 @@
     border-bottom: 2px solid rgba(102, 126, 234, 0.3);
 }
 
-.challenge-item {
+.quest-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -156,17 +156,17 @@
     text-align: left;
 }
 
-.challenge-item:hover {
+.quest-item:hover {
     background: rgba(102, 126, 234, 0.1);
     border-color: #667eea;
     transform: translateX(5px);
 }
 
-.challenge-title {
+.quest-title {
     font-weight: 600;
     color: #333;
 }
 
-.challenge-difficulty {
+.quest-difficulty {
     font-size: 1.2rem;
 }

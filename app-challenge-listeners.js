@@ -1,47 +1,47 @@
 
-// チャレンジシステムのイベントリスナー
+// クエストシステムのイベントリスナー
 function initChallengeListeners() {
-    const loadChallengeBtn = document.getElementById('loadChallengeBtn');
-    const challengeModal = document.getElementById('challengeModal');
-    const closeChallengeModal = document.getElementById('closeChallengeModal');
-    const challengeItems = document.querySelectorAll('.challenge-item');
+    const loadQuestBtn = document.getElementById('loadQuestBtn');
+    const questModal = document.getElementById('questModal');
+    const closeQuestModal = document.getElementById('closeQuestModal');
+    const questItems = document.querySelectorAll('.quest-item');
 
-    // 課題ボタンをクリック
-    if (loadChallengeBtn) {
-        loadChallengeBtn.addEventListener('click', () => {
-            if (challengeModal) {
-                challengeModal.style.display = 'flex';
+    // クエストボタンをクリック
+    if (loadQuestBtn) {
+        loadQuestBtn.addEventListener('click', () => {
+            if (questModal) {
+                questModal.style.display = 'flex';
             }
         });
     }
 
     // モーダルを閉じる
-    if (closeChallengeModal) {
-        closeChallengeModal.addEventListener('click', () => {
-            if (challengeModal) {
-                challengeModal.style.display = 'none';
+    if (closeQuestModal) {
+        closeQuestModal.addEventListener('click', () => {
+            if (questModal) {
+                questModal.style.display = 'none';
             }
         });
     }
 
-    // 課題を選択
-    challengeItems.forEach(item => {
+    // クエストを選択
+    questItems.forEach(item => {
         item.addEventListener('click', async function () {
-            const challengeId = this.dataset.challenge;
-            if (challengeSystem && challengeId) {
-                await challengeSystem.loadChallenge(challengeId);
-                if (challengeModal) {
-                    challengeModal.style.display = 'none';
+            const questId = this.dataset.quest;
+            if (challengeSystem && questId) {
+                await challengeSystem.loadChallenge(questId);
+                if (questModal) {
+                    questModal.style.display = 'none';
                 }
             }
         });
     });
 
     // モーダルの外側をクリックで閉じる
-    if (challengeModal) {
-        challengeModal.addEventListener('click', (e) => {
-            if (e.target === challengeModal) {
-                challengeModal.style.display = 'none';
+    if (questModal) {
+        questModal.addEventListener('click', (e) => {
+            if (e.target === questModal) {
+                questModal.style.display = 'none';
             }
         });
     }
