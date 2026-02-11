@@ -85,6 +85,8 @@
 .program-block[data-category="basic"][data-type="loop_start"],
 .block-template[data-category="basic"][data-type="while_start"],
 .program-block[data-category="basic"][data-type="while_start"],
+.block-template[data-category="basic"][data-type="while_cell"],
+.program-block[data-category="basic"][data-type="while_cell"],
 .block-template[data-category="basic"][data-type="loop_end"],
 .program-block[data-category="basic"][data-type="loop_end"] {
     background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
