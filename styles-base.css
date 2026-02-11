@@ -70,4 +70,5 @@ body {
 
 .column-canvas {
     flex: 0 0 650px;
+    overflow: visible;
 }

@@ -75,9 +75,10 @@ class TurtleSimulator {
     }
 
     getGridMetrics() {
-        const labelArea = 30; // ラベル表示用の余白
-        const availableWidth = this.width - labelArea;
-        const availableHeight = this.height - labelArea;
+        const labelArea = 30; // 左・上のラベル表示用の余白
+        const margin = 10;    // 右・下の余白
+        const availableWidth = this.width - labelArea - margin;
+        const availableHeight = this.height - labelArea - margin;
         const cellSize = Math.floor(Math.min(availableWidth, availableHeight) / this.gridSize);
 
         const offsetX = labelArea + (availableWidth - cellSize * this.gridSize) / 2;
