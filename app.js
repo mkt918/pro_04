@@ -168,7 +168,7 @@ function setupNewBlock(el) {
     // 自動セット配置機能（ループ、条件分岐）
     if (type === 'loop_start') {
         setTimeout(() => addBlockProgrammatically('loop_end'), 50);
-    } else if (type === 'while_start') {
+    } else if (type === 'while_start' || type === 'while_cell') {
         setTimeout(() => addBlockProgrammatically('loop_end'), 50);
     } else if (type === 'if_start') {
         setTimeout(() => addBlockProgrammatically('if_end'), 50);
@@ -211,6 +211,13 @@ function setupNewBlock(el) {
 
         const eventType = control.tagName === 'SELECT' ? 'change' : 'input';
         control.addEventListener(eventType, function () {
+            // 数値入力欄は全角→半角に自動変換
+            if (control.tagName === 'INPUT' && control.type !== 'color') {
+                const pos = this.selectionStart;
+                this.value = this.value.replace(/[０-９．－＋]/g, c =>
+                    String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+                try { this.setSelectionRange(pos, pos); } catch(e) {}
+            }
             const currentParams = JSON.parse(el.dataset.params);
             currentParams[paramName] = this.value;
             el.dataset.params = JSON.stringify(currentParams);
@@ -417,87 +424,94 @@ function closeDataMenu() {
 
 // 実行管理フラグ
 let isStepping = false;
-let currentStepIndex = -1;
+let currentStepIndex = 0; // 「何番目の実行コマンドまで表示するか」（0=初期状態）
 
 async function stopProgram() {
     if (turtleSim) {
         turtleSim.breakFlag = true;
         isStepping = false;
-        currentStepIndex = -1;
+        currentStepIndex = 0;
         showConsoleMessage('プログラムを停止しました。', 'info');
     }
 }
 
-// 一時停止：実行中断し、現在のブロック位置から手動ステップ操作に切り替える
+// 一時停止：実行中断し、現在の実行ステップ数から手動ステップ操作に切り替える
 async function pauseProgram() {
     if (turtleSim && turtleSim.isRunning) {
         turtleSim.breakFlag = true;
-        // 現在実行中のブロックインデックスをステップ位置として保存
-        currentStepIndex = turtleSim.currentBlockIndex;
+        // 現在の実行ステップ数を保存（「次へ」「戻る」の起点として使う）
+        currentStepIndex = turtleSim.stepCount;
         isStepping = true;
-        showConsoleMessage(`⏸ ステップ ${currentStepIndex + 1} で一時停止。「戻る」「進む」で確認できます。`, 'info');
+        showConsoleMessage(`⏸ ${currentStepIndex} ステップ目で一時停止。「戻る」「進む」で確認できます。`, 'info');
     } else {
         showConsoleMessage('実行中のみ一時停止できます。', 'info');
     }
 }
 
+// currentStepIndex: 「何番目の実行コマンドまで表示するか」（0始まり、-1=初期状態）
+// ループ内でも1実行ずつ進む
+
 async function stepForward() {
     if (turtleSim && turtleSim.isRunning) {
-        // すでに通常実行中の場合は何もしない
         return;
     }
 
     isStepping = true;
     updateProgramBlocks();
 
-    if (currentStepIndex === -1) {
-        currentStepIndex = 0;
-    } else {
-        currentStepIndex++;
-    }
+    // 1実行進める
+    currentStepIndex++;
 
-    if (currentStepIndex >= programBlocks.length) {
-        showConsoleMessage('最後の手順なのだ！', 'info');
-        currentStepIndex = programBlocks.length - 1;
-        return;
-    }
-
-    // stepBack と同様に毎回リセット＆高速リプレイで正確な状態を再現する
-    // （リセットしないと前ステップの移動が累積してしまうため）
-    turtleSim.reset(); // breakFlag も同時にリセットされる
+    // リセット＆高速リプレイで正確な状態を再現する
+    const savedSpeed = turtleSim.speed;
+    turtleSim.reset(); // breakFlag もリセット（speedは変わらない）
     if (variableSystem) variableSystem.reset();
 
-    const originalSpeed = turtleSim.speed;
-    turtleSim.speed = 0; // 前ステップを即時リプレイ
-    const code = generatePythonCodeAtStep(currentStepIndex);
+    turtleSim.speed = 0; // 即時リプレイ
+    const code = generatePythonCode();
     await executeTurtleCommandsAtStep(code, currentStepIndex);
-    turtleSim.speed = originalSpeed;
+
+    // 実行が終わってみて、実際に何ステップ実行されたか確認
+    const actualSteps = turtleSim.stepCount;
+    if (actualSteps < currentStepIndex) {
+        // プログラム終端を超えていた場合は末尾に戻す
+        currentStepIndex = actualSteps;
+        showConsoleMessage('最後の手順なのだ！', 'info');
+    } else {
+        showConsoleMessage(`▶ ステップ ${currentStepIndex} を実行したのだ！`, 'info');
+    }
+
+    turtleSim.speed = savedSpeed;
 }
 
 async function stepBack() {
     if (currentStepIndex <= 0) {
-        turtleSim.reset(); // breakFlag もリセットされる
+        const savedSpeed = turtleSim.speed;
+        turtleSim.reset();
         if (variableSystem) variableSystem.reset();
-        currentStepIndex = -1;
+        turtleSim.speed = savedSpeed;
+        currentStepIndex = 0;
         clearActiveHighlights();
         showConsoleMessage('最初の位置に戻ったのだ！', 'info');
         return;
     }
 
     currentStepIndex--;
-    // 「戻る」は「リセット + (現在の手-1)まで高速再実行」で実現
-    const targetStep = currentStepIndex;
-    turtleSim.reset(); // breakFlag もリセットされる
+    // 「戻る」は「リセット + currentStepIndex回まで高速再実行」で実現
+    const savedSpeed = turtleSim.speed;
+    turtleSim.reset(); // breakFlag もリセット
     if (variableSystem) variableSystem.reset();
 
-    // 描画の即時反映のために一時的に速度を0にする
-    const originalSpeed = turtleSim.speed;
     turtleSim.speed = 0;
+    const code = generatePythonCode();
+    await executeTurtleCommandsAtStep(code, currentStepIndex);
 
-    const code = generatePythonCodeAtStep(targetStep);
-    await executeTurtleCommandsAtStep(code, targetStep);
+    turtleSim.speed = savedSpeed;
 
-    turtleSim.speed = originalSpeed;
+    if (currentStepIndex <= 0) {
+        clearActiveHighlights();
+        showConsoleMessage('最初の位置に戻ったのだ！', 'info');
+    }
 }
 
 function generatePythonCodeAtStep(stepIndex) {
@@ -581,7 +595,7 @@ async function runProgram() {
 
         // ステップ実行状態をリセット
         isStepping = false;
-        currentStepIndex = -1;
+        currentStepIndex = 0;
 
         runBtn.disabled = true;
         runBtn.textContent = '⏳...';
@@ -665,6 +679,8 @@ function resetProgram() {
     if (turtleSim) turtleSim.reset();
     if (variableSystem) variableSystem.reset();
     clearActiveHighlights();
+    isStepping = false;
+    currentStepIndex = 0;
 
     // プログラムエリアをクリアして初期ブロックを再配置
     const programArea = document.getElementById('programArea');

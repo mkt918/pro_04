@@ -30,6 +30,7 @@ class TurtleSimulator {
         // 実行制御フラグ
         this.breakFlag = false;
         this.hasError = false;
+        this.stepBreakFlag = false;
         this.stepCount = 0;
     }
 
@@ -112,11 +113,13 @@ class TurtleSimulator {
         this.angle = this.gridMode ? 0 : 0;  // グリッドモードは右向き(0度)、通常モードも0度
         this.penDown = this.gridMode ? false : true; // グリッドモードは上げ、通常モードは下げ
         this.color = 'black';
-        this.speed = 5;
+        // speedはリセット時に変えない（スライダー設定を維持する）
+        if (this.speed === undefined) this.speed = 5;
         this.lineWidth = 2;
         this.isRunning = false;
         this.hasError = false;
-        this.breakFlag = false; // stop後の再実行のためにリセット
+        this.breakFlag = false;    // stop後の再実行のためにリセット
+        this.stepBreakFlag = false; // ステップ実行停止フラグのリセット
 
         // タートルを描画
         this.drawTurtle();
@@ -620,13 +623,13 @@ class TurtleSimulator {
     async animateCellMove(targetX, targetY) {
         // グリッドモード用：セル単位でカクカク動く
         // グリッドモードでは線を引かず、移動のみ行う（fillCellで塗りつぶす）
+        // 待機はexecuteBlock側のsleepで行うため、ここでは描画のみ
         this.clearTurtle();
 
         this.x = targetX;
         this.y = targetY;
 
         this.drawTurtle();
-        await this.sleep(this.speed); // スライダーの速度設定をそのまま使用
     }
 
     updateStepDisplay() {
@@ -762,8 +765,8 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
     let i = startIndex;
 
     while (i < endIndex) {
-        // 停止ボタンやエラーでの中断
-        if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
+        // 停止ボタンやエラーでの中断（stepBreakFlagはステップ実行停止用）
+        if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag || turtleSim.stepBreakFlag)) break;
 
         const line = lines[i];
         const trimmed = line.trim();
@@ -782,11 +785,6 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
         if (metaMatch) {
             blockIdx = parseInt(metaMatch[1]);
 
-            // ステップ実行モードの場合、目標のインデックスを超えたら停止
-            if (targetStepIndex !== -1 && blockIdx > targetStepIndex) {
-                return; // ここでこのブロックの実行を終了
-            }
-
             // 実行中のブロックを強調表示
             if (typeof highlightActiveBlock === 'function') {
                 highlightActiveBlock(blockIdx);
@@ -796,6 +794,13 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
                 turtleSim.stepCount++;
                 turtleSim.updateStepDisplay();
                 turtleSim.currentBlockIndex = blockIdx;
+
+                // ステップ実行モードの場合、目標の実行回数を超えたら停止
+                // stepCount==targetStepIndexのコマンドは実行済み（stepCount++の後でチェック）
+                if (targetStepIndex !== -1 && turtleSim.stepCount > targetStepIndex) {
+                    turtleSim.stepBreakFlag = true; // ループも含め全体を止める（breakコマンドとは別フラグ）
+                    return;
+                }
             }
         }
 
@@ -827,9 +832,9 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
 
             while (evaluateExpression(conditionExpr)) {
                 await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end, targetStepIndex);
-                if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
+                if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag || turtleSim.stepBreakFlag)) break;
             }
-            // ループを抜けた際に breakFlag をリセット（この外側のループには影響させない）
+            // ループを抜けた際に breakFlag をリセット（breakコマンド用。stepBreakFlagはリセットしない）
             if (turtleSim && turtleSim.breakFlag) {
                 turtleSim.breakFlag = false;
             }
@@ -845,9 +850,10 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
                 const blockRange = findBlockRange(lines, i, endIndex);
                 for (let c = 0; c < loopCount; c++) {
                     await executeBlock(lines, blockRange.start, blockRange.indent, blockRange.end, targetStepIndex);
-                    if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
+                    if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag || turtleSim.stepBreakFlag)) break;
                 }
                 if (turtleSim && turtleSim.breakFlag) turtleSim.breakFlag = false;
+                // stepBreakFlagはリセットしない（外側のループも止める）
                 i = blockRange.end;
                 continue;
             }
@@ -878,7 +884,7 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
             }
 
             // 停止チェック
-            if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag)) break;
+            if (turtleSim && (turtleSim.hasError || turtleSim.breakFlag || turtleSim.stepBreakFlag)) break;
 
             // ステップモードでない場合のみ待機
             if (targetStepIndex === -1) {

@@ -118,6 +118,7 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="t.get_current_value()">今のマス</option>
                     </select> <select class="block-select" data-param="op">
                         <option value="==">＝</option>
                         <option value="!=">≠</option>
@@ -140,7 +141,12 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="t.get_current_value()">今のマス</option>
                     </select> まで繰り返す ↓
+                </div>
+                <div class="block-template" data-category="basic" data-type="while_cell"
+                    data-code="while t.get_current_value() != 0:">
+                    🔄 今のマスに数字がある間 繰り返す ↓
                 </div>
                 <div class="block-template" data-category="basic" data-type="break" data-code="break">
                     🛑 このループを強制的に抜ける
@@ -157,6 +163,7 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="t.get_current_value()">今のマス</option>
                     </select> <select class="block-select" data-param="op">
                         <option value="==">＝</option>
                         <option value="!=">≠</option>
@@ -179,6 +186,7 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="t.get_current_value()">今のマス</option>
                     </select> なら ↓
                 </div>
                 <div class="block-template" data-category="basic" data-type="else_start" data-code="else:">
