@@ -657,9 +657,11 @@ function evaluateExpression(expr) {
     if (expr === undefined || expr === null) return 0;
     let s = expr.toString().trim();
 
-    // マス目の値取得
+    // マス目の値取得 (関数呼び出しを数値リテラルに置換)
     if (s.includes('t.get_current_value()')) {
-        s = s.replace(/t\.get_current_value\(\)/g, turtleSim.get_current_value());
+        const val = turtleSim ? turtleSim.get_current_value() : 0;
+        // 文字列ではなく数値リテラルとして埋め込む
+        s = s.replace(/t\.get_current_value\(\)/g, val);
     }
 
     // 変数（箱A〜C）の置換
@@ -668,27 +670,24 @@ function evaluateExpression(expr) {
             const val = variableSystem.getVariable(name);
             // 正規表現の特殊文字をエスケープしてから置換
             const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(escapedName, 'g');
+            const regex = new RegExp(`\\b${escapedName}\\b`, 'g'); // 単語境界を指定して誤置換を防ぐ
             s = s.replace(regex, val);
         }
     }
 
     try {
-        // セキュリティ上の懸念はあるが、教育用シミュレータの内部処理として
-        // 算術演算 (+, -, *, /) を行う。
-        // 割り算を四捨五入するために、カスタム関数の実装を検討するか、
-        // evalの結果に対して処理を行う。
-
         // Python風の演算子をJSに変換
         s = s.replace(/==/g, ' === ');
         s = s.replace(/\bnot\b/g, ' ! ');
         s = s.replace(/\band\b/g, ' && ');
         s = s.replace(/\bor\b/g, ' || ');
 
-        // 安全な計算のために簡易的なパーサを通すべきだが、
-        // ここでは eval を使用し、直後に四捨五入等の後処理を入れる。
-        // ※ 本番環境では math.js などのライブラリ使用を推奨
+        // 文字列の数字を数値として評価されるようにする
+        // evalを実行。
         let result = eval(s);
+
+        // 比較結果（boolean）はそのまま返す
+        if (typeof result === 'boolean') return result;
 
         // 割り算の結果や浮動小数点を四捨五入（ユーザーの要望）
         if (typeof result === 'number' && !Number.isInteger(result)) {
@@ -869,13 +868,25 @@ async function executeBlock(lines, startIndex, baseIndent, endIndex, targetStepI
             const conditionExpr = match[1];
             const ifRange = findBlockRange(lines, i, endIndex);
 
-            // else の範囲を探す（行末に # @idx:N が付くため startsWith で判定）
+            // else の範囲を探す
             let elseRange = null;
-            if (ifRange.end < endIndex) {
-                const nextLine = lines[ifRange.end].trim();
-                if (nextLine.startsWith('else:')) {
-                    elseRange = findBlockRange(lines, ifRange.end, endIndex);
+            let checkIdx = ifRange.end;
+
+            // コメント行や空行をスキップして else: を探す
+            while (checkIdx < endIndex) {
+                const nextLine = lines[checkIdx].trim();
+                const nextLineCleaned = nextLine.replace(/\s*#\s*@idx:\d+\s*$/, '');
+
+                if (nextLineCleaned.startsWith('else:')) {
+                    elseRange = findBlockRange(lines, checkIdx, endIndex);
+                    break;
                 }
+
+                // コメントでも空行でもない、かつ else でもない行を見つけたら探索終了
+                if (nextLineCleaned !== '' && !nextLineCleaned.startsWith('#')) {
+                    break;
+                }
+                checkIdx++;
             }
 
             if (evaluateExpression(conditionExpr)) {
