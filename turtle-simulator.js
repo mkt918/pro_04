@@ -670,7 +670,7 @@ function evaluateExpression(expr) {
             const val = variableSystem.getVariable(name);
             // 正規表現の特殊文字をエスケープしてから置換
             const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`\\b${escapedName}\\b`, 'g'); // 単語境界を指定して誤置換を防ぐ
+            const regex = new RegExp(escapedName, 'g'); // 日本語変数名は \b では判定できないため単純置換
             s = s.replace(regex, val);
         }
     }
