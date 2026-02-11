@@ -88,6 +88,9 @@ class TurtleSimulator {
     }
 
     reset() {
+        // マス目データを再初期化（数値を0に）
+        this.initGridData();
+
         // メインキャンバス（描画用）をクリア
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillStyle = '#ffffff';
@@ -121,11 +124,12 @@ class TurtleSimulator {
         this.hasError = false;
         this.breakFlag = false;    // stop後の再実行のためにリセット
         this.stepBreakFlag = false; // ステップ実行停止フラグのリセット
+        this.stepCount = 0;
 
         // タートルを描画
         this.drawTurtle();
-        this.stepCount = 0;
         this.updateStepDisplay();
+        this.updateCurrentValueDisplay();
     }
 
     setGridMode(enabled, size = 10) {
