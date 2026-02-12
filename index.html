@@ -214,8 +214,18 @@
                 <div class="block-template" data-category="basic" data-type="if_end" data-code="# 条件分岐終わり">
                     🔀 ↑ ここまで
                 </div>
-                <div class="block-template" data-category="basic" data-type="fillcell" data-code="t.fillcell()">
-                    🎨 マスを塗る
+                <div class="block-template" data-category="basic" data-type="fillcell" data-code="t.fillcell('{color}')">
+                    🎨 マスを <select class="block-select" data-param="color">
+                        <option value="orange" selected>オレンジ</option>
+                        <option value="red">赤</option>
+                        <option value="blue">青</option>
+                        <option value="green">緑</option>
+                        <option value="yellow">黄色</option>
+                        <option value="purple">紫</option>
+                        <option value="pink">ピンク</option>
+                        <option value="cyan">水色</option>
+                        <option value="black">黒</option>
+                    </select> で塗る
                 </div>
                 <div class="block-template" data-category="basic" data-type="clear" data-code="t.clear()">
                     🧹 画面をそうじする

@@ -435,17 +435,15 @@ class TurtleSimulator {
         this.penDown = true;
     }
 
-    fillCell() {
+    fillCell(color = null) {
         if (this.hasError) return;
         if (!this.gridMode) {
             console.warn('fillCell() はグリッドモードでのみ使用できます');
             return;
         }
 
-        // penDownの状態をチェック（ペンが下りている時だけ塗りつぶす）
-        if (!this.penDown) {
-            return;
-        }
+        // 色が指定された場合はその色を使用、なければ現在の色を使用
+        const fillColor = color || this.color;
 
         const { cellSize, offsetX, offsetY } = this.getGridMetrics();
 
@@ -457,12 +455,12 @@ class TurtleSimulator {
         const cellX = offsetX + currentCellX * cellSize;
         const cellY = offsetY + currentCellY * cellSize;
 
-        this.ctx.fillStyle = this.color;
+        this.ctx.fillStyle = fillColor;
         this.ctx.fillRect(cellX, cellY, cellSize, cellSize);
 
         // 塗りつぶし色を記録（クエスト判定用）
         if (this.cellColors[currentCellY] && this.cellColors[currentCellY][currentCellX] !== undefined) {
-            this.cellColors[currentCellY][currentCellX] = this.color;
+            this.cellColors[currentCellY][currentCellX] = fillColor;
         }
 
         // タートルを再描画
@@ -1149,7 +1147,13 @@ async function executeCommand(cmd) {
             turtleSim.pendown();
         }
         else if (cmd.includes('fillcell')) {
-            turtleSim.fillCell();
+            // fillcell() または fillcell('色') の両方に対応
+            const match = cmd.match(/fillcell\(['"](.+?)['"]\)/);
+            if (match) {
+                turtleSim.fillCell(match[1]);
+            } else {
+                turtleSim.fillCell();
+            }
         }
         else if (cmd.includes('color')) {
             // HEXなどの特殊文字も通るように正規表現を緩和
