@@ -216,7 +216,7 @@ function setupNewBlock(el) {
                 const pos = this.selectionStart;
                 this.value = this.value.replace(/[０-９．－＋]/g, c =>
                     String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
-                try { this.setSelectionRange(pos, pos); } catch(e) {}
+                try { this.setSelectionRange(pos, pos); } catch (e) { }
             }
             const currentParams = JSON.parse(el.dataset.params);
             currentParams[paramName] = this.value;
@@ -761,57 +761,6 @@ function saveToLocalStorage() {
         blocks: serializable
     };
 
-    const data = JSON.stringify(dataWithVersion);
-    localStorage.setItem('turtle_program', data);
-    showConsoleMessage('ブラウザに保存したのだ！💾', 'success');
-}
-
-// LocalStorageから読込（バージョン互換性チェック付き）
-function loadFromLocalStorage() {
-    const data = localStorage.getItem('turtle_program');
-    if (!data) {
-        showConsoleMessage('保存されたデータがないのだ！📂', 'error');
-        return;
-    }
-
-    try {
-        const parsed = JSON.parse(data);
-        let blocks;
-
-        // バージョン情報がある場合
-        if (parsed.version) {
-            if (parsed.version !== DATA_VERSION) {
-                console.warn(`データバージョンが異なります: ${parsed.version} -> ${DATA_VERSION}`);
-                // 将来的なバージョン変換処理をここに追加
-            }
-            blocks = parsed.blocks;
-        } else {
-            // 旧形式（バージョン情報なし）の場合
-            blocks = parsed;
-        }
-
-        reconstructProgram(blocks);
-        showConsoleMessage('保存データを読み込んだのだ！✨', 'success');
-    } catch (error) {
-        showConsoleMessage('データの読み込みに失敗したのだ...🚫', 'error');
-        console.error('Load error:', error);
-    }
-}
-
-// ファイルに出力 (JSON) - バージョン情報付き
-function exportToFile() {
-    updateProgramBlocks();
-    const serializable = programBlocks.map(b => ({
-        type: b.type,
-        params: b.params
-    }));
-
-    const dataWithVersion = {
-        version: DATA_VERSION,
-        timestamp: new Date().toISOString(),
-        blocks: serializable
-    };
-
     const data = JSON.stringify(dataWithVersion, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -900,6 +849,27 @@ function closeWelcomeModal() {
         localStorage.setItem('python_turtle_welcome_dismissed', 'true');
     }
     document.getElementById('tutorialModal').style.display = 'none';
+}
+
+
+// 保存・読み込み（ファイルベース）
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const fileInput = document.getElementById('fileInput');
+const programNameInput = document.getElementById('programName');
+
+if (exportBtn) {
+    exportBtn.addEventListener('click', exportProgram);
+}
+
+if (importBtn) {
+    importBtn.addEventListener('click', () => {
+        if (fileInput) fileInput.click();
+    });
+}
+
+if (fileInput) {
+    fileInput.addEventListener('change', importProgram);
 }
 
 // チュートリアルイベントリスナー

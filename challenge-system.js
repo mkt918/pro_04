@@ -40,9 +40,44 @@ class ChallengeSystem {
             if (!challenge.initialGrid) {
                 challenge.initialGrid = Array(challenge.gridSize || 10).fill(0).map(() => Array(challenge.gridSize || 10).fill(0));
             }
-            // 0-9の数字をランダムに配置
-            for (let i = 0; i < (challenge.gridSize || 10); i++) {
-                challenge.initialGrid[0][i] = Math.floor(Math.random() * 10);
+
+            // loop_01用: 7を2つ必ず含める + 空白(0)なし
+            if (challenge.id === 'loop_01') {
+                const size = challenge.gridSize || 10;
+                // まず全て0-9のランダム（0も含むが、表示上0は空白ならあとで調整が必要。
+                // ユーザー要望: "1行目に空白はいらない" -> 1-9の範囲？それとも0-9で0も数字として表示？
+                // 通常0は空白扱い。数字を表示するなら0も数字として描画する必要があるが、
+                // turtle-simulatorの実装依存。
+                // ここでは「数字があるマス」＝非0 と仮定していたが、
+                // "0-9のランダム" と言っているので 0 も数字として扱う意図か？
+                // しかし「空白はいらない」＝「全てのセルに埋める」。
+                // もし0が空白なら、1-9で埋めるべき。
+                // いったん1-9で埋めて、7を2箇所配置する。
+
+                for (let i = 0; i < size; i++) {
+                    // 1-9のランダム (7を除く、後で配置)
+                    let val;
+                    do {
+                        val = Math.floor(Math.random() * 9) + 1; // 1-9
+                    } while (val === 7);
+                    challenge.initialGrid[0][i] = val;
+                }
+
+                // 2箇所に7を配置
+                let pos1 = Math.floor(Math.random() * size);
+                let pos2;
+                do {
+                    pos2 = Math.floor(Math.random() * size);
+                } while (pos1 === pos2);
+
+                challenge.initialGrid[0][pos1] = 7;
+                challenge.initialGrid[0][pos2] = 7;
+
+            } else {
+                // 通常のランダム (0-9)
+                for (let i = 0; i < (challenge.gridSize || 10); i++) {
+                    challenge.initialGrid[0][i] = Math.floor(Math.random() * 10);
+                }
             }
         }
     }
@@ -149,6 +184,9 @@ class ChallengeSystem {
             case 'cells_colored_with_numbers':
                 result = this.checkCellsColoredWithNumbers(condition);
                 break;
+            case 'specific_number_colored': // 新規追加
+                result = this.checkSpecificNumberColored(condition);
+                break;
             case 'cell_colored':
                 result = this.checkCellColored(condition);
                 break;
@@ -186,6 +224,47 @@ class ChallengeSystem {
             success: true,
             message: 'お見事！数字があるマスをすべて塗ることができました！🎉'
         };
+    }
+
+    // 指定した数字のマスが塗られているかチェック（それ以外が塗られていたらNG）
+    checkSpecificNumberColored(condition) {
+        if (!turtleSim || !turtleSim.gridData || !turtleSim.cellColors) return { success: false, message: 'エラー' };
+
+        const targetNum = condition.targetNumber;
+        const requiredColor = condition.color;
+
+        let allTargetsColored = true;
+        let invalidCellColored = false;
+
+        for (let row = 0; row < turtleSim.gridSize; row++) {
+            for (let col = 0; col < turtleSim.gridSize; col++) {
+                const num = turtleSim.gridData[row][col];
+                const color = turtleSim.cellColors[row][col];
+                const isColored = color === requiredColor; // 指定色で塗られているか
+                // 色指定が無い場合は、何か色があればOKとするなら color !== null
+                // ここでは condition.color が必須前提
+
+                if (num === targetNum) {
+                    if (!isColored) {
+                        allTargetsColored = false;
+                    }
+                } else {
+                    if (isColored) {
+                        invalidCellColored = true;
+                    }
+                }
+            }
+        }
+
+        if (invalidCellColored) {
+            return { success: false, message: `残念！「${targetNum}」以外のマスも塗られています。` };
+        }
+
+        if (!allTargetsColored) {
+            return { success: false, message: `まだ全ての「${targetNum}」を塗れていません。` };
+        }
+
+        return { success: true, message: `お見事！全ての「${targetNum}」を正しく塗れました！🎉` };
     }
 
     // 九九の表をチェック

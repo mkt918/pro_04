@@ -54,10 +54,15 @@
             <div class="dropdown">
                 <button id="dataBtn" class="btn btn-data" title="保存・読込メニュー">💾 データ ▾</button>
                 <div class="dropdown-menu" id="dataMenu">
-                    <button id="saveBtn">💾 ブラウザに保存</button>
-                    <button id="loadBtn">📂 ブラウザから読込</button>
-                    <button id="exportBtn">📤 ファイルに出力</button>
-                    <button id="importBtn">📥 ファイルから読込</button>
+                    <div class="header-controls">
+                        <span>Program Name:</span>
+                        <input type="text" id="programName" placeholder="my_program" value="my_program">
+                    </div>
+                    <div class="header-controls" style="margin-right: auto; padding-left: 20px;">
+                        <button id="exportBtn" class="btn btn-save" title="ファイルを保存">💾 Save</button>
+                        <button id="importBtn" class="btn btn-load" title="ファイルを読み込む">📂 Load</button>
+                        <input type="file" id="fileInput" accept=".json" style="display: none;">
+                    </div>
                 </div>
             </div>
             <button id="clearAllBtn" class="btn btn-clear" title="プログラムを全削除">🗑️ クリア</button>
@@ -201,8 +206,6 @@
                 <div class="block-template" data-category="basic" data-type="else_start" data-code="else:">
                     🔀 そうでなければ ↓
                 </div>
-                <!-- 操作セット -->
-                <div class="palette-category-sub" data-category="basic">🎯 操作</div>
                 <div class="block-template" data-category="basic" data-type="fillcell" data-code="t.fillcell()">
                     🎨 マスを塗る
                 </div>
@@ -263,8 +266,6 @@
                     </select> に入れる
                 </div>
 
-                <!-- 演算 -->
-                <div class="palette-category-sub" data-category="variable">🧪 けいさん</div>
                 <div class="block-template" data-category="variable" data-type="var_set"
                     data-code="var_set('{target}', {v1} {op} {v2})">
                     🧪 <select class="block-select" data-param="target">
@@ -429,7 +430,7 @@
                     </button>
                     <button class="quest-item" data-quest="loop_02">
                         <span class="quest-title">数字を並べろ</span>
-                        <span class="quest-difficulty">⭐</span>
+                        <span class="quest-difficulty">⭐⭐⭐⭐</span>
                     </button>
                     <button class="quest-item" data-quest="loop_03">
                         <span class="quest-title">99の表を作れ</span>
