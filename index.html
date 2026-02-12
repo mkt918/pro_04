@@ -155,6 +155,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="t.get_current_value()">今のマス</option>
                     </select> まで繰り返す ↓
                 </div>
@@ -177,6 +179,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="t.get_current_value()">今のマス</option>
                     </select> <select class="block-select" data-param="op">
                         <option value="==">＝</option>
@@ -200,6 +204,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="t.get_current_value()">今のマス</option>
                     </select> なら ↓
                 </div>
@@ -221,6 +227,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> に <input type="text" class="block-input" data-param="value" value="0" size="3"> を入れる
                 </div>
                 <div class="block-template" data-category="variable" data-type="var_set"
@@ -232,21 +240,25 @@
                     </select> の数字を入れる
                 </div>
 
-                <!-- 座標・マス目操作（箱タブへ統合） -->
-                <div class="block-template" data-category="variable" data-type="save_pos"
+                <!-- 座標・マス目操作（箱タブへ統合 -> 座標タブへ分離） -->
+                <div class="block-template" data-category="coordinate" data-type="save_pos"
                     data-code="t.savePos('{name}')">
                     📍 今の座標を <select class="block-select" data-param="name">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> に覚える
                 </div>
-                <div class="block-template" data-category="variable" data-type="restore_pos"
+                <div class="block-template" data-category="coordinate" data-type="restore_pos"
                     data-code="t.restorePos('{name}')">
                     🚩 <select class="block-select" data-param="name">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> に覚えた座標へ移動する
                 </div>
                 <div class="block-template" data-category="variable" data-type="grid_set"
@@ -255,6 +267,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> の数字を書く
                 </div>
                 <div class="block-template" data-category="variable" data-type="grid_get_to_var"
@@ -272,10 +286,14 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> に <select class="block-select" data-param="v1">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -296,6 +314,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -430,7 +450,7 @@
                     </button>
                     <button class="quest-item" data-quest="loop_02">
                         <span class="quest-title">数字を並べろ</span>
-                        <span class="quest-difficulty">⭐⭐⭐⭐</span>
+                        <span class="quest-difficulty">⭐</span>
                     </button>
                     <button class="quest-item" data-quest="loop_03">
                         <span class="quest-title">99の表を作れ</span>
@@ -456,7 +476,7 @@
                     <h3>📊 ソートアルゴリズム</h3>
                     <button class="quest-item" data-quest="bubble_sort_01">
                         <span class="quest-title">数字を並び替えよう！レベル1</span>
-                        <span class="quest-difficulty">⭐⭐</span>
+                        <span class="quest-difficulty">⭐⭐⭐⭐</span>
                     </button>
                 </div>
             </div>

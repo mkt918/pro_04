@@ -130,6 +130,16 @@
     color: white;
 }
 
+/* 座標 - ティール/シアンより濃い系 (Purpleはペンに使われているので、Deep Purple or Indigo or Teal) */
+/* ユーザー要望: "その下に座標というカテゴリを作成し色を変えて" -> ペンと被らないように */
+/* Teal/Green-Blue系 */
+.block-template[data-category="coordinate"],
+.program-block[data-category="coordinate"] {
+    background: linear-gradient(135deg, #20B2AA 0%, #008B8B 100%) !important;
+    border-left: 5px solid #006666;
+    color: white;
+}
+
 /* プログラムエリア */
 .program-area {
     flex: 1;

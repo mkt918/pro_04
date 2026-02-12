@@ -80,10 +80,10 @@ class VariableSystem {
         return this.arrays.get(name);
     }
 
-    // すべてリセット（箱A〜Cなどの固定変数は保持）
+    // すべてリセット（箱A〜Eなどの固定変数は保持）
     reset() {
         // 保持したい変数名
-        const reserved = ['箱A', '箱B', '箱C'];
+        const reserved = ['箱A', '箱B', '箱C', '箱D', '箱E'];
 
         // 変数の整理
         for (const name of Array.from(this.variables.keys())) {
@@ -103,48 +103,67 @@ class VariableSystem {
         this.updateVariablePanel();
     }
 
-    // 変数パネルの更新
+    // 変数パネルの更新 (DOM再生成ではなく、値のみ更新する方式へ変更)
     updateVariablePanel() {
         const panel = document.getElementById('variableList');
         if (!panel) return;
 
-        let html = '';
+        // 構造がまだなければ作成（初回のみ）
+        if (panel.innerHTML.trim() === '' || panel.querySelector('.no-variables')) {
+            this.renderInitialStructure(panel);
+        }
 
-        // 変数を表示
-        if (this.variables.size > 0) {
-            html += '<div class="variable-section"><h4>📦 変数</h4>';
-            for (const [name, value] of this.variables) {
-                html += `
-                    <div class="variable-item">
-                        <span class="var-name">${name}</span>
-                        <span class="var-value">${value}</span>
-                    </div>
-                `;
+        // 値の更新
+        for (const [name, value] of this.variables) {
+            // 変数名に対応する要素を探す (ID base or data-attribute)
+            // 変数名は "箱A", "箱B" ...
+            // IDは safe な文字列にする (例: var-箱A -> var-boxA map等)
+            const safeId = this.getSafeId(name);
+            const valueSpan = document.getElementById(`val-${safeId}`);
+
+            if (valueSpan) {
+                valueSpan.textContent = value;
+            } else {
+                // まだ要素がない場合は追加（動的追加の場合）
+                // ただし、今回は箱A-E固定に近いので、足りない場合は再レンダリングのほうが安全かも知れないが
+                // メモ欄保護のため、追加のみ行うロジックにするか、
+                // 初期化時にA-Eを作ってしまう設計が良い。
+                // Planでは "A-E固定" + "メモ" なので、初期化時に全作成がベスト。
             }
-            html += '</div>';
         }
+    }
 
-        // 配列を表示
-        if (this.arrays.size > 0) {
-            html += '<div class="array-section"><h4>📚 配列</h4>';
-            for (const [name, arr] of this.arrays) {
-                html += `
-                    <div class="array-item">
-                        <span class="array-name">${name}</span>
-                        <div class="array-values">
-                            ${arr.map((val, idx) => `<span class="array-cell" title="[${idx}]">${val}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            html += '</div>';
-        }
+    getSafeId(name) {
+        // "箱A" -> "boxA" などのマッピング、または単純にエスケープ
+        const map = { '箱A': 'boxA', '箱B': 'boxB', '箱C': 'boxC', '箱D': 'boxD', '箱E': 'boxE' };
+        return map[name] || name;
+    }
 
-        if (html === '') {
-            html = '<p class="no-variables">変数・配列はまだありません</p>';
-        }
+    renderInitialStructure(panel) {
+        // 5つの箱を表示する構造を作る
+        // 配列は別途考えるが、まずは変数の箱
+        let html = '<div class="variable-section"><h4>📦 変数ウォッチ</h4><div class="variable-container">';
 
+        // 順序固定: 箱A, B, C, D, E
+        const order = ['箱A', '箱B', '箱C', '箱D', '箱E'];
+
+        order.forEach(name => {
+            const safeId = this.getSafeId(name);
+            const val = this.variables.get(name) || 0;
+            html += `
+                <div class="variable-box" id="var-${safeId}">
+                    <div class="var-header">${name}</div>
+                    <div class="var-value" id="val-${safeId}">${val}</div>
+                    <input type="text" class="var-memo" placeholder="メモ" id="memo-${safeId}">
+                </div>
+            `;
+        });
+
+        html += '</div></div>';
         panel.innerHTML = html;
+
+        // メモの入力状態復元ロジックが必要ならここだが、
+        // 構造を作ってしまえば、あとは updateVariablePanel で textContent だけ変えるので消えない。
     }
 
     // 変数名のリストを取得（ドロップダウン用）
@@ -168,5 +187,7 @@ function initVariableSystem() {
     variableSystem.createVariable('箱A', 0);
     variableSystem.createVariable('箱B', 0);
     variableSystem.createVariable('箱C', 0);
-    console.log('VariableSystem initialized with Box A, B, C.');
+    variableSystem.createVariable('箱D', 0);
+    variableSystem.createVariable('箱E', 0);
+    console.log('VariableSystem initialized with Box A-E.');
 }

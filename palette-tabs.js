@@ -15,7 +15,8 @@ function initPaletteTabs() {
     const tabsHTML = `
         <div class="palette-tabs">
             <button class="palette-tab active" data-category="basic">🚀基本・制御</button>
-            <button class="palette-tab" data-category="variable">📦箱（変数）</button>
+            <button class="palette-tab" data-category="variable">📦変数・計算</button>
+            <button class="palette-tab" data-category="coordinate">📍座標</button>
         </div>
     `;
 
