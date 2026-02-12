@@ -402,12 +402,12 @@ function initEventListeners() {
     document.getElementById('stepBackBtn').addEventListener('click', stepBack);
     document.getElementById('stepForwardBtn').addEventListener('click', stepForward);
     document.getElementById('resetBtn').addEventListener('click', resetProgram);
-    document.getElementById('saveBtn').addEventListener('click', () => { closeDataMenu(); saveToLocalStorage(); });
-    document.getElementById('loadBtn').addEventListener('click', () => { closeDataMenu(); loadFromLocalStorage(); });
     document.getElementById('clearAllBtn').addEventListener('click', clearAllBlocks);
-    document.getElementById('exportBtn').addEventListener('click', () => { closeDataMenu(); exportToFile(); });
-    document.getElementById('importBtn').addEventListener('click', () => { closeDataMenu(); document.getElementById('importFile').click(); });
-    document.getElementById('importFile').addEventListener('change', importFromFile);
+
+    // データメニュー内のボタン
+    document.getElementById('exportBtn').addEventListener('click', () => { closeDataMenu(); exportProgramToFile(); });
+    document.getElementById('importBtn').addEventListener('click', () => { closeDataMenu(); document.getElementById('fileInput').click(); });
+    document.getElementById('fileInput').addEventListener('change', importFromFile);
 
     // データドロップダウン
     document.getElementById('dataBtn').addEventListener('click', function (e) {
@@ -512,11 +512,6 @@ async function stepBack() {
         clearActiveHighlights();
         showConsoleMessage('最初の位置に戻ったのだ！', 'info');
     }
-}
-
-function generatePythonCodeAtStep(stepIndex) {
-    // 実際には全コードを生成するが、実行側で制御するために全コードを返す
-    return generatePythonCode();
 }
 
 async function executeTurtleCommandsAtStep(code, stepIndex) {
@@ -746,8 +741,8 @@ function initProgramTabs() {
 
 // --- 保存・入出力機能 ---
 
-// LocalStorageに保存（バージョン情報付き）
-function saveToLocalStorage() {
+// プログラムをJSONファイルにエクスポート（バージョン情報付き）
+function exportProgramToFile() {
     updateProgramBlocks();
     // DOM要素(element)を除外してシリアライザブルな形式にする
     const serializable = programBlocks.map(b => ({
@@ -850,28 +845,6 @@ function closeWelcomeModal() {
     }
     document.getElementById('tutorialModal').style.display = 'none';
 }
-
-
-// 保存・読み込み（ファイルベース）
-const exportBtn = document.getElementById('exportBtn');
-const importBtn = document.getElementById('importBtn');
-const fileInput = document.getElementById('fileInput');
-const programNameInput = document.getElementById('programName');
-
-if (exportBtn) {
-    exportBtn.addEventListener('click', exportProgram);
-}
-
-if (importBtn) {
-    importBtn.addEventListener('click', () => {
-        if (fileInput) fileInput.click();
-    });
-}
-
-if (fileInput) {
-    fileInput.addEventListener('change', importProgram);
-}
-
 // チュートリアルイベントリスナー
 function initTutorialListeners() {
     const closeBtn = document.getElementById('welcomeModalCloseBtn');

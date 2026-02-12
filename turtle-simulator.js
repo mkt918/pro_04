@@ -19,6 +19,7 @@ class TurtleSimulator {
 
         // マス目データ管理（各セルに値を保存）
         this.gridData = [];
+        this.cellColors = []; // 各セルの塗りつぶし色を管理
         this.initGridData();
 
         // タートルの初期状態
@@ -66,10 +67,13 @@ class TurtleSimulator {
     initGridData() {
         // グリッドサイズに応じて2次元配列を初期化
         this.gridData = [];
+        this.cellColors = [];
         for (let i = 0; i < this.gridSize; i++) {
             this.gridData[i] = [];
+            this.cellColors[i] = [];
             for (let j = 0; j < this.gridSize; j++) {
                 this.gridData[i][j] = 0; // 初期値は0
+                this.cellColors[i][j] = null; // 塗りつぶし色（nullは未塗装）
             }
         }
     }
@@ -255,7 +259,7 @@ class TurtleSimulator {
      * @param {string} dir 'up', 'down', 'left', 'right'
      * @param {number} distance マス数
      */
-    async move_dir(dir, distance = 1) {
+    async moveDir(dir, distance = 1) {
         if (this.hasError) return;
 
         // 角度を設定（0=右, 90=下, 180=左, 270=上）
@@ -456,6 +460,11 @@ class TurtleSimulator {
         this.ctx.fillStyle = this.color;
         this.ctx.fillRect(cellX, cellY, cellSize, cellSize);
 
+        // 塗りつぶし色を記録（クエスト判定用）
+        if (this.cellColors[currentCellY] && this.cellColors[currentCellY][currentCellX] !== undefined) {
+            this.cellColors[currentCellY][currentCellX] = this.color;
+        }
+
         // タートルを再描画
         this.drawTurtle();
     }
@@ -511,13 +520,13 @@ class TurtleSimulator {
         this.updateCurrentValueDisplay();
     }
 
-    // ブロックからのエイリアス（t.get_current_value()）
-    get_current_value() {
+    // ブロックからのエイリアス（t.getCurrentValue()）
+    getCurrentValue() {
         return this.getCellValue();
     }
 
-    // ブロックからのエイリアス（t.set_current_value()）
-    set_current_value(value) {
+    // ブロックからのエイリアス（t.setCurrentValue()）
+    setCurrentValue(value) {
         this.setCellValue(value);
     }
 
@@ -654,55 +663,184 @@ function initTurtleSimulator() {
 }
 
 /**
- * 演算・比較式の評価
- * @param {string} expr 評価する式 
+ * 安全な数式評価関数（evalを使わない）
+ * 対応: 四則演算(+,-,*,/)、比較(==,!=,>,<,>=,<=)、論理(and,or,not)
+ * @param {string} expr 評価する式
  */
 function evaluateExpression(expr) {
     if (expr === undefined || expr === null) return 0;
     let s = expr.toString().trim();
 
     // マス目の値取得 (関数呼び出しを数値リテラルに置換)
-    if (s.includes('t.get_current_value()')) {
-        const val = turtleSim ? turtleSim.get_current_value() : 0;
-        // 文字列ではなく数値リテラルとして埋め込む
-        s = s.replace(/t\.get_current_value\(\)/g, val);
+    if (s.includes('t.getCurrentValue()')) {
+        const val = turtleSim ? turtleSim.getCurrentValue() : 0;
+        s = s.replace(/t\.getCurrentValue\(\)/g, val);
     }
 
-    // 変数（箱A〜C）の置換
+    // 変数（箱A〜E）の置換
     if (variableSystem) {
-        for (const name of ['箱A', '箱B', '箱C']) {
-            const val = variableSystem.getVariable(name);
-            // 正規表現の特殊文字をエスケープしてから置換
-            const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(escapedName, 'g'); // 日本語変数名は \b では判定できないため単純置換
-            s = s.replace(regex, val);
+        for (const name of ['箱A', '箱B', '箱C', '箱D', '箱E']) {
+            if (variableSystem.hasVariable(name)) {
+                const val = variableSystem.getVariable(name);
+                const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapedName, 'g');
+                s = s.replace(regex, val);
+            }
         }
     }
 
     try {
-        // Python風の演算子をJSに変換
-        s = s.replace(/==/g, ' === ');
-        s = s.replace(/\bnot\b/g, ' ! ');
-        s = s.replace(/\band\b/g, ' && ');
-        s = s.replace(/\bor\b/g, ' || ');
-
-        // 文字列の数字を数値として評価されるようにする
-        // evalを実行。
-        let result = eval(s);
-
-        // 比較結果（boolean）はそのまま返す
-        if (typeof result === 'boolean') return result;
-
-        // 割り算の結果や浮動小数点を四捨五入（ユーザーの要望）
+        const result = safeEvaluate(s);
+        // 割り算の結果を四捨五入
         if (typeof result === 'number' && !Number.isInteger(result)) {
-            result = Math.round(result);
+            return Math.round(result);
         }
-
         return result;
     } catch (e) {
         console.error('Expression evaluation error:', e, 'Source:', s);
         return 0;
     }
+}
+
+/**
+ * 安全な式評価器（再帰下降パーサー）
+ * 文法: expr = or_expr
+ *       or_expr = and_expr ('or' and_expr)*
+ *       and_expr = not_expr ('and' not_expr)*
+ *       not_expr = 'not' not_expr | comparison
+ *       comparison = additive (('=='|'!='|'>='|'<='|'>'|'<') additive)?
+ *       additive = term (('+'|'-') term)*
+ *       term = factor (('*'|'/') factor)*
+ *       factor = number | '(' expr ')' | '-' factor
+ */
+function safeEvaluate(expr) {
+    // Python風演算子を正規化
+    let s = expr.replace(/\band\b/gi, ' AND ')
+                .replace(/\bor\b/gi, ' OR ')
+                .replace(/\bnot\b/gi, ' NOT ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+    let pos = 0;
+
+    function peek() {
+        while (pos < s.length && s[pos] === ' ') pos++;
+        return s.slice(pos);
+    }
+
+    function consume(pattern) {
+        const remaining = peek();
+        if (remaining.startsWith(pattern)) {
+            pos += pattern.length;
+            return true;
+        }
+        return false;
+    }
+
+    function parseNumber() {
+        const remaining = peek();
+        const match = remaining.match(/^-?\d+(\.\d+)?/);
+        if (match) {
+            pos += match[0].length;
+            return parseFloat(match[0]);
+        }
+        throw new Error('Expected number at: ' + remaining.slice(0, 20));
+    }
+
+    function parseFactor() {
+        const remaining = peek();
+
+        // 括弧
+        if (consume('(')) {
+            const result = parseOrExpr();
+            if (!consume(')')) throw new Error('Missing closing parenthesis');
+            return result;
+        }
+
+        // 負の数
+        if (consume('-')) {
+            return -parseFactor();
+        }
+
+        // 数値
+        return parseNumber();
+    }
+
+    function parseTerm() {
+        let left = parseFactor();
+        while (true) {
+            if (consume('*')) {
+                left = left * parseFactor();
+            } else if (consume('/')) {
+                const right = parseFactor();
+                left = right !== 0 ? left / right : 0;
+            } else {
+                break;
+            }
+        }
+        return left;
+    }
+
+    function parseAdditive() {
+        let left = parseTerm();
+        while (true) {
+            if (consume('+')) {
+                left = left + parseTerm();
+            } else if (consume('-')) {
+                left = left - parseTerm();
+            } else {
+                break;
+            }
+        }
+        return left;
+    }
+
+    function parseComparison() {
+        const left = parseAdditive();
+        const remaining = peek();
+
+        if (consume('==')) return left === parseAdditive();
+        if (consume('!=')) return left !== parseAdditive();
+        if (consume('>=')) return left >= parseAdditive();
+        if (consume('<=')) return left <= parseAdditive();
+        if (consume('>')) return left > parseAdditive();
+        if (consume('<')) return left < parseAdditive();
+
+        return left;
+    }
+
+    function parseNotExpr() {
+        if (consume('NOT ') || consume('NOT')) {
+            return !parseNotExpr();
+        }
+        return parseComparison();
+    }
+
+    function parseAndExpr() {
+        let left = parseNotExpr();
+        while (consume('AND ') || consume('AND')) {
+            left = left && parseNotExpr();
+        }
+        return left;
+    }
+
+    function parseOrExpr() {
+        let left = parseAndExpr();
+        while (consume('OR ') || consume('OR')) {
+            left = left || parseAndExpr();
+        }
+        return left;
+    }
+
+    const result = parseOrExpr();
+
+    // 未消費の文字がないか確認
+    const remaining = peek();
+    if (remaining.length > 0) {
+        console.warn('Unparsed remainder:', remaining);
+    }
+
+    return result;
 }
 
 // コマンド実行
@@ -963,9 +1101,9 @@ async function executeCommand(cmd) {
     if (!cmd || cmd === 'pass' || cmd.startsWith('#')) return;
 
     try {
-        if (cmd.includes('move_dir')) {
-            const match = cmd.match(/move_dir\(['"]?(\w+)['"]?(?:,\s*(\d+))?\)/);
-            if (match) await turtleSim.move_dir(match[1], match[2] ? parseInt(match[2]) : 1);
+        if (cmd.includes('moveDir')) {
+            const match = cmd.match(/moveDir\(['"]?(\w+)['"]?(?:,\s*(\d+))?\)/);
+            if (match) await turtleSim.moveDir(match[1], match[2] ? parseInt(match[2]) : 1);
         }
         else if (cmd.includes('forward')) {
             const match = cmd.match(/forward\((\d+)\)/);
@@ -1025,11 +1163,11 @@ async function executeCommand(cmd) {
         else if (cmd.includes('home')) {
             await turtleSim.home();
         }
-        else if (cmd.includes('set_current_value')) {
-            const match = cmd.match(/set_current_value\((.+)\)/);
+        else if (cmd.includes('setCurrentValue')) {
+            const match = cmd.match(/setCurrentValue\((.+)\)/);
             if (match) {
                 const val = evaluateExpression(match[1]);
-                turtleSim.set_current_value(val);
+                turtleSim.setCurrentValue(val);
             }
         }
         else if (cmd.startsWith('var_set')) {
@@ -1042,8 +1180,8 @@ async function executeCommand(cmd) {
                 }
             }
         }
-        else if (cmd === 't.get_current_value()' || cmd.includes('# 今いるマスの値を取得')) {
-            const val = turtleSim.get_current_value();
+        else if (cmd === 't.getCurrentValue()' || cmd.includes('# 今いるマスの値を取得')) {
+            const val = turtleSim.getCurrentValue();
             showConsoleMessage(`今のマスの数字は ${val} なのだ！`, 'info');
         }
         else if (cmd.includes('wait')) {

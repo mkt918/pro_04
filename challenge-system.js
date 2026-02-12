@@ -212,14 +212,47 @@ class ChallengeSystem {
         this.showResult(result);
     }
 
-    // 数字のあるセルがすべて指定色で塗られているかチェック
+    // 数字のあるセルがすべて塗られているかチェック
     checkCellsColoredWithNumbers(condition) {
-        if (!turtleSim || !turtleSim.gridData) return { success: false, message: 'エラー' };
+        if (!turtleSim || !turtleSim.gridData || !turtleSim.cellColors) {
+            return { success: false, message: 'グリッドデータが見つかりません' };
+        }
 
-        // 簡易実装のため、ここでは「塗られているか」のロジックをシミュレーター側から取得
-        // 実際にはキャンバスのピクセルデータが必要だが、教育用ツールなので
-        // 「fillCellコマンドを実行したか」のログなどがあれば良いが、
-        // 現状は常に成功メッセージを出す（プロトタイプ）
+        let allNumberedCellsColored = true;
+        let anyNonNumberedCellColored = false;
+        const checkRow = condition.row !== undefined ? condition.row : null;
+
+        for (let row = 0; row < turtleSim.gridSize; row++) {
+            // 特定の行のみチェックする場合
+            if (checkRow !== null && row !== checkRow) continue;
+
+            for (let col = 0; col < turtleSim.gridSize; col++) {
+                const num = turtleSim.gridData[row][col];
+                const color = turtleSim.cellColors[row][col];
+                const isColored = color !== null;
+
+                if (num !== 0) {
+                    // 数字があるセルが塗られていない
+                    if (!isColored) {
+                        allNumberedCellsColored = false;
+                    }
+                } else {
+                    // 数字がないセルが塗られている（オプションでチェック）
+                    if (isColored && condition.strictMode) {
+                        anyNonNumberedCellColored = true;
+                    }
+                }
+            }
+        }
+
+        if (condition.strictMode && anyNonNumberedCellColored) {
+            return { success: false, message: '数字がないマスも塗られています。数字があるマスだけを塗りましょう！' };
+        }
+
+        if (!allNumberedCellsColored) {
+            return { success: false, message: 'まだ全ての数字があるマスを塗れていません。' };
+        }
+
         return {
             success: true,
             message: 'お見事！数字があるマスをすべて塗ることができました！🎉'
@@ -291,8 +324,49 @@ class ChallengeSystem {
         };
     }
 
-    // セルが塗られているかチェック (簡易)
-    checkCellColored(_condition) {
+    // 指定されたセルが塗られているかチェック
+    checkCellColored(condition) {
+        if (!turtleSim || !turtleSim.cellColors) {
+            return { success: false, message: 'グリッドデータが見つかりません' };
+        }
+
+        // 特定のセル座標が指定されている場合
+        if (condition.cells && Array.isArray(condition.cells)) {
+            for (const cell of condition.cells) {
+                const { row, col } = cell;
+                if (row < 0 || row >= turtleSim.gridSize || col < 0 || col >= turtleSim.gridSize) {
+                    continue;
+                }
+                const color = turtleSim.cellColors[row][col];
+                if (color === null) {
+                    return { success: false, message: `マス(${col + 1}, ${row + 1})がまだ塗られていません。` };
+                }
+                // 特定の色が指定されている場合
+                if (condition.color && color !== condition.color) {
+                    return { success: false, message: `マス(${col + 1}, ${row + 1})の色が違います。` };
+                }
+            }
+            return {
+                success: true,
+                message: '正解です！指定されたマスを正しく塗ることができました！🎉'
+            };
+        }
+
+        // 塗られたセルの数をカウント
+        let coloredCount = 0;
+        for (let row = 0; row < turtleSim.gridSize; row++) {
+            for (let col = 0; col < turtleSim.gridSize; col++) {
+                if (turtleSim.cellColors[row][col] !== null) {
+                    coloredCount++;
+                }
+            }
+        }
+
+        // 最小塗りつぶし数が指定されている場合
+        if (condition.minCount && coloredCount < condition.minCount) {
+            return { success: false, message: `まだ${condition.minCount}マス塗る必要があります（現在: ${coloredCount}マス）` };
+        }
+
         return {
             success: true,
             message: '正解です！指定されたマスを正しく塗ることができました！🎉'
