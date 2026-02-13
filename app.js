@@ -430,11 +430,9 @@ function updateProgramBlocks() {
             } else {
                 color = '#FF8C1A'; // オレンジ
             }
-        } else {
             depth++;
             parentColors.push(color);
         }
-    }
     });
 }
 

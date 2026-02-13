@@ -196,12 +196,16 @@
     margin-left: 0 !important;
     border-left: none !important;
     background-repeat: no-repeat !important;
-    background-image: var(--spines), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
-    background-clip: padding-box, padding-box !important;
-    /* バーもカードもpadding領域まで描画して隙間をなくす */
+    background-size: auto, 100% !important;
+    background-position: left top, left top !important;
 }
 
-/* インデント時のカード色（背景グラデーションを上書き） */
+/* デフォルトのインデント時カード色（ブルー系） */
+.program-block.is-indented {
+    background-image: var(--spines), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+}
+
+/* ループ系のカード色 */
 .program-block.is-indented[data-type="loop_start"],
 .program-block.is-indented[data-type="while_start"],
 .program-block.is-indented[data-type="while_cell"],
@@ -209,31 +213,34 @@
     background-image: var(--spines), linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
 }
 
+/* 条件分岐系のカード色 */
 .program-block.is-indented[data-type="if_start"],
 .program-block.is-indented[data-type="else_start"],
 .program-block.is-indented[data-type="if_end"] {
     background-image: var(--spines), linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
 }
 
+/* 座標系のカード色 */
 .program-block.is-indented[data-category="coordinate"] {
     background-image: var(--spines), linear-gradient(135deg, #20B2AA 0%, #008B8B 100%) !important;
 }
 
+/* 変数・計算系のカード色 */
 .program-block.is-indented[data-category="variable"],
 .program-block.is-indented[data-category="calc"] {
     background-image: var(--spines), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
 }
 
-/* インデント時の形状固定 */
+/* インデント時の形状調整（C型ブロック） */
 .program-block.is-indented[data-type$="_start"],
 .program-block.is-indented[data-type="while_cell"] {
-    border-top-left-radius: 0 !important;
+    border-top-left-radius: 12px !important;
     border-bottom-left-radius: 0 !important;
 }
 
 .program-block.is-indented[data-type$="_end"] {
     border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+    border-bottom-left-radius: 12px !important;
 }
 
 /* 垂直バーの色（JSで付与） */
