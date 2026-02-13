@@ -397,26 +397,23 @@ function updateProgramBlocks() {
     console.log(`[INDENT] updateProgramBlocks called, total blocks: ${programBlocks.length}`);
 
     programBlocks.forEach((b, index) => {
-        // 全てのインデント用クラスとスタイルをクリア
+        // 初期化
         b.element.classList.remove('is-indented');
-        b.element.style.paddingLeft = ''; // リセット
-        b.element.style.backgroundImage = ''; // リセット
-
-        console.log(`[INDENT] Block ${index}: type=${b.type}, depth=${depth}`);
+        b.element.style.paddingLeft = '';
+        b.element.style.setProperty('--spines', 'none');
 
         // 閉じるブロックまたは継続ブロックで一度深度を下げる
         let isEnding = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
         if (isEnding) {
             depth = Math.max(0, depth - 1);
             parentColors.pop();
-            console.log(`[INDENT] Ending block: ${b.type}, depth now: ${depth}`);
         }
 
         if (depth > 0) {
             b.element.classList.add('is-indented');
-            // パディングを調整 (15px刻み)
+            // パディングを調整
             const padding = depth * LEVEL_WIDTH;
-            b.element.style.paddingLeft = (padding + 10) + 'px'; // 10pxはアイコン等のマージン
+            b.element.style.paddingLeft = (padding + 10) + 'px';
 
             // 全ての親のバーをグラデーションで描画
             let gradientParts = [];
@@ -428,37 +425,21 @@ function updateProgramBlocks() {
                 gradientParts.push(`transparent ${end}px ${(d + 1) * LEVEL_WIDTH}px`);
             }
             const spineGradient = `linear-gradient(to right, ${gradientParts.join(', ')})`;
+            b.element.style.setProperty('--spines', spineGradient);
 
-            // ブロックの種類に応じた背景色を決定
-            let cardGradient = 'linear-gradient(135deg, #4C97FF 0%, #3373CC 100%)'; // デフォルト: ブルー
-            if (b.type === 'loop_start' || b.type === 'while_start' || b.type === 'while_cell' || b.type === 'loop_end') {
-                cardGradient = 'linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%)'; // オレンジ
-            } else if (b.type === 'if_start' || b.type === 'else_start' || b.type === 'if_end') {
-                cardGradient = 'linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%)'; // ピンク
-            } else if (b.element.dataset.category === 'coordinate') {
-                cardGradient = 'linear-gradient(135deg, #20B2AA 0%, #008B8B 100%)'; // ティール
-            }
-
-            // 背景画像を直接設定（CSS変数を使わない）
-            b.element.style.backgroundImage = `${spineGradient}, ${cardGradient}`;
-            b.element.style.backgroundRepeat = 'no-repeat';
-            b.element.style.backgroundSize = 'auto, 100%';
-            b.element.style.backgroundPosition = 'left top, left top';
-
-            console.log(`[INDENT] Applied to ${b.type}: depth=${depth}, padding=${padding + 10}px`);
+            console.log(`[INDENT] Block ${index} (${b.type}): Applied depth ${depth}, padding ${padding + 10}px`);
         }
 
         // 開始ブロックまたは継続ブロックで次の行からの深度を上げる
         if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell') {
             let color = '#ccc';
             if (b.type === 'if_start' || b.type === 'else_start') {
-                color = '#D81B60'; // ピンク
+                color = '#FF4D6D'; // ピンク (グラデーションの開始色に合わせる)
             } else {
-                color = '#FF8C1A'; // オレンジ
+                color = '#FFAB19'; // オレンジ (グラデーションの開始色に合わせる)
             }
             depth++;
             parentColors.push(color);
-            console.log(`[INDENT] Starting block: ${b.type}, depth now: ${depth}, color: ${color}`);
         }
     });
 }
