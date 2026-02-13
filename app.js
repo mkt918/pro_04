@@ -102,9 +102,11 @@ function initUnifiedSortable() {
         onAdd: function (evt) {
             const itemEl = evt.item;
             setupNewBlock(itemEl);
+            updateProgramBlocks(); // インデント適用のため
             updatePreviewIfPossible();
         },
         onEnd: function () {
+            updateProgramBlocks(); // インデント適用のため
             saveHistory(); // 並び替え終了時に保存
             updatePreviewIfPossible();
         }
@@ -204,6 +206,7 @@ function setupNewBlock(el) {
         e.stopPropagation();
         el.remove();
         checkEmptyHint();
+        updateProgramBlocks(); // インデント更新のため
         saveHistory(); // 削除時に保存
         updatePreviewIfPossible();
     };
@@ -391,17 +394,22 @@ function updateProgramBlocks() {
     const LEVEL_WIDTH = 15; // 1階層あたりの幅
     const SPINE_WIDTH = 8;  // バーの太さ
 
-    programBlocks.forEach(b => {
+    console.log(`[INDENT] updateProgramBlocks called, total blocks: ${programBlocks.length}`);
+
+    programBlocks.forEach((b, index) => {
         // 全てのインデント用クラスとスタイルをクリア
         b.element.classList.remove('is-indented');
-        b.element.style.setProperty('--spines', 'none');
         b.element.style.paddingLeft = ''; // リセット
+        b.element.style.backgroundImage = ''; // リセット
+
+        console.log(`[INDENT] Block ${index}: type=${b.type}, depth=${depth}`);
 
         // 閉じるブロックまたは継続ブロックで一度深度を下げる
         let isEnding = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
         if (isEnding) {
             depth = Math.max(0, depth - 1);
             parentColors.pop();
+            console.log(`[INDENT] Ending block: ${b.type}, depth now: ${depth}`);
         }
 
         if (depth > 0) {
@@ -419,7 +427,25 @@ function updateProgramBlocks() {
                 gradientParts.push(`${color} ${start}px ${end}px`);
                 gradientParts.push(`transparent ${end}px ${(d + 1) * LEVEL_WIDTH}px`);
             }
-            b.element.style.setProperty('--spines', `linear-gradient(to right, ${gradientParts.join(', ')})`);
+            const spineGradient = `linear-gradient(to right, ${gradientParts.join(', ')})`;
+
+            // ブロックの種類に応じた背景色を決定
+            let cardGradient = 'linear-gradient(135deg, #4C97FF 0%, #3373CC 100%)'; // デフォルト: ブルー
+            if (b.type === 'loop_start' || b.type === 'while_start' || b.type === 'while_cell' || b.type === 'loop_end') {
+                cardGradient = 'linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%)'; // オレンジ
+            } else if (b.type === 'if_start' || b.type === 'else_start' || b.type === 'if_end') {
+                cardGradient = 'linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%)'; // ピンク
+            } else if (b.element.dataset.category === 'coordinate') {
+                cardGradient = 'linear-gradient(135deg, #20B2AA 0%, #008B8B 100%)'; // ティール
+            }
+
+            // 背景画像を直接設定（CSS変数を使わない）
+            b.element.style.backgroundImage = `${spineGradient}, ${cardGradient}`;
+            b.element.style.backgroundRepeat = 'no-repeat';
+            b.element.style.backgroundSize = 'auto, 100%';
+            b.element.style.backgroundPosition = 'left top, left top';
+
+            console.log(`[INDENT] Applied to ${b.type}: depth=${depth}, padding=${padding + 10}px`);
         }
 
         // 開始ブロックまたは継続ブロックで次の行からの深度を上げる
@@ -432,6 +458,7 @@ function updateProgramBlocks() {
             }
             depth++;
             parentColors.push(color);
+            console.log(`[INDENT] Starting block: ${b.type}, depth now: ${depth}, color: ${color}`);
         }
     });
 }
