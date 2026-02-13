@@ -51,6 +51,10 @@
                 </div>
             </div>
             <button id="resetBtn" class="btn btn-reset">🔄 RESET</button>
+            <div class="history-controls">
+                <button id="undoBtn" class="btn btn-secondary" title="操作を元に戻す (Ctrl+Z)">↩️ 戻す</button>
+                <button id="redoBtn" class="btn btn-secondary" title="操作をやり直す (Ctrl+Y)">↪️ 進む</button>
+            </div>
             <div class="dropdown">
                 <button id="dataBtn" class="btn btn-data" title="保存・読込メニュー">💾 データ ▾</button>
                 <div class="dropdown-menu" id="dataMenu">
@@ -214,7 +218,8 @@
                 <div class="block-template" data-category="basic" data-type="if_end" data-code="# 条件分岐終わり">
                     🔀 ↑ ここまで
                 </div>
-                <div class="block-template" data-category="basic" data-type="fillcell" data-code="t.fillcell('{color}')">
+                <div class="block-template" data-category="basic" data-type="fillcell"
+                    data-code="t.fillcell('{color}')">
                     🎨 マスを <select class="block-select" data-param="color">
                         <option value="orange" selected>オレンジ</option>
                         <option value="red">赤</option>

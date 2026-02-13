@@ -4,6 +4,11 @@ let programBlocks = [];
 let sortableProgram = null;
 let sortablePalette = null;
 
+// 履歴管理 (Undo/Redo)
+let undoStack = [];
+let redoStack = [];
+const MAX_HISTORY = 50;
+
 // データバージョン管理
 const DATA_VERSION = '1.0';
 const MAX_BLOCKS = 200; // ブロック数上限
@@ -100,6 +105,7 @@ function initUnifiedSortable() {
             updatePreviewIfPossible();
         },
         onEnd: function () {
+            saveHistory(); // 並び替え終了時に保存
             updatePreviewIfPossible();
         }
     });
@@ -120,6 +126,7 @@ function initUnifiedSortable() {
             if (targetContainer) {
                 targetContainer.appendChild(clone);
                 setupNewBlock(clone);
+                saveHistory(); // クリック追加時に保存
                 updatePreviewIfPossible();
 
                 // 視覚的なフィードバック (フラッシュ)
@@ -197,6 +204,7 @@ function setupNewBlock(el) {
         e.stopPropagation();
         el.remove();
         checkEmptyHint();
+        saveHistory(); // 削除時に保存
         updatePreviewIfPossible();
     };
 
@@ -221,6 +229,11 @@ function setupNewBlock(el) {
             const currentParams = JSON.parse(el.dataset.params);
             currentParams[paramName] = this.value;
             el.dataset.params = JSON.stringify(currentParams);
+
+            // 入力中(inputイベント)は重いので、changeイベントの時だけ履歴に積むか、
+            // debounce を検討するが、ここではシンプルに change/input 時に保存
+            // ただし input ごとに積むと多すぎるので、少し工夫が必要かもしれない
+            saveHistory();
             updatePreviewIfPossible();
         });
     });
@@ -403,6 +416,21 @@ function initEventListeners() {
     document.getElementById('stepForwardBtn').addEventListener('click', stepForward);
     document.getElementById('resetBtn').addEventListener('click', resetProgram);
     document.getElementById('clearAllBtn').addEventListener('click', clearAllBlocks);
+    document.getElementById('undoBtn').addEventListener('click', undo);
+    document.getElementById('redoBtn').addEventListener('click', redo);
+
+    // ショートカットキー
+    document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey || e.metaKey) {
+            if (e.key === 'z') {
+                e.preventDefault();
+                undo();
+            } else if (e.key === 'y') {
+                e.preventDefault();
+                redo();
+            }
+        }
+    });
 
     // データメニュー内のボタン
     document.getElementById('exportBtn').addEventListener('click', () => { closeDataMenu(); exportProgramToFile(); });
@@ -801,12 +829,19 @@ function importFromFile(e) {
     reader.readAsText(file);
     // 同じファイルを再度選択できるようにリセット
     e.target.value = '';
+
+    // インポート後に履歴を保存
+    setTimeout(() => saveHistory(), 100);
 }
 
 // ブロック配列からプログラムエリアを再構築
-function reconstructProgram(blocks) {
+function reconstructProgram(blocks, skipHistory = true) {
     const programArea = document.getElementById('programArea');
     programArea.innerHTML = '';
+
+    // 履歴保存を一時的に無効化するフラグ（グローバル等で管理しても良いが、
+    // ここでは再構築中の setupNewBlock が saveHistory を呼ばないように制御が必要。
+    // 今回は saveHistory 内で状態比較を行うので、内容が同じなら積まれない設計にする）
 
     blocks.forEach(blockData => {
         addBlockProgrammatically(blockData.type, blockData.params);
@@ -817,6 +852,64 @@ function reconstructProgram(blocks) {
     }
 
     updatePreviewIfPossible();
+}
+
+// 履歴保存
+function saveHistory() {
+    updateProgramBlocks();
+
+    // 現在の状態をシリアライズ
+    const currentState = JSON.stringify(programBlocks.map(b => ({
+        type: b.type,
+        params: b.params
+    })));
+
+    // 直近と同じなら保存しない
+    if (undoStack.length > 0 && undoStack[undoStack.length - 1] === currentState) {
+        return;
+    }
+
+    undoStack.push(currentState);
+    if (undoStack.length > MAX_HISTORY) {
+        undoStack.shift();
+    }
+
+    // 新しい操作をしたら Redo スタックはクリア
+    redoStack = [];
+}
+
+// 元に戻す
+function undo() {
+    if (undoStack.length <= 1) {
+        showConsoleMessage('これ以上戻せないのだ！↩️', 'info');
+        return;
+    }
+
+    // 現在の状態を redoStack に移す
+    const current = undoStack.pop();
+    redoStack.push(current);
+
+    // 一つ前の状態を復元
+    const previous = undoStack[undoStack.length - 1];
+    const blocks = JSON.parse(previous);
+
+    reconstructProgram(blocks);
+    showConsoleMessage('元に戻したのだ！↩️', 'info');
+}
+
+// やり直す
+function redo() {
+    if (redoStack.length === 0) {
+        showConsoleMessage('これ以上進めないのだ！↪️', 'info');
+        return;
+    }
+
+    const next = redoStack.pop();
+    undoStack.push(next);
+
+    const blocks = JSON.parse(next);
+    reconstructProgram(blocks);
+    showConsoleMessage('やり直したのだ！↪️', 'info');
 }
 
 // ===== チュートリアル機能 =====

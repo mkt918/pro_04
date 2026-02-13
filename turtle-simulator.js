@@ -146,6 +146,24 @@ class TurtleSimulator {
     drawGrid() {
         const { cellSize, offsetX, offsetY, labelArea } = this.getGridMetrics();
 
+        // 描画前にキャンバス全体をクリアして白で埋める
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        // 1. セルの背景色を描画 (文字より先に描く)
+        for (let row = 0; row < this.gridSize; row++) {
+            for (let col = 0; col < this.gridSize; col++) {
+                const color = this.cellColors[row][col];
+                if (color) {
+                    const x = offsetX + col * cellSize;
+                    const y = offsetY + row * cellSize;
+                    this.ctx.fillStyle = color;
+                    this.ctx.fillRect(x, y, cellSize, cellSize);
+                }
+            }
+        }
+
         this.ctx.strokeStyle = '#ddd';
         this.ctx.lineWidth = 1;
 
@@ -187,7 +205,7 @@ class TurtleSimulator {
             this.ctx.fillText(i + 1, offsetX - 10, y);
         }
 
-        // グリッドデータに数字があれば表示
+        // 3. グリッドデータに数字があれば表示 (最後に描画することで最前面に)
         this.drawGridNumbers();
     }
 
@@ -451,19 +469,13 @@ class TurtleSimulator {
         const currentCellX = Math.round((this.x - offsetX - cellSize / 2) / cellSize);
         const currentCellY = Math.round((this.y - offsetY - cellSize / 2) / cellSize);
 
-        // セルを塗りつぶす
-        const cellX = offsetX + currentCellX * cellSize;
-        const cellY = offsetY + currentCellY * cellSize;
-
-        this.ctx.fillStyle = fillColor;
-        this.ctx.fillRect(cellX, cellY, cellSize, cellSize);
-
-        // 塗りつぶし色を記録（クエスト判定用）
+        // 塗りつぶし色を記録
         if (this.cellColors[currentCellY] && this.cellColors[currentCellY][currentCellX] !== undefined) {
             this.cellColors[currentCellY][currentCellX] = fillColor;
         }
 
-        // タートルを再描画
+        // 再描画（背景 -> 数字 の順で描画される）
+        this.drawGrid();
         this.drawTurtle();
     }
 
@@ -672,7 +684,8 @@ function evaluateExpression(expr) {
     // マス目の値取得 (関数呼び出しを数値リテラルに置換)
     if (s.includes('t.getCurrentValue()')) {
         const val = turtleSim ? turtleSim.getCurrentValue() : 0;
-        s = s.replace(/t\.getCurrentValue\(\)/g, val);
+        // 数値として確実に置換（かっこを含めて置換）
+        s = s.split('t.getCurrentValue()').join(val);
     }
 
     // 変数（箱A〜E）の置換
@@ -714,10 +727,10 @@ function evaluateExpression(expr) {
 function safeEvaluate(expr) {
     // Python風演算子を正規化
     let s = expr.replace(/\band\b/gi, ' AND ')
-                .replace(/\bor\b/gi, ' OR ')
-                .replace(/\bnot\b/gi, ' NOT ')
-                .replace(/\s+/g, ' ')
-                .trim();
+        .replace(/\bor\b/gi, ' OR ')
+        .replace(/\bnot\b/gi, ' NOT ')
+        .replace(/\s+/g, ' ')
+        .trim();
 
     let pos = 0;
 
@@ -895,6 +908,7 @@ async function executeManualStep(code, targetStepIndex) {
     turtleSim.currentBlockIndex = 0;
     turtleSim.errorBlockIndex = undefined;
     turtleSim.breakFlag = false;
+    turtleSim.stepBreakFlag = false; // これをリセットしないと次が動かない
 
     // 再帰的にブロックを実行
     await executeBlock(lines, 0, 0, lines.length, targetStepIndex);
