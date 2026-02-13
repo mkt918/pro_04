@@ -388,12 +388,16 @@ function updateProgramBlocks() {
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
     let parentColors = []; // 階層ごとの色（CSS変数値）を保持
+    const LEVEL_WIDTH = 15; // 1階層あたりの幅
+    const SPINE_WIDTH = 8;  // バーの太さ
+
     programBlocks.forEach(b => {
         // 全てのインデント用クラスとスタイルをクリア
-        b.element.classList.remove('indented-1', 'indented-2', 'indented-3');
+        b.element.classList.remove('is-indented');
         b.element.style.setProperty('--spines', 'none');
+        b.element.style.paddingLeft = ''; // リセット
 
-        // 閉じるブロックまたは継続ブロックで一度深度を下げる（その行自体の描画のため）
+        // 閉じるブロックまたは継続ブロックで一度深度を下げる
         let isEnding = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
         if (isEnding) {
             depth = Math.max(0, depth - 1);
@@ -401,18 +405,19 @@ function updateProgramBlocks() {
         }
 
         if (depth > 0) {
-            const indentClass = 'indented-' + Math.min(depth, 3);
-            b.element.classList.add(indentClass);
+            b.element.classList.add('is-indented');
+            // パディングを調整 (15px刻み)
+            const padding = depth * LEVEL_WIDTH;
+            b.element.style.paddingLeft = (padding + 10) + 'px'; // 10pxはアイコン等のマージン
 
-            // 全ての親のバーを描画するためのグラデーションを作成
-            // 例: linear-gradient(to right, color1 0 10px, transparent 10px 20px, color2 20px 30px...)
+            // 全ての親のバーをグラデーションで描画
             let gradientParts = [];
             for (let d = 0; d < depth; d++) {
                 const color = parentColors[d] || '#ccc';
-                const start = d * 20;
-                const end = start + 10;
+                const start = d * LEVEL_WIDTH;
+                const end = start + SPINE_WIDTH;
                 gradientParts.push(`${color} ${start}px ${end}px`);
-                gradientParts.push(`transparent ${end}px ${start + 20}px`);
+                gradientParts.push(`transparent ${end}px ${(d + 1) * LEVEL_WIDTH}px`);
             }
             b.element.style.setProperty('--spines', `linear-gradient(to right, ${gradientParts.join(', ')})`);
         }
@@ -425,16 +430,11 @@ function updateProgramBlocks() {
             } else {
                 color = '#FF8C1A'; // オレンジ
             }
-
-            // 終わりブロックが最初からある場合はdepthを上げ直す
-            if (isEnding) {
-                depth++;
-                parentColors.push(color);
-            } else {
-                depth++;
-                parentColors.push(color);
-            }
+        } else {
+            depth++;
+            parentColors.push(color);
         }
+    }
     });
 }
 
