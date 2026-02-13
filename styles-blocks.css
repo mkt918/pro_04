@@ -74,11 +74,28 @@
 .block-template[data-category="basic"][data-type="forward"],
 .program-block[data-category="basic"][data-type="forward"],
 .block-template[data-category="basic"][data-type="wait"],
-.program-block[data-category="basic"][data-type="wait"],
-.block-template[data-category="variable"],
-.program-block[data-category="variable"] {
+.program-block[data-category="basic"][data-type="wait"] {
+    position: relative;
     background: linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
     border-left: 5px solid #2E5FB7;
+    color: white;
+}
+
+/* 変数・計算 - ブルー系 */
+.block-template[data-category="variable"],
+.program-block[data-category="variable"],
+.block-template[data-category="calc"],
+.program-block[data-category="calc"] {
+    background: linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+    border-left: 5px solid #2E5FB7;
+    color: white;
+}
+
+/* 座標 - ティール系 */
+.block-template[data-category="coordinate"],
+.program-block[data-category="coordinate"] {
+    background: linear-gradient(135deg, #20B2AA 0%, #008B8B 100%) !important;
+    border-left: 5px solid #006666;
     color: white;
 }
 
@@ -90,17 +107,17 @@
 .block-template[data-category="basic"][data-type="while_cell"],
 .program-block[data-category="basic"][data-type="while_cell"] {
     background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
-    border-left: 5px solid #CF8B17;
-    border-bottom-left-radius: 0;
+    border-left: 10px solid #CF8B17 !important;
+    border-bottom-left-radius: 0 !important;
     color: white;
 }
 
 .block-template[data-category="basic"][data-type="loop_end"],
 .program-block[data-category="basic"][data-type="loop_end"] {
     background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
-    border-left: 5px solid #CF8B17;
-    border-top-left-radius: 0;
-    margin-top: -1px;
+    border-left: 10px solid #CF8B17 !important;
+    border-top-left-radius: 0 !important;
+    margin-top: 0;
     color: white;
 }
 
@@ -110,25 +127,17 @@
 .block-template[data-category="basic"][data-type="else_start"],
 .program-block[data-category="basic"][data-type="else_start"] {
     background: linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
-    border-left: 5px solid #AD1457;
-    border-bottom-left-radius: 0;
+    border-left: 10px solid #AD1457 !important;
+    border-bottom-left-radius: 0 !important;
     color: white;
 }
 
 .block-template[data-category="basic"][data-type="if_end"],
 .program-block[data-category="basic"][data-type="if_end"] {
     background: linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
-    border-left: 5px solid #AD1457;
-    border-top-left-radius: 0;
-    margin-top: -1px;
-    color: white;
-}
-
-/* 演算 - グリーン系 */
-.block-template[data-category="calc"],
-.program-block[data-category="calc"] {
-    background: linear-gradient(135deg, #59C059 0%, #46A046 100%) !important;
-    border-left: 5px solid #389438;
+    border-left: 10px solid #AD1457 !important;
+    border-top-left-radius: 0 !important;
+    margin-top: 0;
     color: white;
 }
 
@@ -151,12 +160,7 @@
 /* 座標 - ティール/シアンより濃い系 (Purpleはペンに使われているので、Deep Purple or Indigo or Teal) */
 /* ユーザー要望: "その下に座標というカテゴリを作成し色を変えて" -> ペンと被らないように */
 /* Teal/Green-Blue系 */
-.block-template[data-category="coordinate"],
-.program-block[data-category="coordinate"] {
-    background: linear-gradient(135deg, #20B2AA 0%, #008B8B 100%) !important;
-    border-left: 5px solid #006666;
-    color: white;
-}
+
 
 /* プログラムエリア */
 .program-area {
@@ -190,23 +194,48 @@
 }
 
 /* インデント（垂直バー） */
+.program-block[class*="indented-"] {
+    margin-left: 0 !important;
+    /* 左端を絶対に固定 */
+    border-radius: 12px;
+    border-left: none !important;
+    /* 既存のボーダーを完全に消す */
+    background: var(--spines), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+    background-repeat: no-repeat !important;
+    background-clip: padding-box, content-box !important;
+}
+
 .program-block.indented-1 {
-    margin-left: 1.5rem;
-    border-radius: 0 12px 12px 0;
-    border-left-width: 15px !important;
-    /* 太いバー */
+    padding-left: 20px;
 }
 
 .program-block.indented-2 {
-    margin-left: 3rem;
-    border-radius: 0 12px 12px 0;
-    border-left-width: 15px !important;
+    padding-left: 40px;
 }
 
 .program-block.indented-3 {
-    margin-left: 4.5rem;
-    border-radius: 0 12px 12px 0;
-    border-left-width: 15px !important;
+    padding-left: 60px;
+}
+
+/* インデント時のカード色（背景グラデーションを上書き） */
+/* ループ系 */
+.program-block[class*="indented-"][data-type="loop_start"],
+.program-block[class*="indented-"][data-type="while_start"],
+.program-block[class*="indented-"][data-type="while_cell"],
+.program-block[class*="indented-"][data-type="loop_end"] {
+    background: var(--spines), linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
+}
+
+/* 条件分岐系 */
+.program-block[class*="indented-"][data-type="if_start"],
+.program-block[class*="indented-"][data-type="else_start"],
+.program-block[class*="indented-"][data-type="if_end"] {
+    background: var(--spines), linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
+}
+
+/* 座標系 */
+.program-block[class*="indented-"][data-category="coordinate"] {
+    background: var(--spines), linear-gradient(135deg, #20B2AA 0%, #008B8B 100%) !important;
 }
 
 /* 垂直バーの色（JSで付与） */

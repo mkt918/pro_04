@@ -387,36 +387,52 @@ function updateProgramBlocks() {
 
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
-    let parentTypes = []; // 階層ごとの種類を保持
+    let parentColors = []; // 階層ごとの色（CSS変数値）を保持
     programBlocks.forEach(b => {
-        b.element.classList.remove('indented-1', 'indented-2', 'indented-3', 'indent-orange', 'indent-pink', 'indent-blue');
+        // 全てのインデント用クラスとスタイルをクリア
+        b.element.classList.remove('indented-1', 'indented-2', 'indented-3');
+        b.element.style.setProperty('--spines', 'none');
 
-        // 閉じるブロックまたは継続ブロックで深度を下げる
-        if (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start') {
+        // 閉じるブロックまたは継続ブロックで一度深度を下げる（その行自体の描画のため）
+        let isEnding = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
+        if (isEnding) {
             depth = Math.max(0, depth - 1);
-            parentTypes.pop();
+            parentColors.pop();
         }
 
         if (depth > 0) {
             const indentClass = 'indented-' + Math.min(depth, 3);
             b.element.classList.add(indentClass);
 
-            // 親の種類に応じた色を付与
-            const currentParent = parentTypes[parentTypes.length - 1];
-            if (currentParent === 'loop') {
-                b.element.classList.add('indent-orange');
-            } else if (currentParent === 'if') {
-                b.element.classList.add('indent-pink');
+            // 全ての親のバーを描画するためのグラデーションを作成
+            // 例: linear-gradient(to right, color1 0 10px, transparent 10px 20px, color2 20px 30px...)
+            let gradientParts = [];
+            for (let d = 0; d < depth; d++) {
+                const color = parentColors[d] || '#ccc';
+                const start = d * 20;
+                const end = start + 10;
+                gradientParts.push(`${color} ${start}px ${end}px`);
+                gradientParts.push(`transparent ${end}px ${start + 20}px`);
             }
+            b.element.style.setProperty('--spines', `linear-gradient(to right, ${gradientParts.join(', ')})`);
         }
 
-        // 開始ブロックまたは継続ブロックで深度を上げる
+        // 開始ブロックまたは継続ブロックで次の行からの深度を上げる
         if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell') {
-            depth++;
+            let color = '#ccc';
             if (b.type === 'if_start' || b.type === 'else_start') {
-                parentTypes.push('if');
+                color = '#D81B60'; // ピンク
             } else {
-                parentTypes.push('loop');
+                color = '#FF8C1A'; // オレンジ
+            }
+
+            // 終わりブロックが最初からある場合はdepthを上げ直す
+            if (isEnding) {
+                depth++;
+                parentColors.push(color);
+            } else {
+                depth++;
+                parentColors.push(color);
             }
         }
     });
