@@ -387,22 +387,37 @@ function updateProgramBlocks() {
 
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
+    let parentTypes = []; // 階層ごとの種類を保持
     programBlocks.forEach(b => {
-        b.element.classList.remove('indented-1', 'indented-2', 'indented-3');
+        b.element.classList.remove('indented-1', 'indented-2', 'indented-3', 'indent-orange', 'indent-pink', 'indent-blue');
 
         // 閉じるブロックまたは継続ブロックで深度を下げる
         if (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start') {
             depth = Math.max(0, depth - 1);
+            parentTypes.pop();
         }
 
         if (depth > 0) {
             const indentClass = 'indented-' + Math.min(depth, 3);
             b.element.classList.add(indentClass);
+
+            // 親の種類に応じた色を付与
+            const currentParent = parentTypes[parentTypes.length - 1];
+            if (currentParent === 'loop') {
+                b.element.classList.add('indent-orange');
+            } else if (currentParent === 'if') {
+                b.element.classList.add('indent-pink');
+            }
         }
 
         // 開始ブロックまたは継続ブロックで深度を上げる
-        if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start') {
+        if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell') {
             depth++;
+            if (b.type === 'if_start' || b.type === 'else_start') {
+                parentTypes.push('if');
+            } else {
+                parentTypes.push('loop');
+            }
         }
     });
 }

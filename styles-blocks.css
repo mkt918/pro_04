@@ -31,14 +31,15 @@
 .block-template,
 .program-block {
     padding: 0.5rem 0.8rem;
-    border-radius: 8px;
-    margin-bottom: 0.4rem;
+    border-radius: 12px;
+    margin-bottom: 0px;
+    /* 密着させてぷよぷよ感を出す */
     font-size: 0.85rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: grab;
     transition: transform 0.1s;
@@ -46,6 +47,7 @@
     width: fit-content;
     min-width: 200px;
     position: relative;
+    box-sizing: border-box;
 }
 
 .block-template:hover {
@@ -86,23 +88,39 @@
 .block-template[data-category="basic"][data-type="while_start"],
 .program-block[data-category="basic"][data-type="while_start"],
 .block-template[data-category="basic"][data-type="while_cell"],
-.program-block[data-category="basic"][data-type="while_cell"],
+.program-block[data-category="basic"][data-type="while_cell"] {
+    background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
+    border-left: 5px solid #CF8B17;
+    border-bottom-left-radius: 0;
+    color: white;
+}
+
 .block-template[data-category="basic"][data-type="loop_end"],
 .program-block[data-category="basic"][data-type="loop_end"] {
     background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
     border-left: 5px solid #CF8B17;
+    border-top-left-radius: 0;
+    margin-top: -1px;
     color: white;
 }
 
-/* 条件分岐ブロック - レッド/ピンク系 (ユーザー要望: 以前のイエローがループのオレンジと似すぎていたため) */
+/* 条件分岐ブロック - レッド/ピンク系 */
 .block-template[data-category="basic"][data-type="if_start"],
 .program-block[data-category="basic"][data-type="if_start"],
 .block-template[data-category="basic"][data-type="else_start"],
-.program-block[data-category="basic"][data-type="else_start"],
+.program-block[data-category="basic"][data-type="else_start"] {
+    background: linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
+    border-left: 5px solid #AD1457;
+    border-bottom-left-radius: 0;
+    color: white;
+}
+
 .block-template[data-category="basic"][data-type="if_end"],
 .program-block[data-category="basic"][data-type="if_end"] {
     background: linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
     border-left: 5px solid #AD1457;
+    border-top-left-radius: 0;
+    margin-top: -1px;
     color: white;
 }
 
@@ -171,20 +189,37 @@
     opacity: 1;
 }
 
-/* インデント */
-.indented-1 {
-    margin-left: 2rem;
-    border-left: 4px solid rgba(168, 85, 247, 0.6) !important;
+/* インデント（垂直バー） */
+.program-block.indented-1 {
+    margin-left: 1.5rem;
+    border-radius: 0 12px 12px 0;
+    border-left-width: 15px !important;
+    /* 太いバー */
 }
 
-.indented-2 {
-    margin-left: 4rem;
-    border-left: 4px solid rgba(168, 85, 247, 0.8) !important;
+.program-block.indented-2 {
+    margin-left: 3rem;
+    border-radius: 0 12px 12px 0;
+    border-left-width: 15px !important;
 }
 
-.indented-3 {
-    margin-left: 6rem;
-    border-left: 4px solid rgba(168, 85, 247, 1.0) !important;
+.program-block.indented-3 {
+    margin-left: 4.5rem;
+    border-radius: 0 12px 12px 0;
+    border-left-width: 15px !important;
+}
+
+/* 垂直バーの色（JSで付与） */
+.indent-orange {
+    border-left-color: #FF8C1A !important;
+}
+
+.indent-pink {
+    border-left-color: #D81B60 !important;
+}
+
+.indent-blue {
+    border-left-color: #3373CC !important;
 }
 
 /* 実行中のブロックハイライト */
