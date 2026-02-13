@@ -107,7 +107,7 @@
 .block-template[data-category="basic"][data-type="while_cell"],
 .program-block[data-category="basic"][data-type="while_cell"] {
     background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
-    border-left: 10px solid #CF8B17 !important;
+    border-left: 8px solid #CF8B17 !important;
     border-bottom-left-radius: 0 !important;
     color: white;
 }
@@ -115,9 +115,8 @@
 .block-template[data-category="basic"][data-type="loop_end"],
 .program-block[data-category="basic"][data-type="loop_end"] {
     background: linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
-    border-left: 10px solid #CF8B17 !important;
+    border-left: 8px solid #CF8B17 !important;
     border-top-left-radius: 0 !important;
-    margin-top: 0;
     color: white;
 }
 
@@ -127,7 +126,7 @@
 .block-template[data-category="basic"][data-type="else_start"],
 .program-block[data-category="basic"][data-type="else_start"] {
     background: linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
-    border-left: 10px solid #AD1457 !important;
+    border-left: 8px solid #AD1457 !important;
     border-bottom-left-radius: 0 !important;
     color: white;
 }
@@ -135,9 +134,8 @@
 .block-template[data-category="basic"][data-type="if_end"],
 .program-block[data-category="basic"][data-type="if_end"] {
     background: linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
-    border-left: 10px solid #AD1457 !important;
+    border-left: 8px solid #AD1457 !important;
     border-top-left-radius: 0 !important;
-    margin-top: 0;
     color: white;
 }
 
@@ -193,49 +191,49 @@
     opacity: 1;
 }
 
-/* インデント（垂直バー） */
-.program-block[class*="indented-"] {
+/* インデント（垂直バー連動） */
+.program-block.is-indented {
     margin-left: 0 !important;
-    /* 左端を絶対に固定 */
-    border-radius: 12px;
     border-left: none !important;
-    /* 既存のボーダーを完全に消す */
-    background: var(--spines), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
     background-repeat: no-repeat !important;
-    background-clip: padding-box, content-box !important;
-}
-
-.program-block.indented-1 {
-    padding-left: 20px;
-}
-
-.program-block.indented-2 {
-    padding-left: 40px;
-}
-
-.program-block.indented-3 {
-    padding-left: 60px;
+    background-image: var(--spines), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+    background-clip: padding-box, padding-box !important;
+    /* バーもカードもpadding領域まで描画して隙間をなくす */
 }
 
 /* インデント時のカード色（背景グラデーションを上書き） */
-/* ループ系 */
-.program-block[class*="indented-"][data-type="loop_start"],
-.program-block[class*="indented-"][data-type="while_start"],
-.program-block[class*="indented-"][data-type="while_cell"],
-.program-block[class*="indented-"][data-type="loop_end"] {
-    background: var(--spines), linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
+.program-block.is-indented[data-type="loop_start"],
+.program-block.is-indented[data-type="while_start"],
+.program-block.is-indented[data-type="while_cell"],
+.program-block.is-indented[data-type="loop_end"] {
+    background-image: var(--spines), linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%) !important;
 }
 
-/* 条件分岐系 */
-.program-block[class*="indented-"][data-type="if_start"],
-.program-block[class*="indented-"][data-type="else_start"],
-.program-block[class*="indented-"][data-type="if_end"] {
-    background: var(--spines), linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
+.program-block.is-indented[data-type="if_start"],
+.program-block.is-indented[data-type="else_start"],
+.program-block.is-indented[data-type="if_end"] {
+    background-image: var(--spines), linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%) !important;
 }
 
-/* 座標系 */
-.program-block[class*="indented-"][data-category="coordinate"] {
-    background: var(--spines), linear-gradient(135deg, #20B2AA 0%, #008B8B 100%) !important;
+.program-block.is-indented[data-category="coordinate"] {
+    background-image: var(--spines), linear-gradient(135deg, #20B2AA 0%, #008B8B 100%) !important;
+}
+
+.program-block.is-indented[data-category="variable"],
+.program-block.is-indented[data-category="calc"] {
+    background-image: var(--spines), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%) !important;
+}
+
+/* インデント時の形状固定 */
+.program-block.is-indented[data-type$="_start"],
+.program-block.is-indented[data-type="while_cell"] {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.program-block.is-indented[data-type$="_end"] {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
 
 /* 垂直バーの色（JSで付与） */
