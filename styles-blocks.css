@@ -197,16 +197,16 @@
     border-bottom-left-radius: 4px !important;
 }
 
-/* ブロック間の隙間を埋める縦線（box-shadow の影で生じる視覚的な隙間をカバー） */
+/* ブロック間の隙間を埋める縦線 */
 .program-block.is-indented::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: -8px;
-    height: 8px;
+    left: -8px;       /* border-left と同じ位置（padding edge から -8px） */
+    bottom: 100%;     /* ブロックの上端から上に伸ばす */
     width: 8px;
+    height: 60px;     /* 隙間（box-shadow 含む）を十分にカバー */
     background: var(--indent-color, #FFAB19);
-    z-index: 2;
+    z-index: -1;      /* 上のブロックの背面に隠れる */
 }
 
 
