@@ -191,46 +191,11 @@
     opacity: 1;
 }
 
-/* インデント（垂直バー連動） */
+/* インデント（シンプル版） */
 .program-block.is-indented {
     margin-left: 0 !important;
-    border-left: none !important;
-    background-repeat: no-repeat !important;
-    background-size: auto, 100% !important;
-    background-position: left top, left top !important;
-    background-clip: padding-box !important;
-    /* 背景全体をpadding領域まで広げる */
-}
-
-/* デフォルトのインデント時カード色（ブルー系） */
-.program-block.is-indented {
-    background-image: var(--spines, none), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%);
-}
-
-/* ループ系のカード色 */
-.program-block.is-indented[data-type="loop_start"],
-.program-block.is-indented[data-type="while_start"],
-.program-block.is-indented[data-type="while_cell"],
-.program-block.is-indented[data-type="loop_end"] {
-    background-image: var(--spines, none), linear-gradient(135deg, #FFAB19 0%, #FF8C1A 100%);
-}
-
-/* 条件分岐系のカード色 */
-.program-block.is-indented[data-type="if_start"],
-.program-block.is-indented[data-type="else_start"],
-.program-block.is-indented[data-type="if_end"] {
-    background-image: var(--spines, none), linear-gradient(135deg, #FF4D6D 0%, #D81B60 100%);
-}
-
-/* 座標系のカード色 */
-.program-block.is-indented[data-category="coordinate"] {
-    background-image: var(--spines, none), linear-gradient(135deg, #20B2AA 0%, #008B8B 100%);
-}
-
-/* 変数・計算系のカード色 */
-.program-block.is-indented[data-category="variable"],
-.program-block.is-indented[data-category="calc"] {
-    background-image: var(--spines, none), linear-gradient(135deg, #4C97FF 0%, #3373CC 100%);
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
 
 /* インデント時の形状調整（C型ブロック） */

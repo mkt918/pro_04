@@ -390,54 +390,38 @@ function updateProgramBlocks() {
 
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
-    let parentColors = []; // 階層ごとの色（CSS変数値）を保持
-    const LEVEL_WIDTH = 15; // 1階層あたりの幅
-    const SPINE_WIDTH = 8;  // バーの太さ
-
-    console.log(`[INDENT] updateProgramBlocks called, total blocks: ${programBlocks.length}`);
+    let parentColors = [];
+    const INDENT_WIDTH = 20; // 1階層20px
 
     programBlocks.forEach((b, index) => {
         // 初期化
         b.element.classList.remove('is-indented');
         b.element.style.paddingLeft = '';
-        b.element.style.setProperty('--spines', 'none');
+        b.element.style.borderLeft = '';
 
-        // 閉じるブロックまたは継続ブロックで一度深度を下げる
-        let isEnding = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
-        if (isEnding) {
+        // 閉じるブロックで深度を下げる
+        const isEnd = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
+        if (isEnd) {
             depth = Math.max(0, depth - 1);
             parentColors.pop();
         }
 
+        // インデント適用
         if (depth > 0) {
             b.element.classList.add('is-indented');
-            // パディングを調整
-            const padding = depth * LEVEL_WIDTH;
-            b.element.style.paddingLeft = (padding + 10) + 'px';
 
-            // 全ての親のバーをグラデーションで描画
-            let gradientParts = [];
-            for (let d = 0; d < depth; d++) {
-                const color = parentColors[d] || '#ccc';
-                const start = d * LEVEL_WIDTH;
-                const end = start + SPINE_WIDTH;
-                gradientParts.push(`${color} ${start}px ${end}px`);
-                gradientParts.push(`transparent ${end}px ${(d + 1) * LEVEL_WIDTH}px`);
-            }
-            const spineGradient = `linear-gradient(to right, ${gradientParts.join(', ')})`;
-            b.element.style.setProperty('--spines', spineGradient);
+            // シンプルに左ボーダーで表現
+            const color = parentColors[parentColors.length - 1] || '#ccc';
+            b.element.style.borderLeft = `${INDENT_WIDTH}px solid ${color}`;
+            b.element.style.paddingLeft = '12px';
 
-            console.log(`[INDENT] Block ${index} (${b.type}): Applied depth ${depth}, padding ${padding + 10}px`);
+            console.log(`[INDENT] Block ${index} (${b.type}): depth=${depth}, color=${color}`);
         }
 
-        // 開始ブロックまたは継続ブロックで次の行からの深度を上げる
-        if (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell') {
-            let color = '#ccc';
-            if (b.type === 'if_start' || b.type === 'else_start') {
-                color = '#FF4D6D'; // ピンク (グラデーションの開始色に合わせる)
-            } else {
-                color = '#FFAB19'; // オレンジ (グラデーションの開始色に合わせる)
-            }
+        // 開始ブロックで深度を上げる
+        const isStart = (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell');
+        if (isStart) {
+            let color = (b.type.includes('if') || b.type === 'else_start') ? '#FF4D6D' : '#FFAB19';
             depth++;
             parentColors.push(color);
         }
