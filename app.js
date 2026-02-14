@@ -391,7 +391,7 @@ function updateProgramBlocks() {
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
     let parentColors = [];
-    const INDENT_WIDTH = 15; // 1階層15px（少しタイトに）
+    const INDENT_WIDTH = 15; // 1階層15px
 
     programBlocks.forEach((b, index) => {
         // 初期化
@@ -399,58 +399,61 @@ function updateProgramBlocks() {
         b.element.style.paddingLeft = '';
         b.element.style.borderLeft = '';
         b.element.style.boxShadow = '';
+        b.element.style.marginLeft = ''; // マージンもリセット
 
         // 閉じるブロックで深度を下げる
+        // これらはインデントレベルが下がるが、表示上は親のレベルに合わせる
         const isEnd = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
+
+        // else_startは、ifの中のブロックとしては扱わず、ifと同じ階層として描画したいが、
+        // 視覚的には「ifのブロックの終わり」＋「elseの始まり」なので、
+        // 一旦深度を下げて、描画後に上げる（後述）必要がある。
+        // ここでは単純に depth を下げる操作をする。
         if (isEnd) {
             depth = Math.max(0, depth - 1);
             parentColors.pop();
         }
 
         // インデント適用
+        // depth > 0 ならば、それは何らかのブロックの中にある
         if (depth > 0) {
             b.element.classList.add('is-indented');
 
-            // 複数の背骨（スパイン）をbox-shadowで重ねて表現
-            // 浅い階層（0）が一番上（左端）、深い階層が下（右側）に来るように定義
+            // 背骨（スパイン）の描画
             let shadows = [];
-            // box-shadowのinsetは定義順に手前に描画される
-            // 階層0（左端）: 幅 15px
-            // 階層1（その右）: 幅 30px (ただし階層0の下敷きになるので実質15-30pxが見える)
-            // ...
             for (let d = 0; d < depth; d++) {
                 const color = parentColors[d] || '#ccc';
-                // 各階層の影を作成
-                // 親の影の上に子の影を重ねるため、ループ順序とbox-shadowの重なり順を考慮
-                // ここでは「左端からd*15px」ではなく、「左端から(d+1)*15px」の領域を塗りつぶす影を定義し、
-                // これを重ねていく。
-                // 例: 
-                // Color[0] (0-15px): inset 15px ...
-                // Color[1] (15-30px): inset 30px ...
-                // 重ね順は [Color0, Color1] の順であれば、
-                // Color0が上書きして 0-15pxを占有し、Color1がその下で0-30px（実質15-30が露出）となる
-
-                // よって、d=0 から push していけば良い
+                // 左端から順番に影を重ねる
                 shadows.push(`inset ${(d + 1) * INDENT_WIDTH}px 0 0 0 ${color}`);
             }
 
-            // 通常の影（デザイン用）も含める場合は最後に追加
-            shadows.push('0 2px 4px rgba(0, 0, 0, 0.1)'); // 元のスタイルの影
+            // ブロックの影
+            shadows.push('0 2px 4px rgba(0, 0, 0, 0.1)');
 
             b.element.style.boxShadow = shadows.join(', ');
-            b.element.style.paddingLeft = (depth * INDENT_WIDTH + 12) + 'px';
-            b.element.style.borderLeft = 'none'; // ボーダーは使わない
 
-            // console.log(`[INDENT] Block ${index} (${b.type}): depth=${depth}, shadows=${shadows.length}`);
+            // 中身のコンテンツを右にズラす
+            // loop_start などの親ブロック自体もずらす必要があるため、ここを一律に行う
+            b.element.style.paddingLeft = (depth * INDENT_WIDTH + 12) + 'px';
+
+            // ボーダーは使わない（box-shadowで表現するため）
+            b.element.style.borderLeft = 'none';
         } else {
-            // インデントなしの場合もデフォルトの影を戻す（CSSで定義されているが念のため）
             b.element.style.boxShadow = '';
         }
 
         // 開始ブロックで深度を上げる
         const isStart = (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell');
         if (isStart) {
-            let color = (b.type.includes('if') || b.type === 'else_start') ? '#FF4D6D' : '#FFAB19';
+            // 色の決定：一番外側が優先される表現は、box-shadowの重ね順で自然に実現される
+            // ここでは「そのブロックが作る新しい階層の色」をスタックに積む
+            let color = '#ccc';
+            if (b.type.includes('if') || b.type === 'else_start') {
+                color = '#D81B60'; // ピンク
+            } else {
+                color = '#FF8C1A'; // オレンジ
+            }
+
             depth++;
             parentColors.push(color);
         }

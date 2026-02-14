@@ -194,8 +194,9 @@
 /* インデント（シンプル版） */
 .program-block.is-indented {
     margin-left: 0 !important;
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+    /* 角を完全に直角ではなく、少しだけ丸めて馴染ませる */
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
     border-left: none !important;
     /* ボーダーリセット */
 }
