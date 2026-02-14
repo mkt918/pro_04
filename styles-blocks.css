@@ -191,12 +191,10 @@
     opacity: 1;
 }
 
-/* インデント（シンプル版） */
+/* インデント */
 .program-block.is-indented {
-    margin-left: 0 !important;
     border-top-left-radius: 4px !important;
     border-bottom-left-radius: 4px !important;
-    border-left: none !important;
 }
 
 /* インデントされた通常ブロック（制御ブロック以外）を白/クリーム背景に */

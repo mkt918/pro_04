@@ -349,6 +349,15 @@ function syncGlobalSpeed() {
     }
 }
 
+// 16進カラーを指定係数で暗くする
+function darkenHexColor(hex, factor) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const toHex = n => Math.min(255, Math.round(n * factor)).toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 // プログラムブロックの配列を最新化
 function updateProgramBlocks() {
     const programArea = document.getElementById('programArea');
@@ -431,22 +440,18 @@ function updateProgramBlocks() {
         if (drawDepth > 0) {
             b.element.classList.add('is-indented');
 
-            let shadows = [];
-            for (let d = 0; d < drawDepth; d++) {
-                const color = parentColors[d] || '#ccc';
-                // 最外層の帯は太め(8px)で表現、内側は細め(4px)で重ねる
-                const barWidth = (d + 1) * INDENT_WIDTH;
-                shadows.push(`inset ${barWidth}px 0 0 0 ${color}`);
-            }
+            // ブロック全体を depth 段分だけ右にシフト
+            b.element.style.setProperty('margin-left', (drawDepth * INDENT_WIDTH) + 'px', 'important');
 
-            shadows.push('0 2px 5px rgba(0, 0, 0, 0.15)');
+            // 現在のレベルの親色で左ボーダーを表示
+            const borderColor = parentColors[drawDepth - 1] || '#ccc';
+            b.element.style.setProperty('border-left', `8px solid ${borderColor}`, 'important');
 
-            b.element.style.boxShadow = shadows.join(', ');
-
-            // コンテンツを左帯の分だけ右にズラす（帯の外側から8px余白）
-            b.element.style.paddingLeft = (drawDepth * INDENT_WIDTH + 12) + 'px';
-            b.element.style.borderLeft = 'none';
+            // 通常のコンテンツパディング
+            b.element.style.paddingLeft = '14px';
+            b.element.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.15)';
         } else {
+            b.element.style.setProperty('margin-left', '0px', 'important');
             b.element.style.boxShadow = '';
         }
 
