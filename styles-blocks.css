@@ -196,6 +196,8 @@
     margin-left: 0 !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
+    border-left: none !important;
+    /* ボーダーリセット */
 }
 
 /* インデント時の形状調整（C型ブロック） */

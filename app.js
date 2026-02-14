@@ -391,13 +391,14 @@ function updateProgramBlocks() {
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
     let parentColors = [];
-    const INDENT_WIDTH = 20; // 1階層20px
+    const INDENT_WIDTH = 15; // 1階層15px（少しタイトに）
 
     programBlocks.forEach((b, index) => {
         // 初期化
         b.element.classList.remove('is-indented');
         b.element.style.paddingLeft = '';
         b.element.style.borderLeft = '';
+        b.element.style.boxShadow = '';
 
         // 閉じるブロックで深度を下げる
         const isEnd = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
@@ -410,12 +411,40 @@ function updateProgramBlocks() {
         if (depth > 0) {
             b.element.classList.add('is-indented');
 
-            // シンプルに左ボーダーで表現
-            const color = parentColors[parentColors.length - 1] || '#ccc';
-            b.element.style.borderLeft = `${INDENT_WIDTH}px solid ${color}`;
-            b.element.style.paddingLeft = '12px';
+            // 複数の背骨（スパイン）をbox-shadowで重ねて表現
+            // 浅い階層（0）が一番上（左端）、深い階層が下（右側）に来るように定義
+            let shadows = [];
+            // box-shadowのinsetは定義順に手前に描画される
+            // 階層0（左端）: 幅 15px
+            // 階層1（その右）: 幅 30px (ただし階層0の下敷きになるので実質15-30pxが見える)
+            // ...
+            for (let d = 0; d < depth; d++) {
+                const color = parentColors[d] || '#ccc';
+                // 各階層の影を作成
+                // 親の影の上に子の影を重ねるため、ループ順序とbox-shadowの重なり順を考慮
+                // ここでは「左端からd*15px」ではなく、「左端から(d+1)*15px」の領域を塗りつぶす影を定義し、
+                // これを重ねていく。
+                // 例: 
+                // Color[0] (0-15px): inset 15px ...
+                // Color[1] (15-30px): inset 30px ...
+                // 重ね順は [Color0, Color1] の順であれば、
+                // Color0が上書きして 0-15pxを占有し、Color1がその下で0-30px（実質15-30が露出）となる
 
-            console.log(`[INDENT] Block ${index} (${b.type}): depth=${depth}, color=${color}`);
+                // よって、d=0 から push していけば良い
+                shadows.push(`inset ${(d + 1) * INDENT_WIDTH}px 0 0 0 ${color}`);
+            }
+
+            // 通常の影（デザイン用）も含める場合は最後に追加
+            shadows.push('0 2px 4px rgba(0, 0, 0, 0.1)'); // 元のスタイルの影
+
+            b.element.style.boxShadow = shadows.join(', ');
+            b.element.style.paddingLeft = (depth * INDENT_WIDTH + 12) + 'px';
+            b.element.style.borderLeft = 'none'; // ボーダーは使わない
+
+            // console.log(`[INDENT] Block ${index} (${b.type}): depth=${depth}, shadows=${shadows.length}`);
+        } else {
+            // インデントなしの場合もデフォルトの影を戻す（CSSで定義されているが念のため）
+            b.element.style.boxShadow = '';
         }
 
         // 開始ブロックで深度を上げる
