@@ -197,14 +197,16 @@
     border-bottom-left-radius: 4px !important;
 }
 
-/* ブロック間の隙間を埋める縦線 */
+/* 親ループへの接続縦線 */
 .program-block.is-indented::before {
     content: '';
     position: absolute;
-    left: -8px;       /* border-left と同じ位置（padding edge から -8px） */
+    /* left = -(INDENT_WIDTH + border幅) = -(32 + 8) = -40px
+       どの深さでも「自分の1段上の親ループの左端」に一致する */
+    left: -40px;
     bottom: 100%;     /* ブロックの上端から上に伸ばす */
     width: 8px;
-    height: 60px;     /* 隙間（box-shadow 含む）を十分にカバー */
+    height: 60px;     /* 隙間を十分にカバー */
     background: var(--indent-color, #FFAB19);
     z-index: -1;      /* 上のブロックの背面に隠れる */
 }
