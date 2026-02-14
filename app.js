@@ -391,7 +391,7 @@ function updateProgramBlocks() {
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
     let parentColors = [];
-    const INDENT_WIDTH = 24; // 画像に合わせて太くする (24px)
+    const INDENT_WIDTH = 32; // インデント幅 (32px)
 
     // プログラム全体を走査してインデントを適用
     programBlocks.forEach((b, index) => {
@@ -434,18 +434,17 @@ function updateProgramBlocks() {
             let shadows = [];
             for (let d = 0; d < drawDepth; d++) {
                 const color = parentColors[d] || '#ccc';
-                // 左端から順番に影を重ねる (太くした分調整)
-                shadows.push(`inset ${(d + 1) * INDENT_WIDTH}px 0 0 0 ${color}`);
+                // 最外層の帯は太め(8px)で表現、内側は細め(4px)で重ねる
+                const barWidth = (d + 1) * INDENT_WIDTH;
+                shadows.push(`inset ${barWidth}px 0 0 0 ${color}`);
             }
 
-            // ブロックの影 (少し強くして立体感を強調)
             shadows.push('0 2px 5px rgba(0, 0, 0, 0.15)');
 
             b.element.style.boxShadow = shadows.join(', ');
 
-            // 中身のコンテンツを右にズラす
-            // 24px * depth + 微調整
-            b.element.style.paddingLeft = (drawDepth * INDENT_WIDTH + 14) + 'px';
+            // コンテンツを左帯の分だけ右にズラす（帯の外側から8px余白）
+            b.element.style.paddingLeft = (drawDepth * INDENT_WIDTH + 12) + 'px';
             b.element.style.borderLeft = 'none';
         } else {
             b.element.style.boxShadow = '';

@@ -194,15 +194,18 @@
 /* インデント（シンプル版） */
 .program-block.is-indented {
     margin-left: 0 !important;
-    /* 角を少し丸めて馴染ませるが、丸すぎると隙間になるので4pxにする */
     border-top-left-radius: 4px !important;
     border-bottom-left-radius: 4px !important;
     border-left: none !important;
-    /* ボーダーリセット */
+}
+
+/* インデントされた通常ブロック（制御ブロック以外）を白/クリーム背景に */
+.program-block.is-indented:not([data-type$="_start"]):not([data-type$="_end"]):not([data-type="while_cell"]):not([data-type="else_start"]) {
+    background: #FFFDE7 !important;
+    color: #333 !important;
 }
 
 /* インデント時の形状調整 */
-/* ループ開始などの変形も、インデント中（親の中にいる時）は左側を揃える */
 .program-block.is-indented[data-type$="_start"],
 .program-block.is-indented[data-type="while_cell"] {
     border-top-left-radius: 4px !important;
