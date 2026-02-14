@@ -194,23 +194,24 @@
 /* インデント（シンプル版） */
 .program-block.is-indented {
     margin-left: 0 !important;
-    /* 角を完全に直角ではなく、少しだけ丸めて馴染ませる */
+    /* 角を少し丸めて馴染ませるが、丸すぎると隙間になるので4pxにする */
     border-top-left-radius: 4px !important;
     border-bottom-left-radius: 4px !important;
     border-left: none !important;
     /* ボーダーリセット */
 }
 
-/* インデント時の形状調整（C型ブロック） */
+/* インデント時の形状調整 */
+/* ループ開始などの変形も、インデント中（親の中にいる時）は左側を揃える */
 .program-block.is-indented[data-type$="_start"],
 .program-block.is-indented[data-type="while_cell"] {
-    border-top-left-radius: 12px !important;
+    border-top-left-radius: 4px !important;
     border-bottom-left-radius: 0 !important;
 }
 
 .program-block.is-indented[data-type$="_end"] {
     border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 12px !important;
+    border-bottom-left-radius: 4px !important;
 }
 
 /* 垂直バーの色（JSで付与） */

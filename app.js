@@ -391,7 +391,7 @@ function updateProgramBlocks() {
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
     let parentColors = [];
-    const INDENT_WIDTH = 15; // 1階層15px
+    const INDENT_WIDTH = 24; // 画像に合わせて太くする (24px)
 
     // プログラム全体を走査してインデントを適用
     programBlocks.forEach((b, index) => {
@@ -434,17 +434,18 @@ function updateProgramBlocks() {
             let shadows = [];
             for (let d = 0; d < drawDepth; d++) {
                 const color = parentColors[d] || '#ccc';
-                // 左端から順番に影を重ねる
+                // 左端から順番に影を重ねる (太くした分調整)
                 shadows.push(`inset ${(d + 1) * INDENT_WIDTH}px 0 0 0 ${color}`);
             }
 
-            // ブロックの影
-            shadows.push('0 2px 4px rgba(0, 0, 0, 0.1)');
+            // ブロックの影 (少し強くして立体感を強調)
+            shadows.push('0 2px 5px rgba(0, 0, 0, 0.15)');
 
             b.element.style.boxShadow = shadows.join(', ');
 
             // 中身のコンテンツを右にズラす
-            b.element.style.paddingLeft = (drawDepth * INDENT_WIDTH + 12) + 'px';
+            // 24px * depth + 微調整
+            b.element.style.paddingLeft = (drawDepth * INDENT_WIDTH + 14) + 'px';
             b.element.style.borderLeft = 'none';
         } else {
             b.element.style.boxShadow = '';
@@ -454,9 +455,9 @@ function updateProgramBlocks() {
         if (isStart) {
             let color = '#ccc';
             if (b.type.includes('if') || b.type === 'else_start') {
-                color = '#D81B60'; // ピンク
+                color = '#FF4D6D'; // CSSグラデーションの開始色に合わせる
             } else {
-                color = '#FF8C1A'; // オレンジ
+                color = '#FFAB19'; // CSSグラデーションの開始色に合わせる
             }
             depth++;
             parentColors.push(color);
