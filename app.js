@@ -393,35 +393,46 @@ function updateProgramBlocks() {
     let parentColors = [];
     const INDENT_WIDTH = 15; // 1階層15px
 
+    // プログラム全体を走査してインデントを適用
     programBlocks.forEach((b, index) => {
         // 初期化
         b.element.classList.remove('is-indented');
         b.element.style.paddingLeft = '';
         b.element.style.borderLeft = '';
         b.element.style.boxShadow = '';
-        b.element.style.marginLeft = ''; // マージンもリセット
+        b.element.style.marginLeft = '';
 
-        // 閉じるブロックで深度を下げる
-        // これらはインデントレベルが下がるが、表示上は親のレベルに合わせる
+        // ブロックタイプの判定
+        const isStart = (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell');
         const isEnd = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
 
-        // else_startは、ifの中のブロックとしては扱わず、ifと同じ階層として描画したいが、
-        // 視覚的には「ifのブロックの終わり」＋「elseの始まり」なので、
-        // 一旦深度を下げて、描画後に上げる（後述）必要がある。
-        // ここでは単純に depth を下げる操作をする。
+        // 閉じるブロックの場合、まず深度を下げる
+        // ただし、閉じるブロック自身も「そのループの一部」として描画したいので、
+        // 描画用の深度(drawDepth)は depth - 1 ではなく depth を使うべき場合があるが、
+        // Scratchの見た目（C型の底）は、インデントレベルが戻っている。
+        // 例:
+        // Start (depth 0 -> 1)
+        //   Content (depth 1)
+        // End (depth 1 -> 0)
+        // となるので、Endは depth 0 の位置（Startと同じ左端）に描画されるべき。
+
         if (isEnd) {
             depth = Math.max(0, depth - 1);
             parentColors.pop();
         }
 
-        // インデント適用
-        // depth > 0 ならば、それは何らかのブロックの中にある
-        if (depth > 0) {
+        // 描画すべき深度 (現在のdepth)
+        // 開始ブロックの場合、まだdepthは上がっていないので、親のレベルで描画される（正しい）
+        // 中身のブロックの場合、depthは上がっているので、インデントされる（正しい）
+        // 終了ブロックの場合、上でdepthを下げたので、親のレベルで描画される（正しい）
+
+        const drawDepth = depth;
+
+        if (drawDepth > 0) {
             b.element.classList.add('is-indented');
 
-            // 背骨（スパイン）の描画
             let shadows = [];
-            for (let d = 0; d < depth; d++) {
+            for (let d = 0; d < drawDepth; d++) {
                 const color = parentColors[d] || '#ccc';
                 // 左端から順番に影を重ねる
                 shadows.push(`inset ${(d + 1) * INDENT_WIDTH}px 0 0 0 ${color}`);
@@ -433,27 +444,20 @@ function updateProgramBlocks() {
             b.element.style.boxShadow = shadows.join(', ');
 
             // 中身のコンテンツを右にズラす
-            // loop_start などの親ブロック自体もずらす必要があるため、ここを一律に行う
-            b.element.style.paddingLeft = (depth * INDENT_WIDTH + 12) + 'px';
-
-            // ボーダーは使わない（box-shadowで表現するため）
+            b.element.style.paddingLeft = (drawDepth * INDENT_WIDTH + 12) + 'px';
             b.element.style.borderLeft = 'none';
         } else {
             b.element.style.boxShadow = '';
         }
 
-        // 開始ブロックで深度を上げる
-        const isStart = (b.type === 'loop_start' || b.type === 'if_start' || b.type === 'else_start' || b.type === 'while_start' || b.type === 'while_cell');
+        // 開始ブロックの場合、次の行から深度を上げる
         if (isStart) {
-            // 色の決定：一番外側が優先される表現は、box-shadowの重ね順で自然に実現される
-            // ここでは「そのブロックが作る新しい階層の色」をスタックに積む
             let color = '#ccc';
             if (b.type.includes('if') || b.type === 'else_start') {
                 color = '#D81B60'; // ピンク
             } else {
                 color = '#FF8C1A'; // オレンジ
             }
-
             depth++;
             parentColors.push(color);
         }
