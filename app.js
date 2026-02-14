@@ -446,6 +446,8 @@ function updateProgramBlocks() {
             // 現在のレベルの親色で左ボーダーを表示
             const borderColor = parentColors[drawDepth - 1] || '#ccc';
             b.element.style.setProperty('border-left', `8px solid ${borderColor}`, 'important');
+            // ::before 疑似要素の縦線色を CSS 変数で渡す（ブロック間の隙間を埋める）
+            b.element.style.setProperty('--indent-color', borderColor);
 
             // 通常のコンテンツパディング
             b.element.style.paddingLeft = '14px';
