@@ -201,14 +201,14 @@
 .program-block.is-indented::before {
     content: '';
     position: absolute;
-    /* left = -(INDENT_WIDTH + border幅) = -(32 + 8) = -40px
-       どの深さでも「自分の1段上の親ループの左端」に一致する */
-    left: -40px;
-    bottom: 100%;     /* ブロックの上端から上に伸ばす */
+    /* left = -INDENT_WIDTH = -32px
+       ブロックの左端から1段分（32px）戻った位置 = 親ループの左端 */
+    left: -32px;
+    top: -2px;        /* 上の隙間（border 1px × 2）をカバー */
     width: 8px;
-    height: 60px;     /* 隙間を十分にカバー */
+    height: calc(100% + 4px);  /* ブロック全体 + 上下の隙間 */
     background: var(--indent-color, #FFAB19);
-    z-index: -1;      /* 上のブロックの背面に隠れる */
+    z-index: 1;       /* 前面に表示 */
 }
 
 
