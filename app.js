@@ -604,7 +604,7 @@ function generatePythonCode() {
 
         // パラメータ置換
         for (const [key, value] of Object.entries(block.params)) {
-            line = line.replace('{' + key + '}', value);
+            line = line.replaceAll('{' + key + '}', value);
         }
 
         const meta = `  # @idx:${index}`;
