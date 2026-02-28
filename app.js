@@ -399,7 +399,6 @@ function updateProgramBlocks() {
 
     // インデントの視覚的表現（ループ・条件分岐内）
     let depth = 0;
-    let parentColors = [];
     const INDENT_WIDTH = 32; // インデント幅 (32px)
 
     // プログラム全体を走査してインデントを適用
@@ -407,7 +406,6 @@ function updateProgramBlocks() {
         // 初期化
         b.element.classList.remove('is-indented');
         b.element.style.paddingLeft = '';
-        b.element.style.borderLeft = '';
         b.element.style.boxShadow = '';
         b.element.style.marginLeft = '';
 
@@ -416,56 +414,23 @@ function updateProgramBlocks() {
         const isEnd = (b.type === 'loop_end' || b.type === 'if_end' || b.type === 'else_start');
 
         // 閉じるブロックの場合、まず深度を下げる
-        // ただし、閉じるブロック自身も「そのループの一部」として描画したいので、
-        // 描画用の深度(drawDepth)は depth - 1 ではなく depth を使うべき場合があるが、
-        // Scratchの見た目（C型の底）は、インデントレベルが戻っている。
-        // 例:
-        // Start (depth 0 -> 1)
-        //   Content (depth 1)
-        // End (depth 1 -> 0)
-        // となるので、Endは depth 0 の位置（Startと同じ左端）に描画されるべき。
-
         if (isEnd) {
             depth = Math.max(0, depth - 1);
-            parentColors.pop();
         }
-
-        // 描画すべき深度 (現在のdepth)
-        // 開始ブロックの場合、まだdepthは上がっていないので、親のレベルで描画される（正しい）
-        // 中身のブロックの場合、depthは上がっているので、インデントされる（正しい）
-        // 終了ブロックの場合、上でdepthを下げたので、親のレベルで描画される（正しい）
 
         const drawDepth = depth;
 
         if (drawDepth > 0) {
-            b.element.classList.add('is-indented');
-
-            // ブロック全体を depth 段分だけ右にシフト
+            // ブロック全体を depth 段分だけ右にシフト（margin-leftのみ）
             b.element.style.setProperty('margin-left', (drawDepth * INDENT_WIDTH) + 'px', 'important');
-
-            // ::before 疑似要素の縦線色を CSS 変数で渡す
-            const borderColor = parentColors[drawDepth - 1] || '#ccc';
-            b.element.style.setProperty('--indent-color', borderColor);
-            b.element.style.removeProperty('border-left');
-
-            // 通常のコンテンツパディング
             b.element.style.paddingLeft = '14px';
-            b.element.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.15)';
         } else {
             b.element.style.setProperty('margin-left', '0px', 'important');
-            b.element.style.boxShadow = '';
         }
 
         // 開始ブロックの場合、次の行から深度を上げる
         if (isStart) {
-            let color = '#ccc';
-            if (b.type.includes('if') || b.type === 'else_start') {
-                color = '#FF4D6D'; // CSSグラデーションの開始色に合わせる
-            } else {
-                color = '#FFAB19'; // CSSグラデーションの開始色に合わせる
-            }
             depth++;
-            parentColors.push(color);
         }
     });
 }

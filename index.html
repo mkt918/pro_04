@@ -35,28 +35,39 @@
             <p class="subtitle">🎮 アルゴリズムを遊びながら学ぼう！</p>
         </div>
         <div class="header-right">
+            <!-- 編集履歴グループ -->
+            <div class="header-group">
+                <span class="group-label">編集</span>
+                <button id="undoBtn" class="btn btn-secondary btn-sm" title="ブロック操作を元に戻す (Ctrl+Z)">↩ 元に戻す</button>
+                <button id="redoBtn" class="btn btn-secondary btn-sm" title="ブロック操作をやり直す (Ctrl+Y)">↪ やり直す</button>
+            </div>
+            <div class="header-sep"></div>
+            <!-- 速度・クエスト -->
             <div class="speed-control">
-                <span>🚀 はやさ:</span>
+                <span>🚀</span>
                 <input type="range" id="speed" min="0" max="10" value="9" step="1">
-                <span id="speedValueDisplay" class="speed-value">(0.05s)</span>
+                <span id="speedValueDisplay" class="speed-value">0.05s</span>
             </div>
-            <button id="loadQuestBtn" class="btn btn-quest" title="クエストを読み込む">📚 クエスト</button>
-            <div class="execution-controls">
-                <button id="runBtn" class="btn btn-run">▶ RUN</button>
-                <button id="pauseBtn" class="btn btn-pause" title="実行を一時停止し、手動ステップに切り替え">⏸ 一時停止</button>
-                <button id="stopBtn" class="btn btn-stop" title="実行を停止">⏹ STOP</button>
-                <div class="step-controls">
-                    <button id="stepBackBtn" class="btn btn-secondary" title="1手戻る">⏪ 戻る</button>
-                    <button id="stepForwardBtn" class="btn btn-secondary" title="1手進む">⏩ 進む</button>
-                </div>
+            <button id="loadQuestBtn" class="btn btn-quest btn-sm" title="クエストを読み込む">📚 クエスト</button>
+            <div class="header-sep"></div>
+            <!-- 実行制御グループ -->
+            <div class="header-group">
+                <span class="group-label">実行</span>
+                <button id="runBtn" class="btn btn-run btn-sm">▶ RUN</button>
+                <button id="pauseBtn" class="btn btn-pause btn-sm" title="一時停止して1手ずつ操作">⏸</button>
+                <button id="stopBtn" class="btn btn-stop btn-sm" title="実行を停止">⏹ STOP</button>
             </div>
-            <button id="resetBtn" class="btn btn-reset">🔄 RESET</button>
-            <div class="history-controls">
-                <button id="undoBtn" class="btn btn-secondary" title="操作を元に戻す (Ctrl+Z)">↩️ 戻す</button>
-                <button id="redoBtn" class="btn btn-secondary" title="操作をやり直す (Ctrl+Y)">↪️ 進む</button>
+            <!-- ステップ実行グループ -->
+            <div class="header-group">
+                <span class="group-label">ステップ</span>
+                <button id="stepBackBtn" class="btn btn-step btn-sm" title="1手戻る">⏮ 1手戻る</button>
+                <button id="stepForwardBtn" class="btn btn-step btn-sm" title="1手進む">1手進む ⏭</button>
             </div>
+            <div class="header-sep"></div>
+            <!-- リセット・データ・クリア -->
+            <button id="resetBtn" class="btn btn-reset btn-sm">🔄 RESET</button>
             <div class="dropdown">
-                <button id="dataBtn" class="btn btn-data" title="保存・読込メニュー">💾 データ ▾</button>
+                <button id="dataBtn" class="btn btn-data btn-sm" title="保存・読込メニュー">💾 ▾</button>
                 <div class="dropdown-menu" id="dataMenu">
                     <div class="header-controls">
                         <span>Program Name:</span>
@@ -69,7 +80,7 @@
                     </div>
                 </div>
             </div>
-            <button id="clearAllBtn" class="btn btn-clear" title="プログラムを全削除">🗑️ クリア</button>
+            <button id="clearAllBtn" class="btn btn-clear btn-sm" title="プログラムを全削除">🗑️</button>
         </div>
     </header>
 
@@ -135,6 +146,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="t.getCurrentValue()">今のマス</option>
                     </select> <select class="block-select" data-param="op">
                         <option value="==">＝</option>
@@ -254,6 +267,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B" selected>箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> の数字を入れる
                 </div>
 
@@ -294,6 +309,8 @@
                         <option value="箱A" selected>箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> に入れる
                 </div>
 
@@ -352,10 +369,14 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                     </select> に <select class="block-select" data-param="v1">
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -374,6 +395,8 @@
                         <option value="箱A">箱A</option>
                         <option value="箱B">箱B</option>
                         <option value="箱C">箱C</option>
+                        <option value="箱D">箱D</option>
+                        <option value="箱E">箱E</option>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>

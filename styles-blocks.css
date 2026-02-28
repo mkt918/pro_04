@@ -191,51 +191,7 @@
     opacity: 1;
 }
 
-/* インデント */
-.program-block.is-indented {
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-}
-
-/* 親ループへの接続縦線 */
-.program-block.is-indented::before {
-    content: '';
-    position: absolute;
-    /* left = -INDENT_WIDTH = -32px
-       ブロックの左端から1段分（32px）戻った位置 = 親ループの左端 */
-    left: -32px;
-    top: -2px;        /* 上の隙間（border 1px × 2）をカバー */
-    width: 8px;
-    height: calc(100% + 4px);  /* ブロック全体 + 上下の隙間 */
-    background: var(--indent-color, #FFAB19);
-    z-index: 1;       /* 前面に表示 */
-}
-
-
-/* インデント時の形状調整 */
-.program-block.is-indented[data-type$="_start"],
-.program-block.is-indented[data-type="while_cell"] {
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 0 !important;
-}
-
-.program-block.is-indented[data-type$="_end"] {
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 4px !important;
-}
-
-/* 垂直バーの色（JSで付与） */
-.indent-orange {
-    border-left-color: #FF8C1A !important;
-}
-
-.indent-pink {
-    border-left-color: #D81B60 !important;
-}
-
-.indent-blue {
-    border-left-color: #3373CC !important;
-}
+/* インデント（margin-leftのみで字下げ、縦線なし） */
 
 /* 実行中のブロックハイライト */
 .active-block {

@@ -149,6 +149,18 @@
     font-size: 0.9rem;
 }
 
+/* ===== セカンダリボタン（元に戻す・やり直す）===== */
+.btn-secondary {
+    background: linear-gradient(135deg, #a8a8a8, #787878);
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
 /* ===== 一時停止ボタン ===== */
 .btn-pause {
     background: linear-gradient(135deg, #f093fb, #f5576c);
